@@ -1,0 +1,2840 @@
+{
+  "estrutura": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "857D750646F27671531A6A657D17AEAE",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CAMPO",
+          "description": "CAMPO",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "TIPO",
+          "description": "TIPO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "TAMANHO",
+          "description": "TAMANHO",
+          "order": 3,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "PERMITE_NULO",
+          "description": "PERMITE_NULO",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "COMENTARIO",
+          "description": "COMENTARIO",
+          "order": 5,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          "CODPARC",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODVEND",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "NOMEPARC",
+          "VARCHAR2",
+          100,
+          "N",
+          " "
+        ],
+        [
+          "RAZAOSOCIAL",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "TIPPESSOA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODPARCMATRIZ",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODEND",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "NUMEND",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "COMPLEMENTO",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "CODBAI",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODCID",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODREG",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CEP",
+          "VARCHAR2",
+          8,
+          "Y",
+          " "
+        ],
+        [
+          "CAIXAPOSTAL",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "TELEFONE",
+          "VARCHAR2",
+          13,
+          "Y",
+          " "
+        ],
+        [
+          "RAMAL",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FAX",
+          "VARCHAR2",
+          13,
+          "Y",
+          " "
+        ],
+        [
+          "EMAIL",
+          "VARCHAR2",
+          80,
+          "Y",
+          " "
+        ],
+        [
+          "DTCAD",
+          "DATE",
+          7,
+          "N",
+          " "
+        ],
+        [
+          "DTALTER",
+          "DATE",
+          7,
+          "N",
+          " "
+        ],
+        [
+          "DTNASC",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTULTCONTATO",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTULTNEGOC",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "IDENTINSCESTAD",
+          "VARCHAR2",
+          16,
+          "Y",
+          " "
+        ],
+        [
+          "INSCESTADNAUF",
+          "VARCHAR2",
+          16,
+          "Y",
+          " "
+        ],
+        [
+          "CGC_CPF",
+          "VARCHAR2",
+          14,
+          "Y",
+          " "
+        ],
+        [
+          "CODTAB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRAZOCONTATO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRAZOPAG",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TOLERINADIMP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CLIENTE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "FORNECEDOR",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TRANSPORTADORA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "VENDEDOR",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "AGENCIA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODTIPPARC",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODCTABCO",
+          "VARCHAR2",
+          17,
+          "Y",
+          " "
+        ],
+        [
+          "CODAGE",
+          "VARCHAR2",
+          5,
+          "Y",
+          " "
+        ],
+        [
+          "CODBCO",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "NOMEAGE",
+          "VARCHAR2",
+          19,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTB2",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CLASSIFICMS",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TARE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "IPIINCICMS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "RETEMISS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "RETEMINSS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CONTACESSO",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "SITUACAO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "OBSERVACOES",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "ATIVO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODANT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTABCOINT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPOAUTOR",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "LIMCRED",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BLOQUEAR",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SELECIONADO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "MOTBLOQ",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "EVENDA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ECOMPRA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "HOMEPAGE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "CTAADIANT",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODASSESSOR",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "INSCMUN",
+          "VARCHAR2",
+          16,
+          "Y",
+          " "
+        ],
+        [
+          "CALCINSS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODUSU",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "RETEMPIS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "RETEMCOFINS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "RETEMCSL",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "USUARIO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CEI",
+          "VARCHAR2",
+          12,
+          "Y",
+          " "
+        ],
+        [
+          "LIMCREDMENSAL",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODTABST",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "QTDMAXTITVENCIDOS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TEMIPI",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ALUNO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PROFESSOR",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "DESCFIN",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DESCBONIF",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "IMPLAUDOLOTE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "DIASEM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MEDICO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TIPOFATUR",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "DIASVARPAGTO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODUNIMED",
+          "VARCHAR2",
+          17,
+          "Y",
+          " "
+        ],
+        [
+          "CODCRED",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCCUSVAR",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MOTORISTA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "NATUREZAOPERDES",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "SERIENFDES",
+          "VARCHAR2",
+          4,
+          "Y",
+          " "
+        ],
+        [
+          "MODELONFDES",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "DESCSTIVA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CSTIPIENT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CSTIPISAI",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODEMP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRMINPEDCPA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "QTDMAXPEDCPA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "OPERLOGIST",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "AGRONOMO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PRODUTORTEMNF",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "POTENCIALNEG",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "EMAILNFE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "TIPANEXONFE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ORDSUBST",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "MAXCREDINDENIZ",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MAXDEBINDENIZ",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SALDOINDENIZ",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FLEX",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SIMPLES",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SEXO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NURESPPERG",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NURESPPERGFECH",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODROTA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTB3",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTB4",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODUSUCOBR",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "AGRUPAR",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "EMAILDANFE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "VALDESCGRDCAR",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "AGRUPBOLEMPDIF",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PERCREDINSS",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERMITECORTE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "INDNATRET",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSEDZ",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SITRECEITA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SITSINTEGRA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SITCCF",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "USATABCRFORN",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "QTDPEDPRZMED",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DIASPEDPRZMED",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ARTPRECAD",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "GERCTRCAUTO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODLOCALPADRAO",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "SALDODISP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PROVACRESC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "EXIGELAUDOPRD",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "MEIRJ",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "ENTREGAENDCONTATO",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODEMPPARC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "RETSTVENDA",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "LATITUDE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "LONGITUDE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOGERBOLETO",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PERCJURO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCMULTA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIPJURO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PERCDESCESPECIAL",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODEMPPREF",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SITESPECIALRESP",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "MOTNAORETERISSQN",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "SITCADSEFAZ",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DHCADSEFAZ",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQISSRETSIMPLES",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IDESTRANGEIRO",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "TIPGERBOLCENT",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "COMOCONHECEU",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOGERBOLETODUP",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "BOLDESTEMAIL",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TPASSINANTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "APLICLEITRANSP",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "VENDAMIN",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODENQIPIENT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODENQIPISAI",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ENVIPEDEMAILTOP",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "INTEGRAECONECT",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SENHAECONECT",
+          "VARCHAR2",
+          32,
+          "Y",
+          " "
+        ],
+        [
+          "PRAZOPARCECONECT",
+          "VARCHAR2",
+          32,
+          "Y",
+          " "
+        ],
+        [
+          "BASEPRAZOECONECT",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PARCELAMECONECT",
+          "VARCHAR2",
+          32,
+          "Y",
+          " "
+        ],
+        [
+          "BASEPARCELECONECT",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "DIAFECHAECONECT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DIAPAGTOECONECT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERFILECONECT",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "DTEMISNFEFORN",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "ESTABTRANSP",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TRANSPPROPRIA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TERMACORD",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "INTERVANALISCRED",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INDCOMERCIALIZACAO",
+          "VARCHAR2",
+          5,
+          "Y",
+          " "
+        ],
+        [
+          "INDAQUISICAO",
+          "VARCHAR2",
+          5,
+          "Y",
+          " "
+        ],
+        [
+          "MERCHANTID",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "EMAILNOTIFENTREGA",
+          "VARCHAR2",
+          80,
+          "Y",
+          " "
+        ],
+        [
+          "IMPAGRUPFIN",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPLOTACAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "UNIDIMPORT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODPARCGRUECONOMICO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ENQART227",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "LIMCHEQECONECT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ORGPUBLNFSE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "ASSOCIACAODESP",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "MODELONOTACOMPRA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ARREDPRIMEIRAPARC",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "SITCADRF",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DHCADRF",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "VLRLIQITEMNFE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VLRLIQITEMNFCE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CPFPRODRURAL",
+          "VARCHAR2",
+          11,
+          "Y",
+          " "
+        ],
+        [
+          "EMAILNFSE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "NUFOP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CNAE",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "INDCREDNFE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INDCREDCTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTINIATIV",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTULTSIT",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTBAIXA",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "REGAPUR",
+          "VARCHAR2",
+          50,
+          "Y",
+          " "
+        ],
+        [
+          "CODGRUPO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PARCINTER",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "INDOPCCP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TRUNCPARCELA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NUVERSAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCONTATOPADCOT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMESTADOCIVIL",
+          "CHAR",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "TIMQUERCOMPRAR",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIMREFERENCIA02",
+          "VARCHAR2",
+          40,
+          "Y",
+          " "
+        ],
+        [
+          "TIMORGAO",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "TIMCOMPRADOR",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIMBAIRROCOMPRA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMDATACI",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "TIMPROPVENDA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIMPAI",
+          "VARCHAR2",
+          50,
+          "Y",
+          " "
+        ],
+        [
+          "TIMREFERENCIA01",
+          "VARCHAR2",
+          40,
+          "Y",
+          " "
+        ],
+        [
+          "TIMTIPOMORADIA",
+          "CHAR",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "TIMINQUILINO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIMTELEFONE02",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "TIMPROPRIETA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIMCORRESPBANCARIO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIMMAE",
+          "VARCHAR2",
+          50,
+          "Y",
+          " "
+        ],
+        [
+          "TIMFAIXASALARIAL",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "TIMCORRETOR",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIMOUTTELS",
+          "VARCHAR2",
+          400,
+          "Y",
+          " "
+        ],
+        [
+          "TIMTELEFONE01",
+          "VARCHAR2",
+          40,
+          "Y",
+          " "
+        ],
+        [
+          "TIMAINVESTIR",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMFIADOR",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIMSENHASITE",
+          "VARCHAR2",
+          8,
+          "Y",
+          " "
+        ],
+        [
+          "TIMSENHADESC",
+          "VARCHAR2",
+          8,
+          "Y",
+          " "
+        ],
+        [
+          "TIMCARTORIO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMPROFISSAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMNACIONALIDAD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMCARTREGIMEBENSV",
+          "VARCHAR2",
+          3,
+          "Y",
+          " "
+        ],
+        [
+          "INSCRCNO",
+          "VARCHAR2",
+          12,
+          "Y",
+          " "
+        ],
+        [
+          "PARCSUBSTISS",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "EXIGCONTATOENTCAB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "ENVIADANFEREDESPACHO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "EXIGENOMEPARC",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "SALDODISPCAC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PROVACRESCCAC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CONSIDTOTITENSTRIB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "ATUNUVERSAO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "DESCONSIDESCBASE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODIDENTCONS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "UTILIZANUCADPARC",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPCLIENTESERVCOM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CHAVEPIX",
+          "VARCHAR2",
+          77,
+          "Y",
+          " "
+        ],
+        [
+          "EMAILCTE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "CONSPARCADRCST",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "DESCONSDESCINSS",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "DEDUZIPIBCPISCF",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CALCFETHAB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPOPISCOFINS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "REDE",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "REGISTROANS",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "INAPLICPRODEPE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "AD_IDEXTERNO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "ORGAOPUB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TPCOMPRAGOV",
+          "VARCHAR2",
+          5,
+          "Y",
+          " "
+        ],
+        [
+          "TIPTRANSP",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "AD_GRUPO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TENTATIVAS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_ENDIMP",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_ENDPARC",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_BAIRROPARC",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CIDADEPARC",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CODIBGE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TELEFONE1",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TELEFONE2",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CODCENCUS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_ID_CARTAO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_FUNCAO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_DTADMISSAO",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "AD_SETOR",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_INFOMOTORCRED",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_QTDFUNCIONARIOS",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_FAIXAFATURAMENTO",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NIRE",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_JUNTACOMERCIAL",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_PORTE",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CNAEDESCRICAO",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_DTIMP",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CODLEGADO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_VENDPARC",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_ATUAMOTORCRED",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "AD_OBSNFE",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TEMST",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CHAVEPIX",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TIPCHAVEPIX",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_DTREG",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "AD_INTENDEDUSE",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TIPOEMPRESA",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "320ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "chaves": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "449F867744F25CA4B30755275971A823",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "TIPO_CHAVE",
+          "description": "TIPO_CHAVE",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "CAMPO",
+          "description": "CAMPO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "NOME_CONSTRAINT",
+          "description": "NOME_CONSTRAINT",
+          "order": 3,
+          "userType": "S"
+        },
+        {
+          "name": "TABELA_REF",
+          "description": "TABELA_REF",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "CAMPO_REF",
+          "description": "CAMPO_REF",
+          "order": 5,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          "FK",
+          "AD_CODCENCUS",
+          "AD_FK_CB10D19AE0C3FA8BDE1E9",
+          "TSICUS",
+          "CODCENCUS"
+        ],
+        [
+          "FK",
+          "AD_GRUPO",
+          "AD_FK_3B46619A06ACEAF10F5AF",
+          "AD_REDEGRUPO",
+          "CODIGO"
+        ],
+        [
+          "FK",
+          "CODASSESSOR",
+          "FK_TGFPAR_TGFVEN1",
+          "TGFVEN",
+          "CODVEND"
+        ],
+        [
+          "FK",
+          "CODBAI",
+          "FK_TGFPAR_TSIBAI",
+          "TSIBAI",
+          "CODBAI"
+        ],
+        [
+          "FK",
+          "CODBCO",
+          "FK_TGFPAR_TSIBCO",
+          "TSIBCO",
+          "CODBCO"
+        ],
+        [
+          "FK",
+          "CODCID",
+          "FK_TGFPAR_TSICID",
+          "TSICID",
+          "CODCID"
+        ],
+        [
+          "FK",
+          "CODCRED",
+          "FK_TGFPAR_CODCRED_TGCCRED",
+          "TGCCRED",
+          "CODCRED"
+        ],
+        [
+          "FK",
+          "CODCTABCOINT",
+          "FK_TGFPAR_TSICTA",
+          "TSICTA",
+          "CODCTABCOINT"
+        ],
+        [
+          "FK",
+          "CODCTACTB",
+          "FK_TGFPAR_TCBPLA2",
+          "TCBPLA",
+          "CODCTACTB"
+        ],
+        [
+          "FK",
+          "CODCTACTB2",
+          "FK_TGFPAR_TCBPLA1",
+          "TCBPLA",
+          "CODCTACTB"
+        ],
+        [
+          "FK",
+          "CODEMP",
+          "FK_TGFPAR_TSIEMP",
+          "TSIEMP",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODEMPPARC",
+          "FK_TGFPAR_CODEMPPARC_TSIEMP",
+          "TSIEMP",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODEMPPREF",
+          "FK_TGFPAR_CODEMPPREF_TSIEMP",
+          "TSIEMP",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODEND",
+          "FK_TGFPAR_TSIEND",
+          "TSIEND",
+          "CODEND"
+        ],
+        [
+          "FK",
+          "CODGRUPO",
+          "FK_TGFPAR_TGFGCB",
+          "TGFGCB",
+          "CODGRUPO"
+        ],
+        [
+          "FK",
+          "CODPARCGRUECONOMICO",
+          "FK_TGFPAR_TGFPAR_2",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODPARCMATRIZ",
+          "FK_TGFPAR_TGFPAR",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODREG",
+          "FK_TGFPAR_TSIREG",
+          "TSIREG",
+          "CODREG"
+        ],
+        [
+          "FK",
+          "CODROTA",
+          "FK_TGFPAR_TGFROT",
+          "TGFROT",
+          "CODROTA"
+        ],
+        [
+          "FK",
+          "CODTAB",
+          "FK_TGFPAR_CODTAB_TGFNTA",
+          "TGFNTA",
+          "CODTAB"
+        ],
+        [
+          "FK",
+          "CODTABST",
+          "FK_TGFPAR_CODTABST_TGFNTA",
+          "TGFNTA",
+          "CODTAB"
+        ],
+        [
+          "FK",
+          "CODTIPPARC",
+          "FK_TGFPAR_TGFTPP",
+          "TGFTPP",
+          "CODTIPPARC"
+        ],
+        [
+          "FK",
+          "CODUSUCOBR",
+          "FK_TGFPAR_CODUSUCOBR_TSIUSU",
+          "TSIUSU",
+          "CODUSU"
+        ],
+        [
+          "FK",
+          "CODVEND",
+          "FK_TGFPAR_TGFVEN",
+          "TGFVEN",
+          "CODVEND"
+        ],
+        [
+          "FK",
+          "NURESPPERG",
+          "FK_TGFPAR_TPQRPO",
+          "TPQRPO",
+          "NURESPPERG"
+        ],
+        [
+          "FK",
+          "NURESPPERGFECH",
+          "FK_TGFPAR_FECHAMENTO_TPQRPO",
+          "TPQRPO",
+          "NURESPPERG"
+        ],
+        [
+          "FK",
+          "REDE",
+          "FK_TGFPAR_REDE_TSIRTEF",
+          "TSIRTEF",
+          "REDE"
+        ],
+        [
+          "FK",
+          "TIMCARTORIO",
+          "FK_TGFPAR_TIMCAR",
+          "TIMCAR",
+          "CARCODIGO"
+        ],
+        [
+          "FK",
+          "TIMNACIONALIDAD",
+          "FK_TGFPAR_TSIPAI",
+          "TSIPAI",
+          "CODPAIS"
+        ],
+        [
+          "FK",
+          "TIMPROFISSAO",
+          "FK_TGFPAR_TIMPRF",
+          "TIMPRF",
+          "PRFCODIGO"
+        ],
+        [
+          "PK",
+          "CODPARC",
+          "PK_TGFPAR",
+          null,
+          null
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "3,312s",
+      "timeResultSet": "1ms"
+    }
+  },
+  "dominios": {
+    "TIPPESSOA": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "265EE7C8BBFBB75A4359FFC586443752",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "J",
+            31293
+          ],
+          [
+            "F",
+            25828
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "32ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "CLIENTE": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "D7E3BA047291F30C00C0AB5A0029B221",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "S",
+            54810
+          ],
+          [
+            "N",
+            2311
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "50ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "FORNECEDOR": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "D9150DDD81412D7E3B42EFF9902DCD6C",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "S",
+            47195
+          ],
+          [
+            "N",
+            9926
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "61ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "VENDEDOR": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "4815626F8AED25C1AC2247393CB5B274",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "N",
+            57120
+          ],
+          [
+            "S",
+            1
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "43ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "TRANSPORTADORA": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "49E3571DDFA90F940298933FE94F95B6",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "N",
+            56122
+          ],
+          [
+            "S",
+            999
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "48ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "ATIVO": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "BA825DF031D969A9BEF643B4BC9A2AD2",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "S",
+            57116
+          ],
+          [
+            "N",
+            5
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "113ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "sample": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "489817AA017F3FC90FC9AFD6749DC8A3",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CODPARC",
+          "description": "CODPARC",
+          "order": 1,
+          "userType": "I"
+        },
+        {
+          "name": "NOMEPARC",
+          "description": "NOMEPARC",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "RAZAOSOCIAL",
+          "description": "RAZAOSOCIAL",
+          "order": 3,
+          "userType": "S"
+        },
+        {
+          "name": "CGC_CPF",
+          "description": "CGC_CPF",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "TIPPESSOA",
+          "description": "TIPPESSOA",
+          "order": 5,
+          "userType": "S"
+        },
+        {
+          "name": "CLIENTE",
+          "description": "CLIENTE",
+          "order": 6,
+          "userType": "S"
+        },
+        {
+          "name": "FORNECEDOR",
+          "description": "FORNECEDOR",
+          "order": 7,
+          "userType": "S"
+        },
+        {
+          "name": "ATIVO",
+          "description": "ATIVO",
+          "order": 8,
+          "userType": "S"
+        },
+        {
+          "name": "CODCID",
+          "description": "CODCID",
+          "order": 9,
+          "userType": "I"
+        },
+        {
+          "name": "CODVEND",
+          "description": "CODVEND",
+          "order": 10,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          0,
+          "SEM PARCEIRO",
+          null,
+          null,
+          "F",
+          "S",
+          "S",
+          "S",
+          0,
+          0
+        ],
+        [
+          103,
+          "SEFAZ AL",
+          "SEFAZ AL",
+          "12200192000169",
+          "J",
+          "S",
+          "N",
+          "S",
+          2844,
+          0
+        ],
+        [
+          1,
+          "MMARRA  RIBEIRAO PRETO SP",
+          "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+          "67380170000110",
+          "J",
+          "S",
+          "S",
+          "S",
+          4182,
+          0
+        ],
+        [
+          101,
+          "CONSUMIDOR PADRAO",
+          "CONSUMIDOR PADRAO",
+          "00000000000",
+          "F",
+          "S",
+          "S",
+          "S",
+          2,
+          0
+        ],
+        [
+          104,
+          "SEFAZ AM",
+          "SEFAZ AM",
+          "04312377000137",
+          "J",
+          "S",
+          "N",
+          "S",
+          6,
+          0
+        ],
+        [
+          105,
+          "SEFAZ AP",
+          "SEFAZ AP",
+          "11762128000109",
+          "J",
+          "S",
+          "N",
+          "S",
+          2836,
+          0
+        ],
+        [
+          102,
+          "SEFAZ AC",
+          "SEFAZ AC",
+          "04034484000140",
+          "J",
+          "S",
+          "N",
+          "S",
+          4196,
+          0
+        ],
+        [
+          106,
+          "SEFAZ BA",
+          "SEFAZ BA",
+          "13937073000156",
+          "J",
+          "S",
+          "N",
+          "S",
+          4336,
+          0
+        ],
+        [
+          107,
+          "SEFAZ CE",
+          "SEFAZ CE",
+          "07954597000152",
+          "J",
+          "S",
+          "N",
+          "S",
+          7,
+          0
+        ],
+        [
+          108,
+          "SEFAZ DF",
+          "SEFAZ DF",
+          "00394684000153",
+          "J",
+          "N",
+          "N",
+          "S",
+          762,
+          0
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "3ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "contagem": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "FB98A63645F2E95D4A4AA60A34A04253",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "TOTAL",
+          "description": "TOTAL",
+          "order": 1,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          57121
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "25ms",
+      "timeResultSet": "1ms"
+    }
+  }
+}

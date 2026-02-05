@@ -1,0 +1,2921 @@
+{
+  "estrutura": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "22A494C1F0AE307A4A057480BE6C81F5",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CAMPO",
+          "description": "CAMPO",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "TIPO",
+          "description": "TIPO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "TAMANHO",
+          "description": "TAMANHO",
+          "order": 3,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "PERMITE_NULO",
+          "description": "PERMITE_NULO",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "COMENTARIO",
+          "description": "COMENTARIO",
+          "order": 5,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          "CODVEND",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "TIPVEND",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "APELIDO",
+          "VARCHAR2",
+          30,
+          "N",
+          " "
+        ],
+        [
+          "CODPARC",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODREG",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "COMVENDA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "COMGER",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PARTICMETA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODEMP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODFORM",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODGER",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODFUNC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SENHA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ATIVO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "DTALTER",
+          "DATE",
+          7,
+          "N",
+          " "
+        ],
+        [
+          "TIPCALC",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODCARGAHOR",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODCENCUSPAD",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PERCCUSVAR",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "EMAIL",
+          "VARCHAR2",
+          80,
+          "Y",
+          " "
+        ],
+        [
+          "DIACOM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "COMISSAO2",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIPVALOR",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODUSU",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRHORA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SALDODISP",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PROVACRESC",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "DESCMAX",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ACRESCMAX",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPORETENCAO",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "CODFORMFLEX",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPODESCVEND",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "PERCTROCA",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "COMCM",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "RECHREXTRA",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TIPFECHCOM",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ATUACOMPRADOR",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NUVERSAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SALDODISPCAC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PROVACRESCCAC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_IDEXTERNO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_ID_EXTERNO_CODEMP",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CODUSU",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CODUNG",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "268ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "chaves": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "91EED9E2667EB6ACB0EE54CC28C22D4D",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "TIPO_CHAVE",
+          "description": "TIPO_CHAVE",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "CAMPO",
+          "description": "CAMPO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "NOME_CONSTRAINT",
+          "description": "NOME_CONSTRAINT",
+          "order": 3,
+          "userType": "S"
+        },
+        {
+          "name": "TABELA_REF",
+          "description": "TABELA_REF",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "CAMPO_REF",
+          "description": "CAMPO_REF",
+          "order": 5,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          "FK",
+          "AD_CODUNG",
+          "AD_FK_5F05119B6ECAF535950A2",
+          "TMIUNG",
+          "CODUNG"
+        ],
+        [
+          "FK",
+          "AD_CODUSU",
+          "AD_FK_CCF4C19B6EC5057079D94",
+          "TSIUSU",
+          "CODUSU"
+        ],
+        [
+          "FK",
+          "CODCENCUSPAD",
+          "FK_TGFVEN_CODCENCUS_TSICUS",
+          "TSICUS",
+          "CODCENCUS"
+        ],
+        [
+          "FK",
+          "CODEMP",
+          "FK_TGFVEN_TGFEMP",
+          "TGFEMP",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODFORM",
+          "FK_TGFVEN_TGFFOC",
+          "TGFFOC",
+          "CODFORM"
+        ],
+        [
+          "FK",
+          "CODFORMFLEX",
+          "FK_TGFVEN_TGFFDM",
+          "TGFFDM",
+          "CODFORM"
+        ],
+        [
+          "FK",
+          "CODGER",
+          "FK_TGFVEN_TGFVEN",
+          "TGFVEN",
+          "CODVEND"
+        ],
+        [
+          "FK",
+          "CODREG",
+          "FK_TGFVEN_TSIREG",
+          "TSIREG",
+          "CODREG"
+        ],
+        [
+          "FK",
+          "CODUSU",
+          "FK_TGFVEN_CODUSU_TSIUSU",
+          "TSIUSU",
+          "CODUSU"
+        ],
+        [
+          "PK",
+          "CODVEND",
+          "PK_TGFVEN",
+          null,
+          null
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "1,998s",
+      "timeResultSet": "1ms"
+    }
+  },
+  "contagem": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "7CE6C8BCFF04F2BE50CCCFCD8ADF1E46",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "TOTAL",
+          "description": "TOTAL",
+          "order": 1,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          111
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "3ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "vendedores": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "C1DC7FB97489743EFCF3A1826A21C856",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CODVEND",
+          "description": "CODVEND",
+          "order": 1,
+          "userType": "I"
+        },
+        {
+          "name": "APELIDO",
+          "description": "APELIDO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "CODPARC",
+          "description": "CODPARC",
+          "order": 3,
+          "userType": "I"
+        },
+        {
+          "name": "CODGER",
+          "description": "CODGER",
+          "order": 4,
+          "userType": "I"
+        },
+        {
+          "name": "TIPVEND",
+          "description": "TIPVEND",
+          "order": 5,
+          "userType": "S"
+        },
+        {
+          "name": "CODCARGAHOR",
+          "description": "CODCARGAHOR",
+          "order": 6,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          0,
+          "<SEM VENDEDOR>",
+          0,
+          0,
+          null,
+          0
+        ],
+        [
+          1,
+          "CARLOS MARRA",
+          0,
+          0,
+          "G",
+          0
+        ],
+        [
+          2,
+          "CARLOS H MARRA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          3,
+          "JULIANO MARCHEZAM",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          4,
+          "BRUNO JERONIMO",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          5,
+          "JULIANO NOVAES",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          6,
+          "FELIPE PEREIRA",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          7,
+          "NEVES",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          8,
+          "GUILHERME TRINDADE",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          9,
+          "PAULO BOVO",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          10,
+          "LARISSA MARRA",
+          0,
+          0,
+          "G",
+          0
+        ],
+        [
+          11,
+          "LARISSA FERREIRA",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          12,
+          "LARISSA CANDIDO",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          13,
+          "ADRIANO MARRA",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          14,
+          "ALVARO SANTOS",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          15,
+          "BRUNO SILVA",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          16,
+          "FABIO LUIS",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          17,
+          "GABRIEL PAIXAO",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          18,
+          "JOAO FELIPE",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          19,
+          "JULIANE GARCIA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          20,
+          "0 - DISP",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          21,
+          "LEONARDO ZUELI",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          22,
+          "LUIZ PAULO TAVARES",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          23,
+          "MATHEUS SILVA",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          24,
+          "MURILO MURILHA",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          25,
+          "PAULO AFONSO",
+          0,
+          2,
+          "V",
+          0
+        ],
+        [
+          26,
+          "PAULO TEIXEIRA",
+          0,
+          26,
+          "G",
+          0
+        ],
+        [
+          27,
+          "RAFAEL CANDIDO",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          28,
+          "RODOLFO LOTTI",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          29,
+          "0 - DISP",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          30,
+          "VINICIUS TRINDADE",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          31,
+          "WILLIAN MENDES",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          32,
+          "LICIANE",
+          0,
+          32,
+          "V",
+          0
+        ],
+        [
+          33,
+          "MIRÃO SILVA",
+          0,
+          32,
+          "V",
+          0
+        ],
+        [
+          34,
+          "MARCOS TORRES",
+          0,
+          32,
+          "V",
+          0
+        ],
+        [
+          35,
+          "0 - DISP",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          36,
+          "VALDICE",
+          0,
+          32,
+          "V",
+          0
+        ],
+        [
+          37,
+          "VALÉRIO",
+          0,
+          32,
+          "V",
+          0
+        ],
+        [
+          38,
+          "CLEVERTON",
+          0,
+          45,
+          "V",
+          0
+        ],
+        [
+          39,
+          "EVANDRO LAUREANO DA SILVA",
+          0,
+          45,
+          "V",
+          0
+        ],
+        [
+          40,
+          "FABIANO SOUZA",
+          0,
+          45,
+          "V",
+          0
+        ],
+        [
+          41,
+          "REINALDO MIRANDA SILVA",
+          0,
+          45,
+          "V",
+          0
+        ],
+        [
+          42,
+          "ROGERIO FERNANDES",
+          0,
+          45,
+          "V",
+          0
+        ],
+        [
+          43,
+          "TULIO COSTA",
+          0,
+          45,
+          "V",
+          0
+        ],
+        [
+          44,
+          "VINICIUS ALBUQUERQUE",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          45,
+          "FYLIPPE VELOSO",
+          0,
+          45,
+          "V",
+          0
+        ],
+        [
+          46,
+          "RAPHAEL CAMPOS",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          47,
+          "JOÃO AMADEU",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          48,
+          "JOÃO PAULO",
+          0,
+          51,
+          "V",
+          0
+        ],
+        [
+          49,
+          "LEONARDO OLIVEIRA",
+          0,
+          51,
+          "V",
+          0
+        ],
+        [
+          50,
+          "RODRIGO ERNANI VITRO",
+          0,
+          51,
+          "V",
+          0
+        ],
+        [
+          51,
+          "ALESSANDRO CALDEIRA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          52,
+          "FABIO TODARO",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          53,
+          "WENDEL CARVALHO",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          54,
+          "MATHEUS GODINHO",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          55,
+          "ERICK MOISÉS",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          56,
+          "EDUARDO PUTINATTO",
+          0,
+          0,
+          "C",
+          0
+        ],
+        [
+          57,
+          "CAROLINE SILVA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          58,
+          "PAULO MOREIRA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          59,
+          "ESMERALDA GOMES",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          60,
+          "MAICON LIMA",
+          0,
+          86,
+          "V",
+          0
+        ],
+        [
+          61,
+          "VITOR MOURA",
+          0,
+          86,
+          "V",
+          0
+        ],
+        [
+          62,
+          "ALCIR SOARES",
+          0,
+          71,
+          "V",
+          0
+        ],
+        [
+          63,
+          "KARGYLLA SILVA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          64,
+          "JHONATHAN RAMOS",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          65,
+          "0 - DISP (51)",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          66,
+          "JOÃO PEREIRA",
+          0,
+          45,
+          "V",
+          0
+        ],
+        [
+          67,
+          "LUCAS OLIVEIRA",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          68,
+          "GABRIEL GOMES",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          69,
+          "GISELA VIEIRA",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          70,
+          "VIVIANE NEGRI",
+          0,
+          51,
+          "V",
+          0
+        ],
+        [
+          71,
+          "MURILO RIBEIRO",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          72,
+          "ISAQUE OLIVEIRA",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          73,
+          "LEONARDO RAMOS",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          74,
+          "EDUARDO OLIVEIRA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          75,
+          "ANA LIVIA LUIZ",
+          0,
+          32,
+          "V",
+          0
+        ],
+        [
+          76,
+          "0 - DISP",
+          0,
+          2,
+          "V",
+          0
+        ],
+        [
+          77,
+          "PAULO CESAR MORAES",
+          0,
+          32,
+          "V",
+          0
+        ],
+        [
+          78,
+          "FERNANDO PARRILHA",
+          0,
+          51,
+          "V",
+          0
+        ],
+        [
+          79,
+          "0 - DISP",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          80,
+          "TIAGO AZEVEDO",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          81,
+          "MARCELO HENRIQUE",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          82,
+          "LEONARDO DOMINGOS",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          83,
+          "ARTHUR FERRO",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          84,
+          "0 - DISP",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          85,
+          "JORGE LUIS",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          86,
+          "PEDRO CORREIA",
+          0,
+          86,
+          "V",
+          0
+        ],
+        [
+          87,
+          "DAVID GARBIN",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          88,
+          "SEMIRAMIS SANTOS",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          89,
+          "ROBERTO BASTOS",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          90,
+          "0 - DISP",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          91,
+          "BEATRIZ PEREIRA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          92,
+          "BRUNA ROSSETI",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          93,
+          "HANYSIA VENTURA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          94,
+          "GUSTAVO OLIVEIRA",
+          0,
+          0,
+          "V",
+          0
+        ],
+        [
+          95,
+          "CARLOS MENDONÇA",
+          0,
+          26,
+          "V",
+          0
+        ],
+        [
+          96,
+          "FERNANDO CARRETA",
+          0,
+          32,
+          "V",
+          0
+        ],
+        [
+          97,
+          "DANIEL ZANLUCHI",
+          0,
+          2,
+          "V",
+          0
+        ],
+        [
+          98,
+          "LUIZ FERNANDO LUCINDO",
+          0,
+          96,
+          "V",
+          0
+        ],
+        [
+          99,
+          "CARLOS ALBERTO",
+          0,
+          0,
+          "C",
+          0
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "3ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "vendedores_mais_ativos": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "0940D0C35CDDC8A41691A7421AC6288A",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CODVEND",
+          "description": "CODVEND",
+          "order": 1,
+          "userType": "I"
+        },
+        {
+          "name": "APELIDO",
+          "description": "APELIDO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "TIPVEND",
+          "description": "TIPVEND",
+          "order": 3,
+          "userType": "S"
+        },
+        {
+          "name": "QTD_NOTAS",
+          "description": "QTD_NOTAS",
+          "order": 4,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "VLR_TOTAL",
+          "description": "VLR_TOTAL",
+          "order": 5,
+          "userType": "F",
+          "precision": 2
+        }
+      ],
+      "rows": [
+        [
+          0,
+          "<SEM VENDEDOR>",
+          null,
+          241416,
+          406206295.35
+        ],
+        [
+          32,
+          "LICIANE",
+          "V",
+          953,
+          1007060.45
+        ],
+        [
+          21,
+          "LEONARDO ZUELI",
+          "V",
+          917,
+          287663.88
+        ],
+        [
+          37,
+          "VALÉRIO",
+          "V",
+          727,
+          1034704.14
+        ],
+        [
+          42,
+          "ROGERIO FERNANDES",
+          "V",
+          365,
+          371426.4
+        ],
+        [
+          36,
+          "VALDICE",
+          "V",
+          315,
+          704268.7
+        ],
+        [
+          33,
+          "MIRÃO SILVA",
+          "V",
+          308,
+          229618.51
+        ],
+        [
+          23,
+          "MATHEUS SILVA",
+          "V",
+          246,
+          378852.18
+        ],
+        [
+          38,
+          "CLEVERTON",
+          "V",
+          238,
+          249550.66
+        ],
+        [
+          22,
+          "LUIZ PAULO TAVARES",
+          "V",
+          227,
+          258168.83
+        ],
+        [
+          40,
+          "FABIANO SOUZA",
+          "V",
+          227,
+          262642.46
+        ],
+        [
+          75,
+          "ANA LIVIA LUIZ",
+          "V",
+          225,
+          163548.92
+        ],
+        [
+          14,
+          "ALVARO SANTOS",
+          "V",
+          223,
+          284022.34
+        ],
+        [
+          48,
+          "JOÃO PAULO",
+          "V",
+          212,
+          281276.76
+        ],
+        [
+          41,
+          "REINALDO MIRANDA SILVA",
+          "V",
+          191,
+          180234.5
+        ],
+        [
+          18,
+          "JOAO FELIPE",
+          "V",
+          187,
+          167289.27
+        ],
+        [
+          16,
+          "FABIO LUIS",
+          "V",
+          181,
+          240905.81
+        ],
+        [
+          34,
+          "MARCOS TORRES",
+          "V",
+          178,
+          198333.36
+        ],
+        [
+          30,
+          "VINICIUS TRINDADE",
+          "V",
+          172,
+          142492.44
+        ],
+        [
+          27,
+          "RAFAEL CANDIDO",
+          "V",
+          156,
+          276135.26
+        ],
+        [
+          95,
+          "CARLOS MENDONÇA",
+          "V",
+          133,
+          118384.76
+        ],
+        [
+          39,
+          "EVANDRO LAUREANO DA SILVA",
+          "V",
+          132,
+          113126.61
+        ],
+        [
+          77,
+          "PAULO CESAR MORAES",
+          "V",
+          130,
+          309849.68
+        ],
+        [
+          15,
+          "BRUNO SILVA",
+          "V",
+          130,
+          151120.24
+        ],
+        [
+          60,
+          "MAICON LIMA",
+          "V",
+          128,
+          157237.71
+        ],
+        [
+          49,
+          "LEONARDO OLIVEIRA",
+          "V",
+          121,
+          236990.27
+        ],
+        [
+          66,
+          "JOÃO PEREIRA",
+          "V",
+          120,
+          128158.45
+        ],
+        [
+          61,
+          "VITOR MOURA",
+          "V",
+          117,
+          82157.22
+        ],
+        [
+          67,
+          "LUCAS OLIVEIRA",
+          "V",
+          107,
+          77206.26
+        ],
+        [
+          24,
+          "MURILO MURILHA",
+          "V",
+          103,
+          194819.88
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "360ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "dominio_tipvend": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "5370C10B2EB38714769D74DEE8F2432F",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "VALOR",
+          "description": "VALOR",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "QTD",
+          "description": "QTD",
+          "order": 2,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          "V",
+          86
+        ],
+        [
+          "C",
+          20
+        ],
+        [
+          "G",
+          4
+        ],
+        [
+          null,
+          1
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "2ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "sample": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "13C3E4CD1F1A1BACC20A793C49828DE6",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CODVEND",
+          "description": "CODVEND",
+          "order": 1,
+          "userType": "I"
+        },
+        {
+          "name": "TIPVEND",
+          "description": "TIPVEND",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "APELIDO",
+          "description": "APELIDO",
+          "order": 3,
+          "userType": "S"
+        },
+        {
+          "name": "CODPARC",
+          "description": "CODPARC",
+          "order": 4,
+          "userType": "I"
+        },
+        {
+          "name": "CODREG",
+          "description": "CODREG",
+          "order": 5,
+          "userType": "I"
+        },
+        {
+          "name": "COMVENDA",
+          "description": "COMVENDA",
+          "order": 6,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "COMGER",
+          "description": "COMGER",
+          "order": 7,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "PARTICMETA",
+          "description": "PARTICMETA",
+          "order": 8,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "CODEMP",
+          "description": "CODEMP",
+          "order": 9,
+          "userType": "I"
+        },
+        {
+          "name": "CODFORM",
+          "description": "CODFORM",
+          "order": 10,
+          "userType": "I"
+        },
+        {
+          "name": "CODGER",
+          "description": "CODGER",
+          "order": 11,
+          "userType": "I"
+        },
+        {
+          "name": "CODFUNC",
+          "description": "CODFUNC",
+          "order": 12,
+          "userType": "I"
+        },
+        {
+          "name": "SENHA",
+          "description": "SENHA",
+          "order": 13,
+          "userType": "I"
+        },
+        {
+          "name": "ATIVO",
+          "description": "ATIVO",
+          "order": 14,
+          "userType": "S"
+        },
+        {
+          "name": "DTALTER",
+          "description": "DTALTER",
+          "order": 15,
+          "userType": "H"
+        },
+        {
+          "name": "TIPCALC",
+          "description": "TIPCALC",
+          "order": 16,
+          "userType": "S"
+        },
+        {
+          "name": "CODCARGAHOR",
+          "description": "CODCARGAHOR",
+          "order": 17,
+          "userType": "I"
+        },
+        {
+          "name": "CODCENCUSPAD",
+          "description": "CODCENCUSPAD",
+          "order": 18,
+          "userType": "I"
+        },
+        {
+          "name": "PERCCUSVAR",
+          "description": "PERCCUSVAR",
+          "order": 19,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "EMAIL",
+          "description": "EMAIL",
+          "order": 20,
+          "userType": "S"
+        },
+        {
+          "name": "DIACOM",
+          "description": "DIACOM",
+          "order": 21,
+          "userType": "I"
+        },
+        {
+          "name": "COMISSAO2",
+          "description": "COMISSAO2",
+          "order": 22,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "TIPVALOR",
+          "description": "TIPVALOR",
+          "order": 23,
+          "userType": "S"
+        },
+        {
+          "name": "CODUSU",
+          "description": "CODUSU",
+          "order": 24,
+          "userType": "I"
+        },
+        {
+          "name": "VLRHORA",
+          "description": "VLRHORA",
+          "order": 25,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "SALDODISP",
+          "description": "SALDODISP",
+          "order": 26,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "PROVACRESC",
+          "description": "PROVACRESC",
+          "order": 27,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "DESCMAX",
+          "description": "DESCMAX",
+          "order": 28,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "ACRESCMAX",
+          "description": "ACRESCMAX",
+          "order": 29,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "GRUPORETENCAO",
+          "description": "GRUPORETENCAO",
+          "order": 30,
+          "userType": "S"
+        },
+        {
+          "name": "CODFORMFLEX",
+          "description": "CODFORMFLEX",
+          "order": 31,
+          "userType": "I"
+        },
+        {
+          "name": "GRUPODESCVEND",
+          "description": "GRUPODESCVEND",
+          "order": 32,
+          "userType": "S"
+        },
+        {
+          "name": "PERCTROCA",
+          "description": "PERCTROCA",
+          "order": 33,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "COMCM",
+          "description": "COMCM",
+          "order": 34,
+          "userType": "S"
+        },
+        {
+          "name": "RECHREXTRA",
+          "description": "RECHREXTRA",
+          "order": 35,
+          "userType": "S"
+        },
+        {
+          "name": "TIPFECHCOM",
+          "description": "TIPFECHCOM",
+          "order": 36,
+          "userType": "S"
+        },
+        {
+          "name": "ATUACOMPRADOR",
+          "description": "ATUACOMPRADOR",
+          "order": 37,
+          "userType": "S"
+        },
+        {
+          "name": "NUVERSAO",
+          "description": "NUVERSAO",
+          "order": 38,
+          "userType": "I"
+        },
+        {
+          "name": "SALDODISPCAC",
+          "description": "SALDODISPCAC",
+          "order": 39,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "PROVACRESCCAC",
+          "description": "PROVACRESCCAC",
+          "order": 40,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "AD_IDEXTERNO",
+          "description": "AD_IDEXTERNO",
+          "order": 41,
+          "userType": "S"
+        },
+        {
+          "name": "AD_ID_EXTERNO_CODEMP",
+          "description": "AD_ID_EXTERNO_CODEMP",
+          "order": 42,
+          "userType": "S"
+        },
+        {
+          "name": "AD_CODUSU",
+          "description": "AD_CODUSU",
+          "order": 43,
+          "userType": "I"
+        },
+        {
+          "name": "AD_CODUNG",
+          "description": "AD_CODUNG",
+          "order": 44,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          0,
+          null,
+          "<SEM VENDEDOR>",
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "11092003 09:46:20",
+          "N",
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          "U",
+          null,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          1,
+          "G",
+          "CARLOS MARRA",
+          0,
+          0,
+          0,
+          0,
+          null,
+          null,
+          4,
+          0,
+          null,
+          null,
+          "S",
+          "31012026 14:24:56",
+          "N",
+          0,
+          0,
+          null,
+          "carlosmarra@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "S",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          2,
+          "V",
+          "CARLOS H MARRA",
+          0,
+          0,
+          0,
+          0,
+          null,
+          null,
+          3,
+          0,
+          null,
+          null,
+          "S",
+          "31012026 14:24:33",
+          "N",
+          0,
+          0,
+          null,
+          "carloshmarra@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          3,
+          "C",
+          "JULIANO MARCHEZAM",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "27012026 09:38:54",
+          "N",
+          0,
+          0,
+          null,
+          "juliano.marchezan@mmarra.com.br",
+          null,
+          null,
+          "U",
+          27,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          27,
+          null
+        ],
+        [
+          4,
+          "C",
+          "BRUNO JERONIMO",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "25092025 14:41:49",
+          "N",
+          0,
+          0,
+          null,
+          "bruno.jeronimo@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          5,
+          "C",
+          "JULIANO NOVAES",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "25092025 14:42:09",
+          "N",
+          0,
+          0,
+          null,
+          "juliano.novaes@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          6,
+          "C",
+          "FELIPE PEREIRA",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "03022026 08:23:01",
+          "N",
+          0,
+          0,
+          null,
+          "felipe.pereira@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          87,
+          null
+        ],
+        [
+          7,
+          "C",
+          "NEVES",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "25092025 14:45:10",
+          "N",
+          0,
+          0,
+          null,
+          "neves@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          8,
+          "C",
+          "GUILHERME TRINDADE",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "02022026 13:15:12",
+          "N",
+          0,
+          0,
+          null,
+          "guilherme@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          101,
+          null
+        ],
+        [
+          9,
+          "C",
+          "PAULO BOVO",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "25092025 14:45:41",
+          "N",
+          0,
+          0,
+          null,
+          "paulo.bovo@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          10,
+          "G",
+          "LARISSA MARRA",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "31012026 14:26:28",
+          "N",
+          0,
+          0,
+          null,
+          "Larissa@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          11,
+          "C",
+          "LARISSA FERREIRA",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "25092025 14:46:18",
+          "N",
+          0,
+          0,
+          null,
+          "larissa.ferreira@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          12,
+          "C",
+          "LARISSA CANDIDO",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "25092025 14:46:35",
+          "N",
+          0,
+          0,
+          null,
+          "larissa.candido@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          13,
+          "V",
+          "ADRIANO MARRA",
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          0,
+          26,
+          null,
+          null,
+          "S",
+          "25092025 14:47:20",
+          "N",
+          0,
+          0,
+          null,
+          "adriano@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          14,
+          "V",
+          "ALVARO SANTOS",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          26,
+          null,
+          null,
+          "S",
+          "25092025 14:47:50",
+          "N",
+          0,
+          0,
+          null,
+          "alvaro.santos@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          15,
+          "V",
+          "BRUNO SILVA",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          26,
+          null,
+          null,
+          "S",
+          "25092025 14:48:32",
+          "N",
+          0,
+          0,
+          null,
+          "bruno.silva@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          16,
+          "V",
+          "FABIO LUIS",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          26,
+          null,
+          null,
+          "S",
+          "25092025 14:48:49",
+          "N",
+          0,
+          0,
+          null,
+          "fabio.luis@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          17,
+          "V",
+          "GABRIEL PAIXAO",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "25092025 14:51:42",
+          "N",
+          0,
+          0,
+          null,
+          "gabriel.paixao@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          18,
+          "V",
+          "JOAO FELIPE",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          26,
+          null,
+          null,
+          "S",
+          "25092025 14:51:56",
+          "N",
+          0,
+          0,
+          null,
+          "joao.silva@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          19,
+          "V",
+          "JULIANE GARCIA",
+          0,
+          0,
+          null,
+          null,
+          null,
+          1,
+          0,
+          0,
+          null,
+          null,
+          "S",
+          "25092025 14:52:10",
+          "N",
+          0,
+          0,
+          null,
+          "juliane.garcia@mmarra.com.br",
+          null,
+          null,
+          "U",
+          0,
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "N",
+          "S",
+          "N",
+          "N",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "4ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "vendedores_por_gerente": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "B99C13947F0EC2BDB1AD7C1E7E28E503",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CODGER",
+          "description": "CODGER",
+          "order": 1,
+          "userType": "I"
+        },
+        {
+          "name": "QTD_VENDEDORES",
+          "description": "QTD_VENDEDORES",
+          "order": 2,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          0,
+          62
+        ],
+        [
+          26,
+          20
+        ],
+        [
+          45,
+          8
+        ],
+        [
+          32,
+          8
+        ],
+        [
+          51,
+          5
+        ],
+        [
+          86,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          96,
+          1
+        ],
+        [
+          71,
+          1
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "3ms",
+      "timeResultSet": "1ms"
+    }
+  }
+}

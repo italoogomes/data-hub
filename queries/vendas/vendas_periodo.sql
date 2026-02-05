@@ -1,0 +1,61 @@
+-- ================================================
+-- Descricao: Vendas por periodo (dia, mes, ano)
+-- Modulo: Vendas
+-- Tabelas: TGFCAB, TGFTOP
+-- Parametros: Alterar datas conforme necessidade
+-- ================================================
+
+-- Vendas do dia atual
+SELECT
+    COUNT(*) AS QTD_VENDAS,
+    SUM(VLRNOTA) AS VLR_TOTAL,
+    ROUND(AVG(VLRNOTA), 2) AS TICKET_MEDIO
+FROM TGFCAB
+WHERE TIPMOV = 'V'
+  AND CODTIPOPER IN (1100, 1101)
+  AND TRUNC(DTNEG) = TRUNC(SYSDATE);
+
+-- Vendas do mes atual por dia
+SELECT
+    TRUNC(DTNEG) AS DATA,
+    COUNT(*) AS QTD_VENDAS,
+    SUM(VLRNOTA) AS VLR_TOTAL
+FROM TGFCAB
+WHERE TIPMOV = 'V'
+  AND CODTIPOPER IN (1100, 1101)
+  AND DTNEG >= TRUNC(SYSDATE, 'MM')
+GROUP BY TRUNC(DTNEG)
+ORDER BY TRUNC(DTNEG);
+
+-- Vendas dos ultimos 12 meses
+SELECT
+    TO_CHAR(DTNEG, 'YYYY-MM') AS MES,
+    COUNT(*) AS QTD_VENDAS,
+    SUM(VLRNOTA) AS VLR_TOTAL,
+    ROUND(AVG(VLRNOTA), 2) AS TICKET_MEDIO
+FROM TGFCAB
+WHERE TIPMOV = 'V'
+  AND CODTIPOPER IN (1100, 1101)
+  AND DTNEG >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -12)
+GROUP BY TO_CHAR(DTNEG, 'YYYY-MM')
+ORDER BY TO_CHAR(DTNEG, 'YYYY-MM');
+
+-- Comparativo mes atual vs mes anterior
+SELECT
+    'MES_ATUAL' AS PERIODO,
+    COUNT(*) AS QTD_VENDAS,
+    SUM(VLRNOTA) AS VLR_TOTAL
+FROM TGFCAB
+WHERE TIPMOV = 'V'
+  AND CODTIPOPER IN (1100, 1101)
+  AND DTNEG >= TRUNC(SYSDATE, 'MM')
+UNION ALL
+SELECT
+    'MES_ANTERIOR' AS PERIODO,
+    COUNT(*) AS QTD_VENDAS,
+    SUM(VLRNOTA) AS VLR_TOTAL
+FROM TGFCAB
+WHERE TIPMOV = 'V'
+  AND CODTIPOPER IN (1100, 1101)
+  AND DTNEG >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -1)
+  AND DTNEG < TRUNC(SYSDATE, 'MM');

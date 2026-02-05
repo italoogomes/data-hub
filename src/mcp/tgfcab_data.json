@@ -1,0 +1,3864 @@
+{
+  "estrutura": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "C359732752237E9167BC325DD329341C",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CAMPO",
+          "description": "CAMPO",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "TIPO",
+          "description": "TIPO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "TAMANHO",
+          "description": "TAMANHO",
+          "order": 3,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "PERMITE_NULO",
+          "description": "PERMITE_NULO",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "COMENTARIO",
+          "description": "COMENTARIO",
+          "order": 5,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          "NUNOTA",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODEMP",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODCENCUS",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "NUMNOTA",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "SERIENOTA",
+          "VARCHAR2",
+          3,
+          "Y",
+          " "
+        ],
+        [
+          "DTNEG",
+          "DATE",
+          7,
+          "N",
+          " "
+        ],
+        [
+          "DTFATUR",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTENTSAI",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTVAL",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTMOV",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTCONTAB",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "HRMOV",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODEMPNEGOC",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODPARC",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODCONTATO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "RATEADO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODVEICULO",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODTIPOPER",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "DHTIPOPER",
+          "DATE",
+          7,
+          "N",
+          " "
+        ],
+        [
+          "TIPMOV",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODTIPVENDA",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "DHTIPVENDA",
+          "DATE",
+          7,
+          "N",
+          " "
+        ],
+        [
+          "NUMCOTACAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODVEND",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "COMISSAO",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODMOEDA",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODOBSPADRAO",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "OBSERVACAO",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "VLRSEG",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRICMSSEG",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRDESTAQUE",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRJURO",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRVENDOR",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLROUTROS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLREMB",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRICMSEMB",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRDESCSERV",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "IPIEMB",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "TIPIPIEMB",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "VLRDESCTOT",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRDESCTOTITEM",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRFRETE",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "ICMSFRETE",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "BASEICMSFRETE",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "TIPFRETE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CIF_FOB",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VENCFRETE",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "VLRNOTA",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VENCIPI",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "ORDEMCARGA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SEQCARGA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "KMVEICULO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODPARCTRANSP",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "QTDVOL",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PENDENTE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "BASEICMS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRICMS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "BASEIPI",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRIPI",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "ISSRETIDO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "BASEISS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRISS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "APROVADO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "STATUSNOTA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODUSU",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IRFRETIDO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "COMGER",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRIRF",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "DTALTER",
+          "DATE",
+          7,
+          "N",
+          " "
+        ],
+        [
+          "VOLUME",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "CODPARCDEST",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRSUBST",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "BASESUBSTIT",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODPROJ",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "NUMCONTRATO",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "BASEINSS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRINSS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRREPREDTOT",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PERCDESC",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODPARCREMETENTE",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODPARCCONSIGNATARIO",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODPARCREDESPACHO",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "LOCALCOLETA",
+          "VARCHAR2",
+          40,
+          "Y",
+          " "
+        ],
+        [
+          "LOCALENTREGA",
+          "VARCHAR2",
+          40,
+          "Y",
+          " "
+        ],
+        [
+          "VLRMERCADORIA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PESO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NOTASCF",
+          "VARCHAR2",
+          35,
+          "Y",
+          " "
+        ],
+        [
+          "CODNAT",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODMAQ",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODFUNC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMOS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMCF",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRFRETECPL",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TROCO",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "NROREDZ",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRMOEDA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "OCCN48",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODUSUINC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUTRANSF",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODUSUCOMPRADOR",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODSITE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TOTALCUSTOPROD",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TOTALCUSTOSERV",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCID",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BASESUBSTSEMRED",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODMOTORISTA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NURD8",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NATUREZAOPERDES",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "SERIENFDES",
+          "VARCHAR2",
+          4,
+          "Y",
+          " "
+        ],
+        [
+          "MODELONFDES",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "DTPREVENT",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "NUNOTAPEDFRET",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BASEIRF",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQIRF",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PLACA",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "UFVEICULO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PESOBRUTO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "HRENTSAI",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "ANTT",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "LACRES",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "DANFE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CHAVENFE",
+          "VARCHAR2",
+          44,
+          "Y",
+          " "
+        ],
+        [
+          "NUMERACAOVOLUMES",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "DTENVIOPMB",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "TIPNOTAPMB",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "NUMALEATORIO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMPROTOC",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "DHPROTOC",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DTENVSUF",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "NULOTENFE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSNFE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TPEMISNFE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTADIAM",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "HRADIAM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODDOCA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DIGITAL",
+          "VARCHAR2",
+          1000,
+          "Y",
+          " "
+        ],
+        [
+          "TOTDISPDESC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BASEPIS",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRPIS",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BASEPISST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRPISST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BASECOFINS",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRCOFINS",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BASECOFINSST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRCOFINSST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRROYALT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NROCAIXA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMREGDPEC",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "DHREGDPEC",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "CODEMPFUNC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRINDENIZ",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MARCA",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOPTAGJNFE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TPEMISNFSE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NULOTENFSE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMNFSE",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSNFSE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "UFEMBARQ",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "LOCEMBARQ",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "TPLIGACAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODGRUPOTENSAO",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "TPASSINANTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUREM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AGRUPBOL",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "RETDATACRITICA",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "QTDBATIDAS",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCPUREZA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCGERMIN",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FRETEVLRBRUTO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FRETEVLRDESC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FRETEPERCDESC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FRETEVLRIMP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FRETEVLRJUR",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FRETEVLRPAGO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODVENDTEC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMPEDIDO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRINDENIZDIST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMPEDIDO2",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "CODAGENDA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTREF",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "FRETEVLRNEGOC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODPRODPERMUTA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NROGAR",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MD5PAF",
+          "VARCHAR2",
+          32,
+          "Y",
+          " "
+        ],
+        [
+          "CODMODDOCNOTA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CPFCNPJADQUIRENTE",
+          "VARCHAR2",
+          14,
+          "Y",
+          " "
+        ],
+        [
+          "NOMEADQUIRENTE",
+          "VARCHAR2",
+          40,
+          "Y",
+          " "
+        ],
+        [
+          "VLRSACADOLAR",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMCOO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ORDEMCARGAANT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TPAMBNFE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PRZMED",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODRESIDUO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTREF2",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "VLRLIQITEMNFE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CLASCONS",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "NUMFORM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTREF3",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "CODCC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRODUETLOC",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VLRSTEXTRANOTATOT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUTRANEMP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SITESPECIALRESP",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "DTENTSAIINFO",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "EXIGEISSQN",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "REGESPTRIBUT",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "MOTNAORETERISSQN",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "DTREMRET",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "LIBCONF",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NUCONFATUAL",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSXTRATEGIE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODSAF",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRFRETECALC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRJURODIST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NOTAEMPENHO",
+          "VARCHAR2",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PESOBRUTOMANUAL",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PESOLIQUIMANUAL",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CANCELADO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODTPD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODVTP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUPCA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INDPRESNFCE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "M3",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRTOTLIQITEMMOE",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "VLRDESCTOTITEMMOE",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CHAVECTE",
+          "VARCHAR2",
+          44,
+          "Y",
+          " "
+        ],
+        [
+          "PRODPRED",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "TPEMISCTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TPAMBCTE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "LOTACAO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSCTE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NUMALEATORIOCTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMPROTOCCTE",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "DHPROTOCCTE",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "NULOTECTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTDECLARA",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "REBOQUE1",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "REBOQUE2",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "REBOQUE3",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SITUACAOCTE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CTELOTACAO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODVEITRACAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODOBRA",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "CODART",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "IDIPROC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VIATRANSP",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "TIPPROCIMP",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CNPJADQUIRENTE",
+          "VARCHAR2",
+          14,
+          "Y",
+          " "
+        ],
+        [
+          "UFADQUIRENTE",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "NUNOTASUB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CHAVENFSE",
+          "VARCHAR2",
+          52,
+          "Y",
+          " "
+        ],
+        [
+          "DHEMISSEPEC",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "MODENTREGA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VLRICMSDIFALDEST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRICMSDIFALREM",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CIOT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRICMSFCP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRFRETETOTAL",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODPARCTRANSPFINAL",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FUSOEMISSEPEC",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "CHAVENFEREF",
+          "VARCHAR2",
+          44,
+          "Y",
+          " "
+        ],
+        [
+          "VLRDESCRAT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SEQCONFIRMA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCONTATOENTREGA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCIDORIGEM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCIDDESTINO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCIDENTREGA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODUFORIGEM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODUFDESTINO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODUFENTREGA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CLASSIFICMS",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NUFOP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODRASTREAMENTOECT",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "NUODP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUPEDFRETE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCIDPREST",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FORMPGTCTE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PERCDESCFOB",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TPAMBNFSE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TERMACORDNOTA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VLRDESCQTD",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRICMSFCPINT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRSTFCPINT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRSTFCPINTANT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CTEGLOBAL",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VLRCARGAAVERB",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCIDINICTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCIDFIMCTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUCFR",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NFEDEVRECUSA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "AGRUPFINNOTA",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VLRPRESTAFRMM",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRAFRMM",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IDNAVIO",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "IRINNAVIO",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "DIRECAOVIAG",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "IDBALSA01",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "IDBALSA02",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "IDBALSA03",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "CONFIRMNOTAFAT",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PERMALTERCENTRAL",
+          "VARCHAR2",
+          60,
+          "Y",
+          " "
+        ],
+        [
+          "CODGUF",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FINALIZADOFOX",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VLRREPREDTOTSEMDESC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMCUPOMECONECT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMNUFINORIG",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMCONTRATOVENDA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMORIGEM",
+          "CHAR",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "TIMCONTRATOLTV",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIMNUNOTAMOD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTEXTEMPK280",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "LATITUDE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "LONGITUDE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "CODPARCDESCARGAMDFE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODDOCARRECAD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMDOCARRECAD",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "PREMIACAOESTADUAL",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "NFSEID",
+          "VARCHAR2",
+          50,
+          "Y",
+          " "
+        ],
+        [
+          "CODPARCDEPO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRFETHAB",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCHECKOUT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BASEICMSAT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRICMSAT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DISDESAUTIMPEMB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "IDDESCPARCERIA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRDESCPARCERIA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CLIENTEIDPARCERIA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IDPONTUACAOPARCERIA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VALORDESONPISCOFINS",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUNOTAORIGCORTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BASEICMSSTFRETE",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ICMSSTFRETE",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRREPREDST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODINTERM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INTERMED",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "FISTEL",
+          "VARCHAR2",
+          11,
+          "Y",
+          " "
+        ],
+        [
+          "NUMCSTC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "QTDUSU",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMTERMTEL",
+          "VARCHAR2",
+          13,
+          "Y",
+          " "
+        ],
+        [
+          "TIPCLIENTESERVCOM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MD5MODCOMTEL",
+          "VARCHAR2",
+          32,
+          "Y",
+          " "
+        ],
+        [
+          "INDNEGMODAL",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODPARCRETIRADA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NOTAPORPEDIDOPDV",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SUMVLRIIOUTNOTA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SOMICMSNFENAC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SOMPISCOFNFENAC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSCFE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "RETORNOEQUIPFISCAL",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "NURECEBIMENTO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "RETGERWMS",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NUNOTAREC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DHVIAGEM",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "NUSESSAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TPFRETAMENTO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTESCRCONT",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "MODRECEBPDVWEB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CHAVECTEREF",
+          "VARCHAR2",
+          44,
+          "Y",
+          " "
+        ],
+        [
+          "SERIENFSE",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "NUMPROTOCINCTE",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "HISTCONFIG",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CHVNFEINEREF",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "CARACSER",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "CARACAD",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "SOMDESPADUNFENAC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUMPROTOCINNFE",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "VLRREPTERC",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "TIPOGUIA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NUMGUIA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "UFEMISSAO",
+          "CHAR",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "CPFRESPTEC",
+          "VARCHAR2",
+          11,
+          "Y",
+          " "
+        ],
+        [
+          "NUMRECEITAGRO",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "SERIEGUIA",
+          "VARCHAR2",
+          9,
+          "Y",
+          " "
+        ],
+        [
+          "CHAVESINIEF1324",
+          "VARCHAR2",
+          360,
+          "Y",
+          " "
+        ],
+        [
+          "CHAVENFCOM",
+          "VARCHAR2",
+          44,
+          "Y",
+          " "
+        ],
+        [
+          "NUMPROTOCNFCOM",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "NULOTENFCOM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSNFCOM",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TPAMBNFCOM",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "SITUACAONFCOM",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TPEMISNFCOM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TPRETISS",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "UFEMISS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRICMSRET",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CMUNFATGER",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCFO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRSERVICO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "BCICMSRET",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQICMSRET",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CHAVENFETERCEIROREF",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_INF",
+          "CLOB",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUOS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUMIARA",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUNOTAMAE",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TIPOSROTA",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUNOTAVENDAEMP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUNOTAFALTA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUNOTAPEDREC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_ORIGEMDEPLOY",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CONTROLELEGADO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TIPOLEGADO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NFLEGADO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CHAVELEGADO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_SEQNOTA",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUNOTATRANSFPROD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_VENDPARCEIRO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_VLCOMVENDPAR",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CIFFOBREDESP",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUMORCIARA",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUMPEDCLIENTE",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUMPEDIARA",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "LOCALFINALSERV",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "INDCONSFINAL",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "AD_OBSINTERNO",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "AD_SEQOS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TIPOSROTAREDESP",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_VLRCUSTOIARA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_PMV",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_VLRCOMINT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_VLRBASECOMINT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_ALIQCOMINT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AD_MARGEM",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "220ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "chaves": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "1D93BEE657827238F81D2E785325F59E",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "TIPO_CHAVE",
+          "description": "TIPO_CHAVE",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "CAMPO",
+          "description": "CAMPO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "NOME_CONSTRAINT",
+          "description": "NOME_CONSTRAINT",
+          "order": 3,
+          "userType": "S"
+        },
+        {
+          "name": "TABELA_REF",
+          "description": "TABELA_REF",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "CAMPO_REF",
+          "description": "CAMPO_REF",
+          "order": 5,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          "FK",
+          "AD_NUNOTAVENDAEMP",
+          "AD_FK_A7F2A19B0950F3BBCE686",
+          "TGFCAB",
+          "NUNOTA"
+        ],
+        [
+          "FK",
+          "AD_VENDPARCEIRO",
+          "AD_FK_5E6DB19B64C465CB8B11D",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODAGENDA",
+          "FK_TGFCAB_TGFAGE",
+          "TGFAGE",
+          "CODAGENDA"
+        ],
+        [
+          "FK",
+          "CODCC",
+          "FK_TGFCAB_TCCCON_CODCC",
+          "TCCCON",
+          "CODCC"
+        ],
+        [
+          "FK",
+          "CODCENCUS",
+          "FK_TGFCAB_TSICUS",
+          "TSICUS",
+          "CODCENCUS"
+        ],
+        [
+          "FK",
+          "CODCID",
+          "FK_TGFCAB_CODCID_TSICID",
+          "TSICID",
+          "CODCID"
+        ],
+        [
+          "FK",
+          "CODCIDFIMCTE",
+          "FK_TGFCAB_CODCIDFIMCTE",
+          "TSICID",
+          "CODCID"
+        ],
+        [
+          "FK",
+          "CODCIDINICTE",
+          "FK_TGFCAB_CODCIDINICTE",
+          "TSICID",
+          "CODCID"
+        ],
+        [
+          "FK",
+          "CODDOCA",
+          "FK_TGFCAB_CODDOCA_TGWDCA",
+          "TGWDCA",
+          "CODDOCA"
+        ],
+        [
+          "FK",
+          "CODEMP",
+          "FK_TGFCAB_CODPARCRETIRADA",
+          "TGFLCR",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODEMP",
+          "FK_TGFCAB_TGFEMP1",
+          "TGFEMP",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODEMP",
+          "FK_TGFCAB_CODPARCRETIRADA",
+          "TGFLCR",
+          "CODPARCRETIRADA"
+        ],
+        [
+          "FK",
+          "CODEMPFUNC",
+          "FK_TGFCAB_FUNCIONARIO",
+          "TFPFUN",
+          "CODFUNC"
+        ],
+        [
+          "FK",
+          "CODEMPFUNC",
+          "FK_TGFCAB_FUNCIONARIO",
+          "TFPFUN",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODEMPNEGOC",
+          "FK_TGFCAB_TGFEMP2",
+          "TGFEMP",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODFUNC",
+          "FK_TGFCAB_FUNCIONARIO",
+          "TFPFUN",
+          "CODFUNC"
+        ],
+        [
+          "FK",
+          "CODFUNC",
+          "FK_TGFCAB_FUNCIONARIO",
+          "TFPFUN",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODGUF",
+          "FK_TGFCAB_TSIGUF",
+          "TSIGUF",
+          "CODGUF"
+        ],
+        [
+          "FK",
+          "CODINTERM",
+          "FK_TGFCAB_CODINTERM_TGFPAR",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODMOEDA",
+          "FK_TGFCAB_TSIMOE",
+          "TSIMOE",
+          "CODMOEDA"
+        ],
+        [
+          "FK",
+          "CODMOTORISTA",
+          "FK_TGFCAB_CODMOTORISTA_TGFPAR",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODNAT",
+          "FK_TGFCAB_CODNAT_TGFNAT",
+          "TGFNAT",
+          "CODNAT"
+        ],
+        [
+          "FK",
+          "CODOBSPADRAO",
+          "FK_TGFCAB_TGFOBS",
+          "TGFOBS",
+          "CODOBSPADRAO"
+        ],
+        [
+          "FK",
+          "CODPARC",
+          "FK_TGFCAB_TGFPAR2",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODPARCDESCARGAMDFE",
+          "FK_TGFCAB_TGFPAR",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODPARCDEST",
+          "FK_TGFCAB_TGFPAR3",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODPARCRETIRADA",
+          "FK_TGFCAB_CODPARCRETIRADA",
+          "TGFLCR",
+          "CODEMP"
+        ],
+        [
+          "FK",
+          "CODPARCRETIRADA",
+          "FK_TGFCAB_CODPARCRETIRADA",
+          "TGFLCR",
+          "CODPARCRETIRADA"
+        ],
+        [
+          "FK",
+          "CODPARCTRANSP",
+          "FK_TGFCAB_TGFPAR1",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODPARCTRANSPFINAL",
+          "FK_TGFCAB_PARCTRANSPF_TGFPAR",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODPROJ",
+          "FK_TGFCAB_TCSPRJ",
+          "TCSPRJ",
+          "CODPROJ"
+        ],
+        [
+          "FK",
+          "CODRESIDUO",
+          "FK_TGFCAB_TGFRESI",
+          "TGFRESI",
+          "CODRESIDUO"
+        ],
+        [
+          "FK",
+          "CODSAF",
+          "FK_TGFCAB_TGASAF",
+          "TGASAF",
+          "CODSAF"
+        ],
+        [
+          "FK",
+          "CODSITE",
+          "FK_TGFCAB_CODSITE_TGFSIT",
+          "TGFSIT",
+          "CODSITE"
+        ],
+        [
+          "FK",
+          "CODTIPOPER",
+          "FK_TGFCAB_TGFTOP",
+          "TGFTOP",
+          "CODTIPOPER"
+        ],
+        [
+          "FK",
+          "CODTIPOPER",
+          "FK_TGFCAB_TGFTOP",
+          "TGFTOP",
+          "DHALTER"
+        ],
+        [
+          "FK",
+          "CODTIPVENDA",
+          "FK_TGFCAB_TGFTPV",
+          "TGFTPV",
+          "CODTIPVENDA"
+        ],
+        [
+          "FK",
+          "CODTIPVENDA",
+          "FK_TGFCAB_TGFTPV",
+          "TGFTPV",
+          "DHALTER"
+        ],
+        [
+          "FK",
+          "CODTPD",
+          "FK_TGFCAB_TGFTPD",
+          "TGFTPD",
+          "CODTPD"
+        ],
+        [
+          "FK",
+          "CODUSU",
+          "FK_TGFCAB_TSIUSU",
+          "TSIUSU",
+          "CODUSU"
+        ],
+        [
+          "FK",
+          "CODUSUINC",
+          "FK_TGFCAB_CODUSUINC_TSIUSU",
+          "TSIUSU",
+          "CODUSU"
+        ],
+        [
+          "FK",
+          "CODVEICULO",
+          "FK_TGFCAB_TGFVEI",
+          "TGFVEI",
+          "CODVEICULO"
+        ],
+        [
+          "FK",
+          "CODVEITRACAO",
+          "FK_TGFCAB_CODVEITRACAO_TGFVEI",
+          "TGFVEI",
+          "CODVEICULO"
+        ],
+        [
+          "FK",
+          "CODVEND",
+          "FK_TGFCAB_TGFVEN",
+          "TGFVEN",
+          "CODVEND"
+        ],
+        [
+          "FK",
+          "CODVENDTEC",
+          "FK_TGFCAB_TGFVEN2",
+          "TGFVEN",
+          "CODVEND"
+        ],
+        [
+          "FK",
+          "CODVTP",
+          "FK_TGFCAB_TGFVTP",
+          "TGFVTP",
+          "CODVTP"
+        ],
+        [
+          "FK",
+          "DHTIPOPER",
+          "FK_TGFCAB_TGFTOP",
+          "TGFTOP",
+          "CODTIPOPER"
+        ],
+        [
+          "FK",
+          "DHTIPOPER",
+          "FK_TGFCAB_TGFTOP",
+          "TGFTOP",
+          "DHALTER"
+        ],
+        [
+          "FK",
+          "DHTIPVENDA",
+          "FK_TGFCAB_TGFTPV",
+          "TGFTPV",
+          "DHALTER"
+        ],
+        [
+          "FK",
+          "DHTIPVENDA",
+          "FK_TGFCAB_TGFTPV",
+          "TGFTPV",
+          "CODTIPVENDA"
+        ],
+        [
+          "FK",
+          "NUCONFATUAL",
+          "FK_TGFCAB_TGFCON2",
+          "TGFCON2",
+          "NUCONF"
+        ],
+        [
+          "FK",
+          "NUFOP",
+          "FK_TGFCAB_TGFFOP",
+          "TGFFOP",
+          "NUFOP"
+        ],
+        [
+          "FK",
+          "NULOTENFE",
+          "FK_TGFCAB_NULOTENFE_TGFLNF",
+          "TGFLNF",
+          "NULOTE"
+        ],
+        [
+          "FK",
+          "NULOTENFSE",
+          "FK_TGFCAB_TGFLNF",
+          "TGFLNF",
+          "NULOTE"
+        ],
+        [
+          "FK",
+          "NUMCONTRATO",
+          "FK_TGFCAB_TCSCON",
+          "TCSCON",
+          "NUMCONTRATO"
+        ],
+        [
+          "FK",
+          "NUMCOTACAO",
+          "FK_TGFCAB_TGFCOT",
+          "TGFCOT",
+          "NUMCOTACAO"
+        ],
+        [
+          "FK",
+          "NUMOS",
+          "FK_TGFCAB_NUMOS",
+          "TCSOSE",
+          "NUMOS"
+        ],
+        [
+          "FK",
+          "NUNOTAPEDFRET",
+          "FK_TGFCAB_NUNOTAPEDFRET_TGFCAB",
+          "TGFCAB",
+          "NUNOTA"
+        ],
+        [
+          "FK",
+          "NUODP",
+          "FK_TGFCAB_TGFOCP",
+          "TGFODP",
+          "NUODP"
+        ],
+        [
+          "FK",
+          "NURD8",
+          "FK_TGFCAB_NURD8_TGFCAB",
+          "TGFCAB",
+          "NUNOTA"
+        ],
+        [
+          "FK",
+          "NUREM",
+          "FK_TGFCAB_NUREM_TGFCAB",
+          "TGFCAB",
+          "NUNOTA"
+        ],
+        [
+          "FK",
+          "REBOQUE1",
+          "FK_TGFCAB_REBOQUE1_TGFVEI",
+          "TGFVEI",
+          "CODVEICULO"
+        ],
+        [
+          "FK",
+          "REBOQUE2",
+          "FK_TGFCAB_REBOQUE2_TGFVEI",
+          "TGFVEI",
+          "CODVEICULO"
+        ],
+        [
+          "FK",
+          "REBOQUE3",
+          "FK_TGFCAB_REBOQUE3_TGFVEI",
+          "TGFVEI",
+          "CODVEICULO"
+        ],
+        [
+          "FK",
+          "UFVEICULO",
+          "FK_TGFCAB_UFVEICULO_TSIUFS",
+          "TSIUFS",
+          "CODUF"
+        ],
+        [
+          "PK",
+          "NUNOTA",
+          "PK_TGFCAB",
+          null,
+          null
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "681ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "dominios": {
+    "TIPMOV": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "8EAD2F781D567656493ABB30BE6B62D2",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "V",
+            249724
+          ],
+          [
+            "C",
+            71760
+          ],
+          [
+            "P",
+            9824
+          ],
+          [
+            "D",
+            5888
+          ],
+          [
+            "J",
+            2795
+          ],
+          [
+            "O",
+            2083
+          ],
+          [
+            "E",
+            823
+          ],
+          [
+            "Z",
+            143
+          ],
+          [
+            "N",
+            141
+          ],
+          [
+            "3",
+            29
+          ],
+          [
+            "T",
+            5
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "71ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "STATUSNOTA": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "3789C9E0C8EF2107831090CD7402F790",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "L",
+            341713
+          ],
+          [
+            "P",
+            1241
+          ],
+          [
+            "A",
+            261
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "54ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "STATUSNFE": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "6FC322A445088B98EDF0CDC926C6F80D",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "A",
+            7983
+          ],
+          [
+            "D",
+            773
+          ],
+          [
+            "R",
+            19
+          ],
+          [
+            "V",
+            4
+          ],
+          [
+            "I",
+            2
+          ],
+          [
+            "S",
+            1
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "31ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "PENDENTE": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "6DB95A95C1E69F360FF2F75244CEE889",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "S",
+            323311
+          ],
+          [
+            "N",
+            19904
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "64ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "CONFIRMADA": {
+      "error": "Erro na API Sankhya",
+      "detail": "ORA-00904: \"CONFIRMADA\": identificador inválido"
+    }
+  },
+  "sample": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "186313B6F0FDCA6E190D954538C188BE",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "NUNOTA",
+          "description": "NUNOTA",
+          "order": 1,
+          "userType": "I"
+        },
+        {
+          "name": "NUMNOTA",
+          "description": "NUMNOTA",
+          "order": 2,
+          "userType": "I"
+        },
+        {
+          "name": "DTNEG",
+          "description": "DTNEG",
+          "order": 3,
+          "userType": "H"
+        },
+        {
+          "name": "CODPARC",
+          "description": "CODPARC",
+          "order": 4,
+          "userType": "I"
+        },
+        {
+          "name": "CODTIPOPER",
+          "description": "CODTIPOPER",
+          "order": 5,
+          "userType": "I"
+        },
+        {
+          "name": "TIPMOV",
+          "description": "TIPMOV",
+          "order": 6,
+          "userType": "S"
+        },
+        {
+          "name": "STATUSNOTA",
+          "description": "STATUSNOTA",
+          "order": 7,
+          "userType": "S"
+        },
+        {
+          "name": "VLRNOTA",
+          "description": "VLRNOTA",
+          "order": 8,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "CODEMP",
+          "description": "CODEMP",
+          "order": 9,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          12,
+          0,
+          "14092022 00:00:00",
+          129,
+          1152,
+          "Z",
+          "P",
+          0,
+          1
+        ],
+        [
+          13,
+          0,
+          "14092022 00:00:00",
+          0,
+          1900,
+          "Z",
+          "P",
+          0,
+          1
+        ],
+        [
+          15,
+          0,
+          "14092022 00:00:00",
+          0,
+          1950,
+          "Z",
+          "P",
+          0,
+          1
+        ],
+        [
+          23,
+          0,
+          "14092022 00:00:00",
+          0,
+          1457,
+          "Z",
+          "P",
+          0,
+          1
+        ],
+        [
+          7,
+          0,
+          "14092022 00:00:00",
+          1,
+          1495,
+          "Z",
+          "P",
+          0,
+          1
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "5ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "contagem": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "BEEBA9C3D86819527029ED0852137489",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "TOTAL",
+          "description": "TOTAL",
+          "order": 1,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          343215
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "12ms",
+      "timeResultSet": "1ms"
+    }
+  }
+}

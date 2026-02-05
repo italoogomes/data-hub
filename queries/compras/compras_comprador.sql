@@ -1,0 +1,59 @@
+-- ================================================
+-- Descricao: Compras por comprador
+-- Modulo: Compras
+-- Tabelas: TGFCAB, TGFVEN
+-- Nota: Compradores tem TIPVEND = 'C'
+-- ================================================
+
+-- Compras por comprador (mes atual)
+SELECT
+    V.CODVEND,
+    V.APELIDO,
+    V.EMAIL,
+    COUNT(*) AS QTD_COMPRAS,
+    SUM(C.VLRNOTA) AS VLR_TOTAL,
+    ROUND(AVG(C.VLRNOTA), 2) AS VALOR_MEDIO
+FROM TGFCAB C
+JOIN TGFVEN V ON C.CODVEND = V.CODVEND
+WHERE C.TIPMOV = 'C'
+  AND C.CODTIPOPER = 1209
+  AND C.DTNEG >= TRUNC(SYSDATE, 'MM')
+  AND V.TIPVEND = 'C'
+GROUP BY V.CODVEND, V.APELIDO, V.EMAIL
+ORDER BY VLR_TOTAL DESC;
+
+-- Lista de compradores ativos
+SELECT
+    CODVEND,
+    APELIDO,
+    EMAIL,
+    ATIVO
+FROM TGFVEN
+WHERE TIPVEND = 'C'
+  AND ATIVO = 'S'
+ORDER BY APELIDO;
+
+-- Evolucao mensal por comprador
+SELECT
+    V.APELIDO,
+    TO_CHAR(C.DTNEG, 'YYYY-MM') AS MES,
+    COUNT(*) AS QTD_COMPRAS,
+    SUM(C.VLRNOTA) AS VLR_TOTAL
+FROM TGFCAB C
+JOIN TGFVEN V ON C.CODVEND = V.CODVEND
+WHERE C.TIPMOV = 'C'
+  AND C.CODTIPOPER = 1209
+  AND C.DTNEG >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6)
+  AND V.TIPVEND = 'C'
+GROUP BY V.APELIDO, TO_CHAR(C.DTNEG, 'YYYY-MM')
+ORDER BY V.APELIDO, MES;
+
+-- Compras sem comprador definido
+SELECT
+    COUNT(*) AS QTD_SEM_COMPRADOR,
+    SUM(VLRNOTA) AS VLR_TOTAL
+FROM TGFCAB
+WHERE TIPMOV = 'C'
+  AND CODTIPOPER = 1209
+  AND (CODVEND = 0 OR CODVEND IS NULL)
+  AND DTNEG >= TRUNC(SYSDATE, 'MM');

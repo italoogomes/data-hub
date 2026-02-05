@@ -1,0 +1,4003 @@
+{
+  "estrutura": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "9BC7287FE273758ECC7AC2D5DDA10AB5",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CAMPO",
+          "description": "CAMPO",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "TIPO",
+          "description": "TIPO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "TAMANHO",
+          "description": "TAMANHO",
+          "order": 3,
+          "userType": "F",
+          "precision": 2
+        },
+        {
+          "name": "PERMITE_NULO",
+          "description": "PERMITE_NULO",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "COMENTARIO",
+          "description": "COMENTARIO",
+          "order": 5,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          "CODPROD",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "DESCRPROD",
+          "VARCHAR2",
+          120,
+          "N",
+          " "
+        ],
+        [
+          "COMPLDESC",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "CARACTERISTICAS",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "REFERENCIA",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "CODGRUPOPROD",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODVOL",
+          "VARCHAR2",
+          6,
+          "N",
+          " "
+        ],
+        [
+          "MARCA",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "LOCALIZACAO",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "CODIPI",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CLASSUBTRIB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODFORMPREC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MARGLUCRO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MULTIPVENDA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DECCUSTO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DECVLR",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DECQTD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "COMGER",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "COMVEND",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DESCMAX",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PESOBRUTO",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PESOLIQ",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "MEDAUX",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRAZOVAL",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "AGRUPMIN",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "QTDEMB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ALERTAESTMIN",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PROMOCAO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TEMICMS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TEMISS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TEMIPIVENDA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TEMIPICOMPRA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TEMIRF",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PERCIRF",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TEMINSS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PERCINSS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "REDBASEINSS",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "USOPROD",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "ORIGPROD",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPSUBST",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODICMSFAST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIPLANCNOTA",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPCONTEST",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODTAB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IMAGEM",
+          "BLOB",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "ATIVO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ESTMAX",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ESTMIN",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "APRESDETALHE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SELECIONADO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TITCONTEST",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "LISCONTEST",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "CODMOEDA",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "GRUPOICMS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCAUMENTCUSTO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "LOCAL",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "DTALTER",
+          "DATE",
+          7,
+          "N",
+          " "
+        ],
+        [
+          "USALOCAL",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "HOMEPAGE",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTB2",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTB3",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TEMPOSERV",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "ENDIMAGEM",
+          "VARCHAR2",
+          200,
+          "Y",
+          " "
+        ],
+        [
+          "CODUSU",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODPARCFORN",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODVOLCOMPRA",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "CODPRODROI",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPODESCPROD",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "REFFORN",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "HRDOBRADA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ICMSGERENCIA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODNAT",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODCENCUS",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODPROJ",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "M3",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TEMCIAP",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "IMPLAUDOLOTE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODGAR",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DIMENSOES",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PERCQUEBRATEC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTB4",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODFILTRO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODGENERO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODLST",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PADRAO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ENDMODROTULO",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "NATUREZAOPERDES",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "CNAE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SOLCOMPRA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CONFERE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "REMETER",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "MOTIVOINCEXC",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "ARREDPRECO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TEMCOMISSAO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "COMPONOBRIG",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "FATTOTAL",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NOMETAB",
+          "VARCHAR2",
+          32,
+          "Y",
+          " "
+        ],
+        [
+          "AP1RCTEGO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CALCULOGIRO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "REDBASEIRF",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ALTURA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "LARGURA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ESPESSURA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "UNIDADE",
+          "VARCHAR2",
+          2,
+          "N",
+          " "
+        ],
+        [
+          "CODFORMAPONTA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCOS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CONFCEGAPESO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ORDCALCCUSTPROD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "REGRAWMS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "GRUPOPIS",
+          "VARCHAR2",
+          30,
+          "N",
+          " "
+        ],
+        [
+          "GRUPOCOFINS",
+          "VARCHAR2",
+          30,
+          "N",
+          " "
+        ],
+        [
+          "GRUPOCSSL",
+          "VARCHAR2",
+          30,
+          "N",
+          " "
+        ],
+        [
+          "CSTIPIENT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CSTIPISAI",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSINCEXC",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "UTILIZAWMS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "BALANCA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODPAIS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "RENDIMENTO",
+          "VARCHAR2",
+          50,
+          "Y",
+          " "
+        ],
+        [
+          "OBSETIQUETA",
+          "VARCHAR2",
+          120,
+          "Y",
+          " "
+        ],
+        [
+          "CODANP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODAUTCODIF",
+          "VARCHAR2",
+          21,
+          "Y",
+          " "
+        ],
+        [
+          "CODPRODAGRUPAPT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODPRODAGRUPAPTENC",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CULTURA",
+          "VARCHAR2",
+          80,
+          "Y",
+          " "
+        ],
+        [
+          "CIENTIFICO",
+          "VARCHAR2",
+          80,
+          "Y",
+          " "
+        ],
+        [
+          "CLASSEAGT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPOQUIMICO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CLASSETOX",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRINCATIVO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FORMULACAO",
+          "VARCHAR2",
+          180,
+          "Y",
+          " "
+        ],
+        [
+          "CONCENTRACAO",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "MODOAPLIC",
+          "VARCHAR2",
+          240,
+          "Y",
+          " "
+        ],
+        [
+          "EPOCAAPLIC",
+          "VARCHAR2",
+          120,
+          "Y",
+          " "
+        ],
+        [
+          "MANEJOINT",
+          "VARCHAR2",
+          120,
+          "Y",
+          " "
+        ],
+        [
+          "DOSAGEM",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VOLDOSAGEM",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "DOSAGEMPOR",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VOLDOSAGEMPOR",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "RENDIMENTOPR",
+          "VARCHAR2",
+          15,
+          "Y",
+          " "
+        ],
+        [
+          "RECEITUARIO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "EXIGEBENEFIC",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOCLASSEAGT",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOGRUPOQUIMICO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOPRINCATIVO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOCLASSETOX",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPOTRANSG",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "GERAPLAPROD",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "APLICACAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INTERVALO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CARENCIA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "RENDIMENTOHA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRODUTONFE",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "TIPGTINNFE",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "NCM",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "CODVOLPLAN",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "DESCMAXFLEX",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ACRESCMAX",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FLEX",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "NUMITEMREA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IMPRIMIR",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CONFIRMAIMP",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "APURAPRODEPE",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "INDESPPRODEPE",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "QTDNFLAUDOSINT",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODTRIBMUNISS",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "TIPCONTESTWMS",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "LISTALPM",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ONEROSO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "REFMERCMED",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TERMOLABIL",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TEMPMINIMA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TEMPMAXIMA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CONTROLADO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "IDENPORTARIA",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "IDENOTC",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "IDENCORRELATO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "IDENCOSME",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PRODFALTA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODFAB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSMED",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODCPR",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SEQSPR",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SEQSCA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SEQSTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCAT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODTER",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODPAT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MVAAJUSTADO",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "INFPUREZA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "FABRICANTE",
+          "VARCHAR2",
+          80,
+          "Y",
+          " "
+        ],
+        [
+          "USASTATUSLOTE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TAMLOTE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TAMSERIE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "UNIDMINARMAZ",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "ORIGEMFAT",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "USACODBARRASQTD",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "MD5PAF",
+          "VARCHAR2",
+          32,
+          "Y",
+          " "
+        ],
+        [
+          "VALCAPM3",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "QTDPECAFRAC",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "UTILORDCORTE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODPRODPERDA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DESCRUTILBEM",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "IMPORDEMCORTE",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PERCTROCA",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CORFONTCONSPRECO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CORFUNDOCONSPRECO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODVOLRES",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "CODAREASEP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IDENTIMOB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "UTILIMOB",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TEMCREDPISCOFINSDEPR",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODPRODINNATURA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "UTILSMARTCARD",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "RECUPAVARIA",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CONVERVOL",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "LASTRO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CAMADAS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ORDEMMEDIDA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQICMSINTEFD",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODREGMAPA",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "APRESFORM",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODBARCOMP",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TEMMEDICAO",
+          "VARCHAR2",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODFILTROREQ",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NATBCPISCOFINS",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CONTARPORPESO",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODLOCALPADRAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERMCOMPPROD",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODEXNCM",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "QTDCST",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "DIASCST",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PERCTOLVARCST",
+          "NUMBER",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "QTDPEDPEND",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "LEADTIME",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DIASEXPEDICAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTVALDIF",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "SHELFLIFEMIN",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SHELFLIFE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODBARBALANCA",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "VALCBGLOBAL",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "USAPONTOS",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODRFA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCROYALTY",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INTEGRAECONECT",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ENQREINTEGRA",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "PERCCMTNAC",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PERCCMTIMP",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODATIVREINTEGRA",
+          "VARCHAR2",
+          8,
+          "Y",
+          " "
+        ],
+        [
+          "NOTIFCONF",
+          "VARCHAR2",
+          500,
+          "Y",
+          " "
+        ],
+        [
+          "USASERIEFAB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPSERNFE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "VENCOMPINDIV",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "EXCLUIRCONF",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PRODUZAUT",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "USAIMPAGRUPMIN",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "RASTRESTOQUE",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "IMPETIQCONF",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "VLRCOMERC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRPARCIMPEXT",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODFCI",
+          "VARCHAR2",
+          36,
+          "Y",
+          " "
+        ],
+        [
+          "SERVPARAINDUST",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "DESCRPRODNFE",
+          "VARCHAR2",
+          50,
+          "Y",
+          " "
+        ],
+        [
+          "CAT1799SPRES",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "ALIQNAC",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQIMP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ESTSEGQTD",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "ESTSEGDIAS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTALTERESQ",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "LOTECOMPRAS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ESTMAXQTD",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "ESTMAXDIAS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTALTEREMQ",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "DESVIOMAX",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "ARREDAGRUP",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "APLICASAZO",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "LOTECOMPMINIMO",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "AGRUPCOMPMINIMO",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "USASERIESEPWMS",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "GERACUSTCOMPSEG",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TOPFATURCON",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SERFATURCON",
+          "VARCHAR2",
+          3,
+          "Y",
+          " "
+        ],
+        [
+          "CODGPROD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "EXIGELASTROCAMADAS",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "FIXOAGENDA",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODPARCCONSIG",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "USALOTEDTVAL",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "USALOTEDTFAB",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "EXIBCOMPEXPKIT",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TIPORECEITAMOD21",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODPRODSUBST",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DTSUBST",
+          "DATE",
+          7,
+          "Y",
+          " "
+        ],
+        [
+          "CODCOMP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NATEFDCONTM410M810",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCTOLPESOMAIOR",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCTOLPESOMENOR",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODVOLPESOVAR",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "USACONTPESOVAR",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PERCTOLPESOMAIORSEP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCTOLPESOMENORSEP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PCT_BF",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRZ_BF",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CONTROLMEDIC",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "DECVLRENT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCCMTFED",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PERCCMTEST",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "PERCCMTMUN",
+          "FLOAT",
+          22,
+          "N",
+          " "
+        ],
+        [
+          "CODENQIPIENT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODENQIPISAI",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DESCVENCONSUL",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPOICMS2",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MVAPADRAO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQGERAL",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODPRODSUBKIT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCONFKIT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOKIT",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODESPECST",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VISIVELAPPOS",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "UTILIZAENDFLUT",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "MAXMULTECONECT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODVTP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "QTDIDENTIF",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOIDENTIF",
+          "VARCHAR2",
+          50,
+          "Y",
+          " "
+        ],
+        [
+          "MODETIQSEPWMS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IMPETIQSEPWMS",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "NROPROCESSO",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOSN",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ARMAZELOTE",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "TEMRASTROLOTE",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODANVISA",
+          "VARCHAR2",
+          13,
+          "Y",
+          " "
+        ],
+        [
+          "DESCRANP",
+          "VARCHAR2",
+          95,
+          "Y",
+          " "
+        ],
+        [
+          "PERCMISTGLP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODSERVTELECOM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOCONTAGEM",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "CODMARCA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCMISTGNN",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCMISTGNI",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "VLRPARTIDAGLP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCTACTBEFD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODCPRB",
+          "VARCHAR2",
+          8,
+          "Y",
+          " "
+        ],
+        [
+          "COMERCIALIZACAOAGRI",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "OBRACONSTCIVIL",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CLASSIFCESSAOOBRA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOINSSESPECIAL",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PERCINSSESPECIAL",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CALCDIFAL",
+          "CHAR",
+          1,
+          "N",
+          " "
+        ],
+        [
+          "INDESCALA",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CNPJFABRICANTE",
+          "VARCHAR2",
+          14,
+          "Y",
+          " "
+        ],
+        [
+          "CODBENEFNAUF",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "CODAGREGACAO",
+          "VARCHAR2",
+          20,
+          "Y",
+          " "
+        ],
+        [
+          "QTDAGRUPAMENTOMTZ",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODIDCNAE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODFILTROCTA",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "FORCAEXPECONECT",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "REGISTRARPESO",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "DESVIOMAXTOLCONFSEP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "DESVIOMINTOLCONFSEP",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SERVPRESTTER",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "FRAGMENTALOTE",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PERCREDBASEICMSEFET",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUVERSAOIMG",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INTEGRAFOX",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NUVERSAO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MOTISENCAOANVISA",
+          "VARCHAR2",
+          255,
+          "Y",
+          " "
+        ],
+        [
+          "CODNBS",
+          "VARCHAR2",
+          9,
+          "Y",
+          " "
+        ],
+        [
+          "CONSPRODCAT42",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPOITEMSPED",
+          "VARCHAR2",
+          2,
+          "Y",
+          " "
+        ],
+        [
+          "INCPESOBRUTO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INCPESOLIQUIDO",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "NURFE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "MVAORIGINALDRCST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TAMANHOMEDIOPECA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "IDGRADE",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PERCENTSEPPUL",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ATUNUVERSAO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "GRADEPADRAO",
+          "CLOB",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQFETHAB",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODVOLFETHAB",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "OBTSTANTMEDENT",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "DESCPRODDRCST",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PARTICIPAADRCST",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "MVAORIGINALADRCST",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQFECOP",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRODSUJFECOP",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "DESDESCCALCPIS",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "ALIQINTERNACAT42",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CONESTORIGPROD",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "GERIMPNRETREINFAQ",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PRODALIADRCST",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "TIPUTILCOM",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "PRODINTERNO",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CALCFUSTPRO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CALCFUNTTELPRO",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODBARDIFGTIN",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "CODBARTRIBDIFGTIN",
+          "VARCHAR2",
+          30,
+          "Y",
+          " "
+        ],
+        [
+          "WMSPRODRASTSERMED",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "STATUSNCM",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "BLOQVENDAFRAC",
+          "VARCHAR2",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "AD_GRUPOICMSPROD",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TPIRRFEXT",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CODNATREND",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "INDTIPREFBCICMSST",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CALRUPTURAESTOQUE",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODVOLKANBAN",
+          "VARCHAR2",
+          6,
+          "Y",
+          " "
+        ],
+        [
+          "OPEEXPFETHAB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "OPEINTESTFETHAB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "OPEINTFETHAB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "PERCINDMISTURA",
+          "FLOAT",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "SERVDESPNTRIB",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "AD_IDEXTERNO",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "CODIGONFCOM",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUMFABRICANTE",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUMORIGINAL",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_LINHA",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_DESCRPRODDEPLOY",
+          "VARCHAR2",
+          120,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TEMIPICOMPRA",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_TEMPEDIDO",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUMAUX",
+          "VARCHAR2",
+          4000,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPOIBSCBS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "GRUPOIS",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "CREDPISCOFINSAQUIPAR",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ],
+        [
+          "TEMCREDPISCOFINSAQUI",
+          "CHAR",
+          1,
+          "Y",
+          " "
+        ],
+        [
+          "CODCLASTRIBNAC",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_REVISADO",
+          "VARCHAR2",
+          10,
+          "Y",
+          " "
+        ],
+        [
+          "AD_NUMFABRICANTE2",
+          "VARCHAR2",
+          100,
+          "Y",
+          " "
+        ],
+        [
+          "AD_CODIGO",
+          "NUMBER",
+          22,
+          "Y",
+          " "
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "302ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "chaves": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "38663DD33B911D22AF1AF29B0EBEC8C5",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "TIPO_CHAVE",
+          "description": "TIPO_CHAVE",
+          "order": 1,
+          "userType": "S"
+        },
+        {
+          "name": "CAMPO",
+          "description": "CAMPO",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "NOME_CONSTRAINT",
+          "description": "NOME_CONSTRAINT",
+          "order": 3,
+          "userType": "S"
+        },
+        {
+          "name": "TABELA_REF",
+          "description": "TABELA_REF",
+          "order": 4,
+          "userType": "S"
+        },
+        {
+          "name": "CAMPO_REF",
+          "description": "CAMPO_REF",
+          "order": 5,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          "FK",
+          "AD_CODIGO",
+          "AD_FK_7D3EE19C28EF359EC7D6C",
+          "TGFMAR",
+          "CODIGO"
+        ],
+        [
+          "FK",
+          "CLASSEAGT",
+          "FK_TGFPRO_CLASSEAGT_TGADIG",
+          "TGADIG",
+          "TIPO"
+        ],
+        [
+          "FK",
+          "CLASSEAGT",
+          "FK_TGFPRO_CLASSEAGT_TGADIG",
+          "TGADIG",
+          "NUDIG"
+        ],
+        [
+          "FK",
+          "CLASSETOX",
+          "FK_TGFPRO_CLASSETOX_TGADIG",
+          "TGADIG",
+          "TIPO"
+        ],
+        [
+          "FK",
+          "CLASSETOX",
+          "FK_TGFPRO_CLASSETOX_TGADIG",
+          "TGADIG",
+          "NUDIG"
+        ],
+        [
+          "FK",
+          "CODAREASEP",
+          "FK_TGFPRO_TGWARS",
+          "TGWARS",
+          "CODAREASEP"
+        ],
+        [
+          "FK",
+          "CODCAT",
+          "FK_TGFPRO_TGFCAT",
+          "TGFCAT",
+          "CODCAT"
+        ],
+        [
+          "FK",
+          "CODCENCUS",
+          "FK_TGFPRO_CODCENCUS",
+          "TSICUS",
+          "CODCENCUS"
+        ],
+        [
+          "FK",
+          "CODCONFKIT",
+          "FK_TGFPRO_CODCONFKIT_TSIKIT",
+          "TSIKIT",
+          "CODCONFKIT"
+        ],
+        [
+          "FK",
+          "CODCOS",
+          "FK_TGFPRO_CODCOS_TCSCOS",
+          "TCSCOS",
+          "CODCOS"
+        ],
+        [
+          "FK",
+          "CODCPR",
+          "FK_TGFPRO_TGFCPR",
+          "TGFCPR",
+          "CODCPR"
+        ],
+        [
+          "FK",
+          "CODCPRB",
+          "FK_TGFPRO_TGFCPRB",
+          "TGFCPRB",
+          "CODCPRB"
+        ],
+        [
+          "FK",
+          "CODCTACTB",
+          "FK_TGFPRO_TCBPLA",
+          "TCBPLA",
+          "CODCTACTB"
+        ],
+        [
+          "FK",
+          "CODCTACTBEFD",
+          "FK_TGFPRO_TCBPLA_EFD",
+          "TCBPLA",
+          "CODCTACTB"
+        ],
+        [
+          "FK",
+          "CODFAB",
+          "FK_TGFPRO_TGFPAR",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODFORMPREC",
+          "FK_TGFPRO_TGFFOR",
+          "TGFFOR",
+          "CODFORMPREC"
+        ],
+        [
+          "FK",
+          "CODGPROD",
+          "FK_TGFPRO_CODGPROD_TGAGRU",
+          "TGAGRU",
+          "CODGPROD"
+        ],
+        [
+          "FK",
+          "CODGRUPOPROD",
+          "FK_TGFPRO_TGFGRU",
+          "TGFGRU",
+          "CODGRUPOPROD"
+        ],
+        [
+          "FK",
+          "CODIPI",
+          "FK_TGFPRO_TGFIPI",
+          "TGFIPI",
+          "CODIPI"
+        ],
+        [
+          "FK",
+          "CODLOCALPADRAO",
+          "FK_TGFPRO_CODLOCPADRAO_TGFLOC",
+          "TGFLOC",
+          "CODLOCAL"
+        ],
+        [
+          "FK",
+          "CODLST",
+          "FK_TGFPRO_CODLST_TGFLST",
+          "TGFLST",
+          "CODLST"
+        ],
+        [
+          "FK",
+          "CODMARCA",
+          "FK_TGFPRO_CODMARCA",
+          "TGFMAR",
+          "CODIGO"
+        ],
+        [
+          "FK",
+          "CODMOEDA",
+          "FK_TGFPRO_TSIMOE",
+          "TSIMOE",
+          "CODMOEDA"
+        ],
+        [
+          "FK",
+          "CODNAT",
+          "FK_TGFPRO_CODNAT",
+          "TGFNAT",
+          "CODNAT"
+        ],
+        [
+          "FK",
+          "CODPAIS",
+          "FK_TGFPRO_TSIPAI",
+          "TSIPAI",
+          "CODPAIS"
+        ],
+        [
+          "FK",
+          "CODPARCCONSIG",
+          "FK_TGFPRO_CODPARCCONSIG_TGFPAR",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODPARCFORN",
+          "FK_TGFPRO_CODPARC_TGFPAR",
+          "TGFPAR",
+          "CODPARC"
+        ],
+        [
+          "FK",
+          "CODPAT",
+          "FK_TGFPRO_TGFPAT",
+          "TGFPAT",
+          "CODPAT"
+        ],
+        [
+          "FK",
+          "CODPRODAGRUPAPT",
+          "FK_TGFPRO_CODPRODAGRUPAPT",
+          "TGFPRO",
+          "CODPROD"
+        ],
+        [
+          "FK",
+          "CODPRODAGRUPAPTENC",
+          "FK_TGFPRO_CODPRODAGRUPAPTENC",
+          "TGFPRO",
+          "CODPROD"
+        ],
+        [
+          "FK",
+          "CODPRODINNATURA",
+          "FK_PRO_CODPRODINNATURA_PRO",
+          "TGFPRO",
+          "CODPROD"
+        ],
+        [
+          "FK",
+          "CODPROJ",
+          "FK_TGFPRO_CODPROJ",
+          "TCSPRJ",
+          "CODPROJ"
+        ],
+        [
+          "FK",
+          "CODRFA",
+          "FK_TGFPRO_CODRFA_TGWRFA",
+          "TGWRFA",
+          "CODRFA"
+        ],
+        [
+          "FK",
+          "CODSERVTELECOM",
+          "FK_TGFPRO_TGFCIT",
+          "TGFCIT",
+          "CODSERVTELECOM"
+        ],
+        [
+          "FK",
+          "CODTAB",
+          "FK_TGFPRO_CODTAB_TGFNTA",
+          "TGFNTA",
+          "CODTAB"
+        ],
+        [
+          "FK",
+          "CODTER",
+          "FK_TGFPRO_TGFTER",
+          "TGFTER",
+          "CODTER"
+        ],
+        [
+          "FK",
+          "CODVOL",
+          "FK_TGFPRO_TGFVOL",
+          "TGFVOL",
+          "CODVOL"
+        ],
+        [
+          "FK",
+          "CODVOLCOMPRA",
+          "FK_TGFPRO_CODVOLCOMPRA_TGFVOL",
+          "TGFVOL",
+          "CODVOL"
+        ],
+        [
+          "FK",
+          "CODVOLFETHAB",
+          "FK_TGFPRO_CODVOLFETHAB",
+          "TGFVOL",
+          "CODVOL"
+        ],
+        [
+          "FK",
+          "CODVOLRES",
+          "FK_TGFPRO_CODVOLRES_TGFVOL",
+          "TGFVOL",
+          "CODVOL"
+        ],
+        [
+          "FK",
+          "GRUPOQUIMICO",
+          "FK_TGFPRO_GRUPOQUIMICO_TGADIG",
+          "TGADIG",
+          "TIPO"
+        ],
+        [
+          "FK",
+          "GRUPOQUIMICO",
+          "FK_TGFPRO_GRUPOQUIMICO_TGADIG",
+          "TGADIG",
+          "NUDIG"
+        ],
+        [
+          "FK",
+          "GRUPOTRANSG",
+          "FK_TGFPRO_TGAGT",
+          "TGAGT",
+          "GRUPOTRANSG"
+        ],
+        [
+          "FK",
+          "IDGRADE",
+          "FK_TGFPRO_IDGRADE_TGFGRD",
+          "TGFGRD",
+          "IDGRADE"
+        ],
+        [
+          "FK",
+          "MODETIQSEPWMS",
+          "FK_TGFPRO_MODETIQSEPWMS_TSIRFE",
+          "TSIRFE",
+          "NURFE"
+        ],
+        [
+          "FK",
+          "PRINCATIVO",
+          "FK_TGFPRO_PRINCATIVO_TGADIG",
+          "TGADIG",
+          "NUDIG"
+        ],
+        [
+          "FK",
+          "PRINCATIVO",
+          "FK_TGFPRO_PRINCATIVO_TGADIG",
+          "TGADIG",
+          "TIPO"
+        ],
+        [
+          "FK",
+          "TIPOCLASSEAGT",
+          "FK_TGFPRO_CLASSEAGT_TGADIG",
+          "TGADIG",
+          "NUDIG"
+        ],
+        [
+          "FK",
+          "TIPOCLASSEAGT",
+          "FK_TGFPRO_CLASSEAGT_TGADIG",
+          "TGADIG",
+          "TIPO"
+        ],
+        [
+          "FK",
+          "TIPOCLASSETOX",
+          "FK_TGFPRO_CLASSETOX_TGADIG",
+          "TGADIG",
+          "NUDIG"
+        ],
+        [
+          "FK",
+          "TIPOCLASSETOX",
+          "FK_TGFPRO_CLASSETOX_TGADIG",
+          "TGADIG",
+          "TIPO"
+        ],
+        [
+          "FK",
+          "TIPOGRUPOQUIMICO",
+          "FK_TGFPRO_GRUPOQUIMICO_TGADIG",
+          "TGADIG",
+          "NUDIG"
+        ],
+        [
+          "FK",
+          "TIPOGRUPOQUIMICO",
+          "FK_TGFPRO_GRUPOQUIMICO_TGADIG",
+          "TGADIG",
+          "TIPO"
+        ],
+        [
+          "FK",
+          "TIPOPRINCATIVO",
+          "FK_TGFPRO_PRINCATIVO_TGADIG",
+          "TGADIG",
+          "NUDIG"
+        ],
+        [
+          "FK",
+          "TIPOPRINCATIVO",
+          "FK_TGFPRO_PRINCATIVO_TGADIG",
+          "TGADIG",
+          "TIPO"
+        ],
+        [
+          "PK",
+          "CODPROD",
+          "PK_TGFPRO",
+          null,
+          null
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "1,802s",
+      "timeResultSet": "1ms"
+    }
+  },
+  "dominios": {
+    "USOPROD": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "1801E23D0AB85C8A750075228A3C8B02",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "R",
+            386620
+          ],
+          [
+            "C",
+            6832
+          ],
+          [
+            "S",
+            227
+          ],
+          [
+            "M",
+            15
+          ],
+          [
+            "V",
+            2
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "461ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "ATIVO": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "0001BDA42C93A0154BC491C3A189D9FF",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "S",
+            393624
+          ],
+          [
+            "N",
+            72
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "579ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "TEMICMS": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "1636C0DE98BC2F399B47F90395FD1231",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "S",
+            393216
+          ],
+          [
+            "N",
+            480
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "512ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "TEMIPI": {
+      "error": "Erro na API Sankhya",
+      "detail": "ORA-00904: \"TEMIPI\": identificador inválido"
+    },
+    "CODGRUPOPROD": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "6F6F3E2292CBB4FC410B67CB85C27F31",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            0,
+            198716
+          ],
+          [
+            20299,
+            64626
+          ],
+          [
+            10109,
+            16480
+          ],
+          [
+            10101,
+            14372
+          ],
+          [
+            10102,
+            13955
+          ],
+          [
+            11301,
+            7854
+          ],
+          [
+            10401,
+            7029
+          ],
+          [
+            10301,
+            6946
+          ],
+          [
+            90101,
+            4996
+          ],
+          [
+            10304,
+            4754
+          ],
+          [
+            10704,
+            3870
+          ],
+          [
+            10121,
+            3683
+          ],
+          [
+            10501,
+            3500
+          ],
+          [
+            11311,
+            3430
+          ],
+          [
+            10601,
+            2630
+          ],
+          [
+            10701,
+            2503
+          ],
+          [
+            11501,
+            2201
+          ],
+          [
+            10108,
+            2150
+          ],
+          [
+            10801,
+            1778
+          ],
+          [
+            10703,
+            1773
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "96ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "MARCA": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "83AE560A37154E49BD9B0710D2561DB4",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "VALOR",
+            "description": "VALOR",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "QTD",
+            "description": "QTD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            "CUMMINS",
+            44655
+          ],
+          [
+            "MWM",
+            15664
+          ],
+          [
+            "ZF DO BRASIL",
+            13884
+          ],
+          [
+            "EATON",
+            10835
+          ],
+          [
+            "FPT",
+            10359
+          ],
+          [
+            "VW",
+            7251
+          ],
+          [
+            "MERCEDES BENZ",
+            6920
+          ],
+          [
+            "LNG",
+            6707
+          ],
+          [
+            "PATRAL",
+            6628
+          ],
+          [
+            "MATERIAL CONSUMO",
+            5795
+          ],
+          [
+            "DONALDSON",
+            5764
+          ],
+          [
+            "RP IMPORTS",
+            5705
+          ],
+          [
+            "JUNTAS SANTA CRUZ",
+            5434
+          ],
+          [
+            "RAINHA DAS SETE",
+            4418
+          ],
+          [
+            "FABBOF",
+            4385
+          ],
+          [
+            "VETOR",
+            4229
+          ],
+          [
+            "MERITOR",
+            4214
+          ],
+          [
+            "FLEETGUARD",
+            4198
+          ],
+          [
+            "KS",
+            4182
+          ],
+          [
+            "TRW VARGA",
+            4026
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "80ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "sample": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "6AFD89D21674E7C339F4AF01C084E109",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "CODPROD",
+          "description": "CODPROD",
+          "order": 1,
+          "userType": "I"
+        },
+        {
+          "name": "DESCRPROD",
+          "description": "DESCRPROD",
+          "order": 2,
+          "userType": "S"
+        },
+        {
+          "name": "REFERENCIA",
+          "description": "REFERENCIA",
+          "order": 3,
+          "userType": "S"
+        },
+        {
+          "name": "CODGRUPOPROD",
+          "description": "CODGRUPOPROD",
+          "order": 4,
+          "userType": "I"
+        },
+        {
+          "name": "MARCA",
+          "description": "MARCA",
+          "order": 5,
+          "userType": "S"
+        },
+        {
+          "name": "CODVOL",
+          "description": "CODVOL",
+          "order": 6,
+          "userType": "S"
+        },
+        {
+          "name": "ATIVO",
+          "description": "ATIVO",
+          "order": 7,
+          "userType": "S"
+        },
+        {
+          "name": "USOPROD",
+          "description": "USOPROD",
+          "order": 8,
+          "userType": "S"
+        }
+      ],
+      "rows": [
+        [
+          100004,
+          "SUPORTE DE FIXACAO CENTRAL 14200/16170/13190/17210",
+          "0100004",
+          20299,
+          "DUEGUE DO BRASIL",
+          "UN",
+          "S",
+          "R"
+        ],
+        [
+          200000,
+          "TAMPA CAIXA BATERIA PLASTICO INJETADA",
+          "0200000",
+          10705,
+          "LNG",
+          "UN",
+          "S",
+          "R"
+        ],
+        [
+          100100,
+          "INDUSTRIALIZACAO EM TERCEIROS",
+          "0100100",
+          0,
+          null,
+          "UN",
+          "S",
+          "S"
+        ],
+        [
+          0,
+          "<SEM DESCRICAO>",
+          "0000000",
+          0,
+          null,
+          "0",
+          "S",
+          "R"
+        ],
+        [
+          100001,
+          "PINO ROLETE SOB MEDIDA",
+          "0100001",
+          11200,
+          "CARRETA",
+          "UN",
+          "S",
+          "R"
+        ],
+        [
+          100003,
+          "ARRUELA",
+          "0100003",
+          0,
+          "VW",
+          "UN",
+          "S",
+          "R"
+        ],
+        [
+          100005,
+          "JOGO MANOPLA",
+          "0100005",
+          20299,
+          "FORD",
+          "UN",
+          "S",
+          "R"
+        ],
+        [
+          100006,
+          "JOGO MANOPLA",
+          "0100006",
+          20299,
+          "FORD",
+          "UN",
+          "S",
+          "R"
+        ],
+        [
+          100007,
+          "CAIXA MANOPLA",
+          "0100007",
+          20299,
+          "FORD",
+          "UN",
+          "S",
+          "R"
+        ],
+        [
+          100008,
+          "PINO",
+          "0100008",
+          20299,
+          "FORD",
+          "UN",
+          "S",
+          "R"
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "4ms",
+      "timeResultSet": "1ms"
+    }
+  },
+  "contagem": {
+    "serviceName": "DbExplorerSP.executeQuery",
+    "status": "1",
+    "pendingPrinting": "false",
+    "transactionId": "70AE421AEDCD480A44FC4289AFAFC12B",
+    "responseBody": {
+      "fieldsMetadata": [
+        {
+          "name": "TOTAL",
+          "description": "TOTAL",
+          "order": 1,
+          "userType": "I"
+        }
+      ],
+      "rows": [
+        [
+          393696
+        ]
+      ],
+      "burstLimit": false,
+      "timeQuery": "21ms",
+      "timeResultSet": "1ms"
+    }
+  }
+}

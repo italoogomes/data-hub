@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:developer.sankhya.com.br)",
+      "Bash(conda run:*)",
+      "Bash(python:*)"
+    ]
+  }
+}
