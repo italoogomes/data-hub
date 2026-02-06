@@ -30,87 +30,69 @@ from src.llm.llm_client import LLMClient, LLM_MODEL, LLM_PROVIDER
 from src.llm.query_executor import SafeQueryExecutor, QuerySecurityError
 
 # ============================================================
-# SYSTEM PROMPT DO AGENTE
+# PROMPTS SIMPLIFICADOS PARA MODELO 8B
 # ============================================================
 
-AGENT_SYSTEM_PROMPT = """Voce e o assistente de dados da MMarra Distribuidora Automotiva, uma distribuidora de autopecas para veiculos pesados (caminhoes, onibus) com sede em Ribeirao Preto/SP e 9 filiais pelo Brasil.
+CLASSIFIER_PROMPT = """Voce eh um classificador. Responda APENAS com uma unica palavra.
 
-## Seu papel
-- Responder perguntas sobre o negocio, processos, dados e sistema Sankhya ERP
-- Explicar fluxos de compra, venda, estoque, financeiro, WMS
-- Ajudar a entender tabelas, campos e relacionamentos do banco de dados
-- Consultar o banco de dados em tempo real quando necessario
-- Explicar regras de negocio especificas da MMarra
+Tipos de perguntas:
+- BANCO: usuario quer dados reais, numeros, listas, relatorios, pendencias, totais, quantidades, valores, ranking
+  Exemplos: "quantas notas", "quais pedidos pendentes", "maiores clientes", "vendas do mes"
 
-## Contexto tecnico
-- ERP: Sankhya (banco Oracle)
-- Tabelas principais: TGFCAB (notas), TGFITE (itens), TGFPAR (parceiros), TGFPRO (produtos), TGFTOP (operacoes), TSIEMP (empresas), TGFVEN (vendedores), TGFEST (estoque), TGFFIN (financeiro)
-- Tabelas customizadas: Prefixo AD_* (MMarra personalizou bastante)
+- DOC: usuario quer explicacao de processos, como funciona algo, o que significa algo
+  Exemplos: "como funciona", "o que significa", "explique o fluxo", "o que eh"
 
-## Numeros chave
-- 10 empresas (Ribeirao Preto e a maior: R$ 343M)
-- 394k produtos (Cummins 44k, MWM 15k, ZF 14k SKUs)
-- 57k parceiros
-- 343k notas
-- 1.1M itens
-- 20 compradores, 86 vendedores
+Pergunta: {pergunta}
 
-## Regras importantes da MMarra
-- NAO usa workflow de aprovacao padrao (TGFLIB vazia)
-- Solicitacao de compra usa TGFCAB com TIPMOV='J' (nao TGFSOL)
-- Cotacao usa TGFCOT, apenas preco importa (PESOPRECO=1)
-- Custos em tabela customizada AD_TGFCUSMMA (709k registros, 5 anos)
-- Codigos auxiliares em AD_TGFPROAUXMMA (1.1M registros, 18 por produto)
+IMPORTANTE: Se tiver qualquer duvida, responda BANCO (eh melhor tentar executar).
 
-## Capacidade de consulta ao banco
+Resposta (apenas BANCO ou DOC):"""
 
-Voce pode consultar o banco de dados Sankhya (Oracle) em tempo real.
+SQL_GENERATOR_PROMPT = """Gere APENAS a query SQL Oracle para responder a pergunta. Sem explicacao, sem markdown, apenas o SELECT.
 
-Quando o usuario pedir dados especificos (relatorios, listagens, totais, pendencias, rankings),
-voce DEVE gerar uma query SQL para consultar o banco.
+TABELAS DISPONIVEIS:
+- TGFCAB: Cabecalho de notas (NUNOTA, TIPMOV, DTNEG, VLRNOTA, STATUSNOTA, CODPARC, CODEMP)
+- TGFITE: Itens das notas (NUNOTA, SEQUENCIA, CODPROD, QTDNEG, VLRUNIT, VLRTOT)
+- TGFPAR: Parceiros/Clientes/Fornecedores (CODPARC, NOMEPARC, RAZAOSOCIAL, CGCCPF)
+- TGFPRO: Produtos (CODPROD, DESCRPROD, MARCA, CODVOL, ESTOQUE)
+- TGFTOP: Tipos de Operacao (CODTIPOPER, DESCRTIPOPER, ATUALEST, ATUALFIN)
+- TGFVEN: Vendedores/Compradores (CODVEND, APELIDO, TIPVEND)
+- TGFEST: Estoque (CODEMP, CODLOCAL, CODPROD, ESTOQUE, RESERVADO)
+- TGFFIN: Financeiro (NUFIN, NUNOTA, RECDESP, VLRDESDOB, DTVENC, DHBAIXA)
 
-Regras para gerar SQL:
-- SOMENTE SELECT (nunca INSERT, UPDATE, DELETE)
-- Sempre usar sintaxe Oracle (ROWNUM, SYSDATE, NVL, TO_CHAR, TO_DATE)
-- Sempre limitar resultados (ROWNUM <= 100 para listagens)
-- Usar as tabelas documentadas na base de conhecimento
-- Incluir JOINs necessarios para trazer descricoes (ex: NOMEPARC, DESCRPROD)
-- Usar TO_CHAR para formatar datas: TO_CHAR(campo, 'DD/MM/YYYY')
-- Usar TO_CHAR para formatar valores: TO_CHAR(campo, 'FM999G999G999D00')
-- Para mes atual: TRUNC(SYSDATE, 'MM') ate SYSDATE
-- Para ano atual: TRUNC(SYSDATE, 'YYYY') ate SYSDATE
-
-## Tipos de Movimentacao (TIPMOV em TGFCAB)
+TIPOS DE MOVIMENTACAO (TIPMOV):
 - 'V' = Venda
 - 'C' = Compra/Recebimento
-- 'D' = Devolucao
 - 'O' = Pedido de Compra
 - 'P' = Pedido de Venda
 - 'J' = Solicitacao de Compra
+- 'D' = Devolucao
 - 'T' = Transferencia
 
-## Como responder
+STATUS (STATUSNOTA):
+- 'A' = Aberto
+- 'L' = Liberado
+- 'P' = Pendente
 
-SEMPRE responda em formato JSON valido:
+REGRAS OBRIGATORIAS:
+1. SEMPRE usar ROWNUM <= 100 para limitar resultados
+2. Para datas usar TRUNC(SYSDATE, 'MM') para mes atual
+3. JOINs: sempre usar alias curtos (C, P, I, V)
+4. Para nomes: JOIN com TGFPAR P ON C.CODPARC = P.CODPARC para trazer NOMEPARC
+5. Ordenar por valor DESC quando tiver agregacao
 
-Para perguntas que podem ser respondidas com a documentacao:
-{"tipo": "documentacao", "resposta": "texto da resposta completa", "sql": null}
+Pergunta: {pergunta}
 
-Para perguntas que precisam de dados do banco:
-{"tipo": "consulta_banco", "resposta": null, "sql": "SELECT ..."}
+SQL:"""
 
-Exemplos:
-- "Como funciona o fluxo de compras?" -> {"tipo": "documentacao", "resposta": "O fluxo de compras...", "sql": null}
-- "Quantas notas temos este mes?" -> {"tipo": "consulta_banco", "resposta": null, "sql": "SELECT COUNT(*) AS TOTAL FROM TGFCAB WHERE DTNEG >= TRUNC(SYSDATE, 'MM')"}
-- "Quais os 10 maiores clientes?" -> {"tipo": "consulta_banco", "resposta": null, "sql": "SELECT * FROM (SELECT P.CODPARC, P.NOMEPARC, SUM(C.VLRNOTA) AS TOTAL FROM TGFCAB C JOIN TGFPAR P ON C.CODPARC = P.CODPARC WHERE C.TIPMOV = 'V' GROUP BY P.CODPARC, P.NOMEPARC ORDER BY TOTAL DESC) WHERE ROWNUM <= 10"}
+DOC_ANSWER_PROMPT = """Responda a pergunta usando APENAS a documentacao fornecida abaixo.
 
-## Instrucoes finais
-- Responda em portugues brasileiro
-- Use os documentos fornecidos como fonte principal
-- Se nao souber e nao conseguir consultar, diga que precisa investigar
-- Seja direto e pratico
-- SEMPRE retorne JSON valido
-"""
+Documentacao:
+{context}
+
+Pergunta: {pergunta}
+
+Resposta (direta, clara, em portugues):"""
 
 FORMATTER_PROMPT = """Voce e um assistente de negocios da MMarra Distribuidora.
 
@@ -309,58 +291,95 @@ class DataHubAgent:
 
     async def _classify(self, question: str, context: str, retry_with_smaller: bool = True) -> dict:
         """
-        Classifica a pergunta: documentacao ou consulta_banco.
+        Classifica a pergunta em 3 etapas simples:
+        1. BANCO ou DOC? (uma palavra)
+        2. Se BANCO: gera SQL
+        3. Se DOC: responde da documentacao
 
         Args:
             question: Pergunta do usuario
             context: Contexto da base de conhecimento
-            retry_with_smaller: Se True, tenta com contexto menor em caso de erro 413
+            retry_with_smaller: Se True, tenta com contexto menor em caso de erro
 
         Returns:
             dict com tipo, resposta e sql
         """
-        messages = [
-            {"role": "system", "content": AGENT_SYSTEM_PROMPT},
-            {"role": "system", "content": f"## Documentacao disponivel\n\n{context}"},
-        ]
-
-        # Adicionar historico (ultimas 4 trocas)
-        for msg in self.history[-8:]:
-            messages.append(msg)
-
-        messages.append({"role": "user", "content": question})
-
         try:
-            response = self.llm.chat(messages, temperature=0.1)
+            # ========================================
+            # ETAPA 1: CLASSIFICAR (BANCO ou DOC)
+            # ========================================
+            print(f"[1/3] Classificando pergunta...")
+            classifier_prompt = CLASSIFIER_PROMPT.format(pergunta=question)
 
-            # Tentar extrair JSON da resposta
-            json_match = re.search(r'\{[^{}]*\}', response, re.DOTALL)
-            if json_match:
-                try:
-                    result = json.loads(json_match.group())
-                    # Salvar no historico
-                    self.history.append({"role": "user", "content": question})
-                    if result.get("tipo") == "documentacao":
-                        self.history.append({"role": "assistant", "content": result.get("resposta", "")})
-                    return result
-                except json.JSONDecodeError:
-                    pass
+            classification = self.llm.chat(
+                [{"role": "user", "content": classifier_prompt}],
+                temperature=0,
+                timeout=120
+            ).strip().upper()
 
-            # Se nao conseguiu extrair JSON, tenta interpretar como documentacao
+            print(f"[i] Classificacao: {classification}")
+
+            # Se nao for claramente DOC, assume BANCO
+            if "DOC" not in classification:
+                tipo = "consulta_banco"
+            else:
+                tipo = "documentacao"
+
+            # ========================================
+            # ETAPA 2: SE BANCO, GERAR SQL
+            # ========================================
+            if tipo == "consulta_banco":
+                print(f"[2/3] Gerando SQL...")
+                sql_prompt = SQL_GENERATOR_PROMPT.format(pergunta=question)
+
+                sql = self.llm.chat(
+                    [{"role": "user", "content": sql_prompt}],
+                    temperature=0,
+                    timeout=120
+                ).strip()
+
+                # Limpar SQL (remover markdown, espacos extras)
+                sql = sql.replace("```sql", "").replace("```", "").strip()
+
+                print(f"[i] SQL gerado: {sql[:100]}...")
+
+                # Salvar no historico
+                self.history.append({"role": "user", "content": question})
+
+                return {
+                    "tipo": "consulta_banco",
+                    "resposta": None,
+                    "sql": sql,
+                }
+
+            # ========================================
+            # ETAPA 3: SE DOC, RESPONDER
+            # ========================================
+            print(f"[2/3] Respondendo da documentacao...")
+            doc_prompt = DOC_ANSWER_PROMPT.format(
+                context=context[:10000],  # Limitar contexto
+                pergunta=question
+            )
+
+            resposta = self.llm.chat(
+                [{"role": "user", "content": doc_prompt}],
+                temperature=0.3,
+                timeout=120
+            ).strip()
+
+            # Salvar no historico
+            self.history.append({"role": "user", "content": question})
+            self.history.append({"role": "assistant", "content": resposta})
+
             return {
                 "tipo": "documentacao",
-                "resposta": response,
+                "resposta": resposta,
                 "sql": None,
             }
 
         except Exception as e:
             error_str = str(e)
-            # Se erro 413 (payload muito grande), tentar com contexto menor
-            if "413" in error_str and retry_with_smaller:
-                print("[!] Payload muito grande, tentando com contexto reduzido...")
-                # Truncar contexto para ~15k caracteres
-                truncated_context = context[:15000] + "\n\n[... contexto truncado ...]"
-                return await self._classify(question, truncated_context, retry_with_smaller=False)
+            print(f"[ERRO] Classificacao falhou: {error_str}")
             return {"error": error_str}
 
     async def _format_results(self, question: str, sql: str, data: list, columns: list) -> str:
@@ -424,12 +443,14 @@ class DataHubAgent:
         ]
 
         try:
+            print(f"[3/3] Formatando resultado...")
             # Temperature=0 para respostas mais deterministicas (menos criatividade)
-            response = self.llm.chat(messages, temperature=0)
+            response = self.llm.chat(messages, temperature=0, timeout=120)
             # Salvar no historico
             self.history.append({"role": "assistant", "content": response})
             return response
         except Exception as e:
+            print(f"[!] Erro ao formatar: {e}")
             # Fallback: retornar tabela markdown simples (dados reais, sem LLM)
             fallback_response = f"Encontrei {len(data)} registro(s).\n\n{resultados_texto}"
             return fallback_response

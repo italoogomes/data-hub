@@ -24,7 +24,8 @@
       "Bash(where:*)",
       "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" --version)",
       "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" pull llama3.1:8b)",
-      "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" list)"
+      "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" list)",
+      "Bash(ipconfig:*)"
     ]
   }
 }

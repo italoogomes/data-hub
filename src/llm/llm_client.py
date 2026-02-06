@@ -38,7 +38,7 @@ class LLMClient:
         self.base_url = OLLAMA_URL
         self.timeout = 120  # segundos (modelos locais podem demorar)
 
-    def chat(self, messages: list, temperature: float = 0.3) -> str:
+    def chat(self, messages: list, temperature: float = 0.3, timeout: int = None) -> str:
         """
         Envia mensagens para o LLM e retorna a resposta.
 
@@ -46,11 +46,13 @@ class LLMClient:
             messages: Lista de mensagens no formato OpenAI
                       [{"role": "user", "content": "texto"}, ...]
             temperature: Criatividade (0 = deterministico, 1 = criativo)
+            timeout: Timeout em segundos (default: 120s)
 
         Returns:
             Texto da resposta do LLM
         """
         url = f"{self.base_url}/api/chat"
+        timeout_to_use = timeout if timeout is not None else self.timeout
 
         payload = {
             "model": self.model,
@@ -62,14 +64,14 @@ class LLMClient:
         }
 
         try:
-            with httpx.Client(timeout=self.timeout) as client:
+            with httpx.Client(timeout=timeout_to_use) as client:
                 response = client.post(url, json=payload)
                 response.raise_for_status()
                 data = response.json()
                 return data.get("message", {}).get("content", "")
 
         except httpx.TimeoutException:
-            raise Exception(f"Timeout ao chamar Ollama ({self.timeout}s). O modelo pode estar carregando.")
+            raise Exception(f"Timeout ao chamar Ollama ({timeout_to_use}s). O modelo pode estar carregando.")
 
         except httpx.HTTPStatusError as e:
             raise Exception(f"Erro HTTP do Ollama: {e.response.status_code} - {e.response.text}")

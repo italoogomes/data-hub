@@ -1,6 +1,6 @@
 # PROGRESSO.md
 
-> Última atualização: 2026-02-06
+> Última atualização: 2026-02-06 (sessão 11)
 
 ---
 
@@ -94,6 +94,58 @@ _Nenhum ainda_
 ---
 
 ## SESSOES ANTERIORES
+
+### 2026-02-06 (sessao 11) - Correcao de Classificacao para Modelo 8B
+
+**Problema identificado:**
+- Modelo llama3.1:8b (8B parametros) nao conseguia gerar JSON complexo
+- Perguntas de banco eram classificadas como "documentacao"
+- Exemplo: "Quais pedidos de compra pendentes?" mostrava badge DOC e sugeria SQL em vez de executar
+
+**Solucao implementada - Prompts simplificados em 3 etapas:**
+
+1. **ETAPA 1 - Classificacao (BANCO ou DOC):**
+   - Prompt simplificado: responder apenas "BANCO" ou "DOC"
+   - Regra de fallback: se nao for claramente DOC, assume BANCO
+   - Temperature=0 (deterministico)
+   - Timeout=120s (modelo 8B em CPU pode demorar)
+
+2. **ETAPA 2 - Geracao de SQL (se BANCO):**
+   - Prompt direto: "Gere APENAS a query SQL"
+   - Sem contexto pesado, apenas tabelas e regras basicas
+   - Lista de tabelas, campos, TIPMOV, STATUS
+   - Sem markdown, sem explicacao, apenas SELECT
+
+3. **ETAPA 3 - Resposta ou Formatacao:**
+   - Se DOC: responde direto da documentacao (contexto 10k chars)
+   - Se BANCO: formata resultado em relatorio de negocios
+
+**Arquivos modificados:**
+- `src/llm/agent.py`:
+  - Substituido AGENT_SYSTEM_PROMPT complexo por 3 prompts simples:
+    - CLASSIFIER_PROMPT (palavra unica)
+    - SQL_GENERATOR_PROMPT (direto, sem fluff)
+    - DOC_ANSWER_PROMPT (resposta da documentacao)
+  - Reescrito metodo `_classify()` em 3 chamadas sequenciais simples
+  - Adicionado logs de debug ([1/3], [2/3], [3/3])
+  - Timeout de 120s em todas as chamadas
+
+- `src/llm/llm_client.py`:
+  - Adicionado parametro `timeout` no metodo `chat()`
+  - Permite sobrescrever timeout padrao de 120s
+
+**Testes sugeridos:**
+- "Quais pedidos de compra estao pendentes?" -> deve executar SQL (badge SQL)
+- "Como funciona o fluxo de compras?" -> deve responder da doc (badge DOC)
+- "Quantas notas temos este mes?" -> deve executar SQL
+- "O que significa TIPMOV?" -> deve responder da doc
+
+**Acesso remoto configurado:**
+- IP da maquina: 192.168.0.10
+- URL: http://192.168.0.10:8000
+- Porta 8000 deve estar liberada no firewall (netsh advfirewall)
+
+---
 
 ### 2026-02-06 (sessao 10) - Migracao para Ollama (LLM local)
 
