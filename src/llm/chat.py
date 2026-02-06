@@ -27,11 +27,12 @@ sys.path.insert(0, str(PROJECT_ROOT))
 load_dotenv(PROJECT_ROOT / ".env")
 
 # ============================================================
-# CONFIGURAÇÃO
+# CONFIGURACAO
 # ============================================================
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_MODEL = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")  # 128k context window
+# Importar cliente LLM unificado
+from src.llm.llm_client import LLMClient, LLM_MODEL, LLM_PROVIDER
+
 KNOWLEDGE_DIR = PROJECT_ROOT / "knowledge"
 QUERIES_DIR = PROJECT_ROOT / "queries"
 
@@ -186,38 +187,9 @@ class KnowledgeBase:
 
 
 # ============================================================
-# LLM CLIENT
+# LLM CLIENT (usa LLMClient de llm_client.py)
 # ============================================================
-
-class GroqClient:
-    """Cliente para API do Groq."""
-
-    def __init__(self):
-        import httpx
-        self.client = httpx.Client(
-            base_url="https://api.groq.com/openai/v1",
-            headers={
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type": "application/json",
-            },
-            timeout=60.0,
-        )
-        self.model = GROQ_MODEL
-
-    def chat(self, messages, temperature=0.3):
-        """Envia mensagem para o Groq e retorna resposta."""
-        response = self.client.post(
-            "/chat/completions",
-            json={
-                "model": self.model,
-                "messages": messages,
-                "temperature": temperature,
-                "max_tokens": 4096,
-            },
-        )
-        response.raise_for_status()
-        data = response.json()
-        return data["choices"][0]["message"]["content"]
+# Classe LLMClient importada de src.llm.llm_client
 
 
 # ============================================================
@@ -291,21 +263,25 @@ class ChatEngine:
         for cat, count in sorted(summary.items()):
             console.print(f"  - {cat}: {count} documentos")
 
-        # Verificar Groq
-        if not GROQ_API_KEY:
-            console.print("[error][X] GROQ_API_KEY nao configurada no .env[/]")
-            sys.exit(1)
-
+        # Verificar LLM (Ollama)
         try:
-            self.llm = GroqClient()
-            # Teste rapido
-            test = self.llm.chat([
-                {"role": "system", "content": "Responda apenas: OK"},
-                {"role": "user", "content": "teste"},
-            ])
-            console.print(f"[system][OK] Groq conectado ({GROQ_MODEL})[/]")
+            self.llm = LLMClient()
+            health = self.llm.check_health()
+
+            if health["status"] != "ok":
+                console.print(f"[error][X] LLM nao disponivel: {health.get('error', 'Erro desconhecido')}[/]")
+                console.print("[error]   Verifique se o Ollama esta rodando[/]")
+                sys.exit(1)
+
+            if not health["model_available"]:
+                console.print(f"[error][X] Modelo {self.llm.model} nao encontrado[/]")
+                console.print(f"[error]   Modelos disponiveis: {health['models']}[/]")
+                sys.exit(1)
+
+            console.print(f"[system][OK] LLM conectado ({LLM_PROVIDER}/{LLM_MODEL})[/]")
+
         except Exception as e:
-            console.print(f"[error][X] Erro ao conectar Groq: {e}[/]")
+            console.print(f"[error][X] Erro ao conectar LLM: {e}[/]")
             sys.exit(1)
 
         # Calcular tamanho da base
@@ -313,6 +289,7 @@ class ChatEngine:
         total_tokens_aprox = total_chars // 4
         console.print(f"[system][i] Base total: ~{total_tokens_aprox:,} tokens[/]")
 
+        # Ollama local - sem limite de tokens! Pode usar modo full
         if total_tokens_aprox < 60000:
             self.mode = "full"
             console.print("[system][i] Modo: contexto completo (base cabe no context window)[/]")
@@ -451,11 +428,6 @@ class ChatEngine:
 # ============================================================
 
 def main():
-    if not GROQ_API_KEY:
-        console.print("[error][X] Configure GROQ_API_KEY no arquivo .env[/]")
-        console.print("[error]   Obtenha gratuitamente em: https://console.groq.com/keys[/]")
-        sys.exit(1)
-
     engine = ChatEngine()
 
     # Se passou pergunta como argumento

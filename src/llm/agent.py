@@ -25,7 +25,8 @@ sys.path.insert(0, str(PROJECT_ROOT))
 load_dotenv(PROJECT_ROOT / ".env")
 
 # Import components
-from src.llm.chat import KnowledgeBase, GroqClient, GROQ_MODEL
+from src.llm.chat import KnowledgeBase
+from src.llm.llm_client import LLMClient, LLM_MODEL, LLM_PROVIDER
 from src.llm.query_executor import SafeQueryExecutor, QuerySecurityError
 
 # ============================================================
@@ -187,11 +188,11 @@ class DataHubAgent:
             return
 
         self.kb.load()
-        self.llm = GroqClient()
+        self.llm = LLMClient()
         self.initialized = True
         print(f"[OK] Agente inicializado")
         print(f"[i] {len(self.kb.documents)} documentos carregados")
-        print(f"[i] Modelo: {GROQ_MODEL}")
+        print(f"[i] Modelo: {LLM_PROVIDER}/{LLM_MODEL}")
 
     async def ask(self, question: str) -> dict:
         """

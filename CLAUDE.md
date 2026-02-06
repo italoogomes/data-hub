@@ -285,8 +285,9 @@ python -m src.api.app
 
 | Arquivo | Descricao |
 |---------|-----------|
+| `src/llm/llm_client.py` | Cliente LLM unificado (Ollama) |
 | `src/llm/agent.py` | Agente LLM (decide DOC vs SQL) |
-| `src/llm/chat.py` | Motor de chat com RAG (TF-IDF + Groq) |
+| `src/llm/chat.py` | Motor de chat com RAG (TF-IDF) |
 | `src/llm/query_executor.py` | Executor seguro de SQL (SELECT only) |
 | `src/api/app.py` | API FastAPI v2.0 (usa agente) |
 | `src/api/static/index.html` | Frontend com queries colapsaveis |
@@ -294,11 +295,30 @@ python -m src.api.app
 ### Configuracao (.env)
 
 ```
-GROQ_API_KEY=sua_chave_aqui
-LLM_MODEL=llama-3.1-8b-instant  # opcional
+# LLM (Ollama - local)
+LLM_PROVIDER=ollama
+LLM_MODEL=llama3.1:8b
+OLLAMA_URL=http://localhost:11434
+
+# Sankhya
 SANKHYA_CLIENT_ID=...
 SANKHYA_CLIENT_SECRET=...
 SANKHYA_X_TOKEN=...
+```
+
+### Ollama (LLM local)
+
+O projeto usa Ollama para rodar LLM localmente:
+- Sem custo (roda na maquina)
+- Sem rate limit (diferente de APIs externas)
+- Dados nao saem da rede interna (seguranca)
+- Modelo: llama3.1:8b (4.9GB)
+
+**Comandos uteis:**
+```bash
+ollama list              # ver modelos instalados
+ollama pull llama3.1:8b  # baixar modelo
+ollama serve             # iniciar servidor (ja roda como servico)
 ```
 
 ### Funcionamento do Agente
@@ -342,4 +362,4 @@ A LLM precisa saber:
 
 ---
 
-*Versao 3.1 - Fevereiro 2026*
+*Versao 3.2 - Fevereiro 2026 (Ollama local)*

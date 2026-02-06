@@ -28,7 +28,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 # Import agent
 from src.llm.agent import DataHubAgent
-from src.llm.chat import GROQ_MODEL
+from src.llm.llm_client import LLMClient, LLM_MODEL, LLM_PROVIDER
 
 # ============================================================
 # APP
@@ -49,10 +49,20 @@ agent = DataHubAgent()
 
 @app.on_event("startup")
 async def startup():
+    # Verificar se LLM esta disponivel
+    llm_client = LLMClient()
+    health = llm_client.check_health()
+
+    if health["status"] != "ok":
+        print(f"[ERRO] LLM nao disponivel: {health.get('error', 'Erro desconhecido')}")
+        print(f"[ERRO] Verifique se o Ollama esta rodando")
+    else:
+        print(f"[OK] LLM conectado ({LLM_PROVIDER}/{LLM_MODEL})")
+
     agent.initialize()
     print(f"[OK] MMarra Data Hub API pronta!")
     print(f"[i] {len(agent.kb.documents)} documentos carregados")
-    print(f"[i] Modelo: {GROQ_MODEL}")
+    print(f"[i] Modelo: {LLM_PROVIDER}/{LLM_MODEL}")
     print(f"[i] Modo: Agente com consulta ao banco")
     print(f"[i] Acesse: http://localhost:8000")
 
@@ -132,12 +142,15 @@ async def clear_history():
 @app.get("/api/status")
 async def status():
     """Status da base de conhecimento e agente."""
+    model_info = f"{LLM_PROVIDER}/{LLM_MODEL}"
+
     if not agent.initialized:
         return {
             "documents": 0,
             "categories": {},
             "tokens_approx": 0,
-            "model": GROQ_MODEL,
+            "model": model_info,
+            "provider": LLM_PROVIDER,
             "history_length": 0,
             "mode": "agent",
         }
@@ -148,7 +161,8 @@ async def status():
         "documents": len(agent.kb.documents),
         "categories": summary,
         "tokens_approx": total_chars // 4,
-        "model": GROQ_MODEL,
+        "model": model_info,
+        "provider": LLM_PROVIDER,
         "history_length": len(agent.history) // 2,
         "mode": "agent",
     }

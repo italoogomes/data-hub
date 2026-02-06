@@ -15,10 +15,9 @@ azure-identity>=1.15.0
 fastapi>=0.109.0
 uvicorn>=0.27.0
 
-# LLM
-anthropic>=0.18.0
-groq>=0.4.0
-scikit-learn>=1.4.0
+# LLM (Ollama roda local via API REST - nao precisa de SDK)
+# anthropic>=0.18.0  # opcional - nao usado atualmente
+scikit-learn>=1.4.0  # TF-IDF para RAG
 
 # MCP
 mcp>=1.0.0

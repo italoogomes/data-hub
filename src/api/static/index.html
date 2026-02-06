@@ -827,7 +827,7 @@
                 document.getElementById('model-info').textContent = data.model;
                 document.getElementById('stat-docs').textContent = data.documents;
                 document.getElementById('stat-tokens').textContent = (data.tokens_approx / 1000).toFixed(1) + 'k';
-                document.getElementById('stat-model').textContent = data.model.split('-').slice(0, 2).join(' ');
+                document.getElementById('stat-model').textContent = data.model.split('/')[1] || data.model;
 
                 const catList = document.getElementById('cat-list');
                 const emojis = { tabela: '📋', processo: '🔄', regra: '⚖️', query: '🔍', api: '🔌', glossario: '📖', erro: '❌' };

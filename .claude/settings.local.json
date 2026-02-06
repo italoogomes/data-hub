@@ -20,7 +20,11 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(cmd /c \"taskkill /PID 10916 /F\")",
-      "Bash(ollama:*)"
+      "Bash(ollama:*)",
+      "Bash(where:*)",
+      "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" --version)",
+      "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" pull llama3.1:8b)",
+      "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" list)"
     ]
   }
 }

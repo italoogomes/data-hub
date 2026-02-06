@@ -6,15 +6,18 @@
 
 ## STATUS ATUAL
 
-**Agente LLM com consulta ao banco funcionando!**
+**Agente LLM com consulta ao banco funcionando - AGORA 100% LOCAL!**
 
 - **Web:** http://localhost:8000 (`python -m src.api.app`)
 - **CLI:** `python -m src.llm.chat "pergunta"` (apenas documentacao)
-- **Modelo:** llama-3.3-70b-versatile (Groq, 128k context)
+- **LLM Provider:** Ollama (local, sem custo, sem rate limit)
+- **Modelo:** llama3.1:8b (4.9GB, roda na maquina)
 - **RAG:** Top 5 docs, max 3000 chars/doc, 15k total
 - **Query Executor:** SELECT only, ROWNUM <= 500, retry auth 401/403
+- **Dados:** Nao saem da rede interna (LLM local)
 
 **Arquivos principais:**
+- `src/llm/llm_client.py` - Cliente LLM unificado (Ollama)
 - `src/llm/agent.py` - Agente que decide DOC vs SQL
 - `src/llm/query_executor.py` - Executor seguro de SQL
 - `src/llm/chat.py` - Chat CLI com RAG
@@ -91,6 +94,43 @@ _Nenhum ainda_
 ---
 
 ## SESSOES ANTERIORES
+
+### 2026-02-06 (sessao 10) - Migracao para Ollama (LLM local)
+
+**Migracao de Groq (API externa) para Ollama (LLM local):**
+- **Problema:** Groq tinha limite de 12k tokens/minuto no free tier, causando erro 429
+- **Solucao:** Ollama rodando local, sem limites, sem custo, sem dados saindo da rede
+
+**Arquivos criados/modificados:**
+- `src/llm/llm_client.py` - NOVO: Cliente LLM unificado para Ollama
+- `src/llm/chat.py` - Atualizado para usar LLMClient
+- `src/llm/agent.py` - Atualizado para usar LLMClient
+- `src/api/app.py` - Atualizado com health check do Ollama
+- `.env` - Novas variaveis: LLM_PROVIDER, LLM_MODEL, OLLAMA_URL
+- `requirements.txt` - Removido groq, mantido httpx
+
+**Configuracao do Ollama:**
+- Instalado: Ollama v0.15.5
+- Modelo: llama3.1:8b (4.9GB)
+- API: http://localhost:11434
+
+**Vantagens:**
+- Sem rate limit (Groq tinha 12k tokens/min)
+- Sem custo (Groq tinha limite no free tier)
+- Dados nao saem da rede interna (seguranca)
+- Modelo roda na maquina local
+
+**FORMATTER_PROMPT melhorado:**
+- Instrucoes claras para NAO inventar dados
+- Mapeamento de colunas tecnicas para amigaveis
+- Temperature=0 para respostas mais deterministicas
+
+**Como rodar:**
+- Ollama: `ollama serve` (ja roda como servico)
+- Web: `python -m src.api.app` (http://localhost:8000)
+- CLI: `python -m src.llm.chat "pergunta"`
+
+---
 
 ### 2026-02-06 (sessao 9) - LLM + Agente com acesso ao banco
 
