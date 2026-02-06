@@ -1,0 +1,4815 @@
+{
+  "total_tabelas_ad": 142,
+  "lista_tabelas": [
+    "AD_ACLMPSSCRIPTS",
+    "AD_AGRCOM",
+    "AD_APONTAORDEM",
+    "AD_APONTAOS",
+    "AD_APROVACAO",
+    "AD_BASECOMDUPLICATA_MMA",
+    "AD_BASECOMDUPLICATA2_MMA",
+    "AD_BIP",
+    "AD_BKP_TGFVOA_12012026",
+    "AD_BKP_TGWEST_12012026",
+    "AD_BKP_TGWEXP_12012026",
+    "AD_CABOS",
+    "AD_CADICMS",
+    "AD_CADPRODCODIGO_MMA",
+    "AD_CADPRODCOD_MMA",
+    "AD_CADPRODMMA",
+    "AD_CKLISTCAM",
+    "AD_CKLISTMOT",
+    "AD_CKLISTSAIDA",
+    "AD_CKLISTSAIDAMT",
+    "AD_CLASSDRE",
+    "AD_CLASSEOS",
+    "AD_CODBARRAS_MMA",
+    "AD_COMPLPARC",
+    "AD_COMPRASEMENT",
+    "AD_CONCARGA",
+    "AD_COTACOESDEITENS",
+    "AD_CSV_LINHA",
+    "AD_CUSTOIMP_REL_TGFCUS",
+    "AD_CUSTOIMP_2312_MMA",
+    "AD_CUSTOPRODCOMISSAO_MMA",
+    "AD_DESPADIANTAMENTO",
+    "AD_DRE",
+    "AD_DREITEM",
+    "AD_DREMENSAL",
+    "AD_DREMENSALITEM",
+    "AD_DREMENSALTST",
+    "AD_DUPLICATAS2_MMA",
+    "AD_DUPLICATAS3_MMA",
+    "AD_EMPDESTINO",
+    "AD_EMPORIGEM",
+    "AD_ENTIDADES_MMA",
+    "AD_ENTIDADES_RSYS2_MMA",
+    "AD_ENTIDADESRSYS2_MMA",
+    "AD_FORNEMPPRO",
+    "AD_GESTAO_ATUALESTOQUE_MMA",
+    "AD_IMAGENS",
+    "AD_IMGCKCAM",
+    "AD_IMGCKMOT",
+    "AD_IMGLAUDO",
+    "AD_IMPCOMISS_MMA",
+    "AD_IMPENDLOG",
+    "AD_IMPNUMAUX_MMA",
+    "AD_IMPORTACSV",
+    "AD_INTDDA",
+    "AD_ITECOMP",
+    "AD_ITEMPEDIDO",
+    "AD_ITEOC",
+    "AD_ITEOS",
+    "AD_LAUDOTECOS",
+    "AD_LIBERACOESVENDA",
+    "AD_LOCAL_IMP_MMA",
+    "AD_LOCALITEM_IMP_MMA",
+    "AD_LOG_AJUSTA_ATUALEST_MMA",
+    "AD_LOG_ATUALIZA_TGFCAB_MMA",
+    "AD_LOG_IMPORTA_ESTOQUE_MMA",
+    "AD_LOG_IMPWEST_MMA",
+    "AD_LOG_TGFPAP_1601_MMA",
+    "AD_LOG_TGWREV_IMP_MMA",
+    "AD_LOG_ZERA_ESTOQUE_MMA",
+    "AD_MARCAS",
+    "AD_MATCOM",
+    "AD_MATCOMMARG",
+    "ADMINSERVICE$PARAMPROCMGE",
+    "AD_MKPFORNEMPHF",
+    "AD_MODETIQUETAS",
+    "AD_MONSESS",
+    "AD_MOTORCRED_HISTORICO",
+    "AD_MOVBAIXA_MMA",
+    "AD_NATTPOCFO",
+    "AD_NATUREZAS",
+    "AD_NATUREZASCR",
+    "AD_NATUREZASPARC",
+    "AD_NATUREZATIT",
+    "AD_NOVOPSOLIC",
+    "AD_NUMAUX_IMP_MMA",
+    "AD_OCOCOB",
+    "AD_ORCA",
+    "AD_ORCNATCC",
+    "AD_PARAM",
+    "AD_PARAMETER",
+    "AD_PARCOMPANY",
+    "AD_PARVALUE",
+    "AD_PEDIDOVENDA",
+    "AD_PENDENCIASVENDA",
+    "AD_PLANESTDET",
+    "AD_PLANESTPROD",
+    "AD_PROANE",
+    "AD_PROCMPS",
+    "AD_PRODCESTRSYS_MMA",
+    "AD_PRODGIRO_MMA",
+    "AD_PROD_MMA_IMP",
+    "AD_PRODUTOUN_MMA",
+    "AD_RECEBCANH",
+    "AD_REDEGRUPO",
+    "AD_REL_CUSTOIMP_TGFCUS",
+    "AD_SALDO_EST_0401",
+    "AD_SALDOTRANSF",
+    "AD_SEGMENTACAOEMPRESAS",
+    "AD_SOLICITACAOADIANTAMENTO",
+    "AD_SOLICITACAOCOMPRA",
+    "AD_STPRECO",
+    "AD_TABCOMISSAO_MMA",
+    "AD_TABELA9851",
+    "AD_TABPRCCAB_1",
+    "AD_TESEVE",
+    "AD_TGFCAB_0401",
+    "AD_TGFCUSMMA",
+    "AD_TGFCUS_0401",
+    "AD_TGFEXC_GERAL_0401",
+    "AD_TGFEXC_0401",
+    "AD_TGFFINTEMP",
+    "AD_TGFGRUMMA",
+    "AD_TGFITE_0401",
+    "AD_TGFPAP_1601",
+    "AD_TGFPAR_0401",
+    "AD_TGFPROAUXMMA",
+    "AD_TGFPROIPI",
+    "AD_TGFPRO_0401",
+    "AD_TGHSQL",
+    "AD_TGVSQL",
+    "AD_TGWEST_DIV_0401",
+    "AD_TGWEST_V6_0501",
+    "AD_TGWEST_040126",
+    "AD_TGWEST_0501",
+    "AD_TIPNAT",
+    "AD_TRANSFFALTA",
+    "AD_TSCGUSU",
+    "AD_TSCUSU",
+    "AD_USUARIOS_MMA",
+    "AD_VINC_LOG",
+    "AD_VISITATEC"
+  ],
+  "classificacao": {
+    "com_dados": 95,
+    "vazias": 47,
+    "erro": 0,
+    "ranking": [
+      [
+        "AD_BKP_TGWEXP_12012026",
+        40432998
+      ],
+      [
+        "AD_LOG_TGFPAP_1601_MMA",
+        1636112
+      ],
+      [
+        "AD_TGFPROAUXMMA",
+        1145087
+      ],
+      [
+        "AD_IMPNUMAUX_MMA",
+        1048301
+      ],
+      [
+        "AD_TGFEXC_GERAL_0401",
+        999249
+      ],
+      [
+        "AD_TGFITE_0401",
+        978200
+      ],
+      [
+        "AD_CUSTOIMP_2312_MMA",
+        710194
+      ],
+      [
+        "AD_TGFCUSMMA",
+        709230
+      ],
+      [
+        "AD_DUPLICATAS3_MMA",
+        425373
+      ],
+      [
+        "AD_PRODCESTRSYS_MMA",
+        407860
+      ],
+      [
+        "AD_CADPRODCODIGO_MMA",
+        397709
+      ],
+      [
+        "AD_CADPRODCOD_MMA",
+        397709
+      ],
+      [
+        "AD_PROD_MMA_IMP",
+        397531
+      ],
+      [
+        "AD_LOCALITEM_IMP_MMA",
+        397473
+      ],
+      [
+        "AD_CADPRODMMA",
+        397422
+      ],
+      [
+        "AD_TGFGRUMMA",
+        390374
+      ],
+      [
+        "AD_TGFEXC_0401",
+        355262
+      ],
+      [
+        "AD_TGFPAP_1601",
+        345534
+      ],
+      [
+        "AD_CSV_LINHA",
+        343834
+      ],
+      [
+        "AD_CODBARRAS_MMA",
+        339931
+      ],
+      [
+        "AD_TGFCAB_0401",
+        318221
+      ],
+      [
+        "AD_LOG_ATUALIZA_TGFCAB_MMA",
+        316647
+      ],
+      [
+        "AD_CUSTOIMP_REL_TGFCUS",
+        275164
+      ],
+      [
+        "AD_TGFCUS_0401",
+        275164
+      ],
+      [
+        "AD_TABPRCCAB_1",
+        248670
+      ],
+      [
+        "AD_BKP_TGFVOA_12012026",
+        156403
+      ],
+      [
+        "AD_ENTIDADES_RSYS2_MMA",
+        106289
+      ],
+      [
+        "AD_ENTIDADES_MMA",
+        103402
+      ],
+      [
+        "AD_ENTIDADESRSYS2_MMA",
+        96434
+      ],
+      [
+        "AD_PRODGIRO_MMA",
+        86307
+      ]
+    ]
+  },
+  "AD_APROVACAO": {
+    "tabela": "AD_APROVACAO",
+    "total": 0,
+    "campos": [
+      {
+        "campo": "IDINSTPRN",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDINSTTAR",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODREGISTRO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDTAREFA",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      },
+      {
+        "campo": "SITUACAO",
+        "tipo": "VARCHAR2",
+        "tamanho": 10
+      },
+      {
+        "campo": "OBSERVACAOAPRO",
+        "tipo": "CLOB",
+        "tamanho": 4000
+      }
+    ],
+    "pks": [
+      "CODREGISTRO",
+      "IDINSTPRN",
+      "IDINSTTAR"
+    ],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "DBFF65A891B5D863B8553178E324B323",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "IDINSTPRN",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDINSTTAR",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "CODREGISTRO",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDTAREFA",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ],
+          [
+            "SITUACAO",
+            "VARCHAR2",
+            10,
+            "N",
+            null
+          ],
+          [
+            "OBSERVACAOAPRO",
+            "CLOB",
+            4000,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "293ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "E684422D391F1F3490627077D44E9450",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "PK",
+            "CODREGISTRO",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTPRN",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTTAR",
+            null,
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "1,839s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": null
+  },
+  "AD_LIBERACOESVENDA": {
+    "tabela": "AD_LIBERACOESVENDA",
+    "total": 0,
+    "campos": [
+      {
+        "campo": "CODREGISTRO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDINSTPRN",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDINSTTAR",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDTAREFA",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      },
+      {
+        "campo": "NUCHAVE",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "AUTORIZADO",
+        "tipo": "VARCHAR2",
+        "tamanho": 10
+      },
+      {
+        "campo": "OBSERVACAO",
+        "tipo": "CLOB",
+        "tamanho": 4000
+      },
+      {
+        "campo": "EVENTO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "SEQUENCIA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "SEQCASCATA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "NUCLL",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "TABELA",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      },
+      {
+        "campo": "VLRATUAL",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "VLRLIMITE",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      }
+    ],
+    "pks": [
+      "CODREGISTRO",
+      "IDINSTPRN",
+      "IDINSTTAR"
+    ],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "50B48B95951EB5018010A1DF9F5DDEB6",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "CODREGISTRO",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDINSTPRN",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDINSTTAR",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDTAREFA",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ],
+          [
+            "NUCHAVE",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "AUTORIZADO",
+            "VARCHAR2",
+            10,
+            "Y",
+            null
+          ],
+          [
+            "OBSERVACAO",
+            "CLOB",
+            4000,
+            "Y",
+            null
+          ],
+          [
+            "EVENTO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "SEQUENCIA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "SEQCASCATA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "NUCLL",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "TABELA",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ],
+          [
+            "VLRATUAL",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VLRLIMITE",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "231ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "2913CDFE3A4A8681BF8B28E5D724A2B6",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "PK",
+            "CODREGISTRO",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTPRN",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTTAR",
+            null,
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "1,841s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": null
+  },
+  "AD_COTACOESDEITENS": {
+    "tabela": "AD_COTACOESDEITENS",
+    "total": 0,
+    "campos": [
+      {
+        "campo": "PK",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODREGISTRO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDINSTTAR",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDINSTPRN",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDTAREFA",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      },
+      {
+        "campo": "CODPARC",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "PRECO",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "OBSERVACAO",
+        "tipo": "CLOB",
+        "tamanho": 4000
+      }
+    ],
+    "pks": [
+      "CODREGISTRO",
+      "IDINSTPRN",
+      "IDINSTTAR",
+      "PK"
+    ],
+    "fks": [
+      {
+        "campo": "CODPARC",
+        "ref": "TGFPAR.CODPARC"
+      },
+      {
+        "campo": "CODREGISTRO",
+        "ref": "AD_SOLICITACAOCOMPRA.CODREGISTRO"
+      },
+      {
+        "campo": "CODREGISTRO",
+        "ref": "AD_SOLICITACAOCOMPRA.IDINSTPRN"
+      },
+      {
+        "campo": "CODREGISTRO",
+        "ref": "AD_SOLICITACAOCOMPRA.IDINSTTAR"
+      },
+      {
+        "campo": "IDINSTPRN",
+        "ref": "AD_SOLICITACAOCOMPRA.CODREGISTRO"
+      },
+      {
+        "campo": "IDINSTPRN",
+        "ref": "AD_SOLICITACAOCOMPRA.IDINSTTAR"
+      },
+      {
+        "campo": "IDINSTPRN",
+        "ref": "AD_SOLICITACAOCOMPRA.IDINSTPRN"
+      },
+      {
+        "campo": "IDINSTTAR",
+        "ref": "AD_SOLICITACAOCOMPRA.CODREGISTRO"
+      },
+      {
+        "campo": "IDINSTTAR",
+        "ref": "AD_SOLICITACAOCOMPRA.IDINSTTAR"
+      },
+      {
+        "campo": "IDINSTTAR",
+        "ref": "AD_SOLICITACAOCOMPRA.IDINSTPRN"
+      }
+    ],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "1183DA1419AED48032393954A4F113FF",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "PK",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "CODREGISTRO",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDINSTTAR",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDINSTPRN",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDTAREFA",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ],
+          [
+            "CODPARC",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "PRECO",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "OBSERVACAO",
+            "CLOB",
+            4000,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "174ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "8C6A240B913CB1D984971A2E8C74D038",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "FK",
+            "CODPARC",
+            "TGFPAR",
+            "CODPARC"
+          ],
+          [
+            "FK",
+            "CODREGISTRO",
+            "AD_SOLICITACAOCOMPRA",
+            "CODREGISTRO"
+          ],
+          [
+            "FK",
+            "CODREGISTRO",
+            "AD_SOLICITACAOCOMPRA",
+            "IDINSTPRN"
+          ],
+          [
+            "FK",
+            "CODREGISTRO",
+            "AD_SOLICITACAOCOMPRA",
+            "IDINSTTAR"
+          ],
+          [
+            "FK",
+            "IDINSTPRN",
+            "AD_SOLICITACAOCOMPRA",
+            "CODREGISTRO"
+          ],
+          [
+            "FK",
+            "IDINSTPRN",
+            "AD_SOLICITACAOCOMPRA",
+            "IDINSTTAR"
+          ],
+          [
+            "FK",
+            "IDINSTPRN",
+            "AD_SOLICITACAOCOMPRA",
+            "IDINSTPRN"
+          ],
+          [
+            "FK",
+            "IDINSTTAR",
+            "AD_SOLICITACAOCOMPRA",
+            "CODREGISTRO"
+          ],
+          [
+            "FK",
+            "IDINSTTAR",
+            "AD_SOLICITACAOCOMPRA",
+            "IDINSTTAR"
+          ],
+          [
+            "FK",
+            "IDINSTTAR",
+            "AD_SOLICITACAOCOMPRA",
+            "IDINSTPRN"
+          ],
+          [
+            "PK",
+            "CODREGISTRO",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTPRN",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTTAR",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "PK",
+            null,
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "1,468s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": null
+  },
+  "AD_SOLICITACAOCOMPRA": {
+    "tabela": "AD_SOLICITACAOCOMPRA",
+    "total": 0,
+    "campos": [
+      {
+        "campo": "IDINSTTAR",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODREGISTRO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDINSTPRN",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDTAREFA",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      },
+      {
+        "campo": "QUANTIDADE",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "OBSERVACAO",
+        "tipo": "CLOB",
+        "tamanho": 4000
+      },
+      {
+        "campo": "CODPROD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "NUNOTA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      }
+    ],
+    "pks": [
+      "CODREGISTRO",
+      "IDINSTPRN",
+      "IDINSTTAR"
+    ],
+    "fks": [
+      {
+        "campo": "CODPROD",
+        "ref": "TGFPRO.CODPROD"
+      }
+    ],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "6E435698D347CD66C5C947B77D4A1E1D",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "IDINSTTAR",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "CODREGISTRO",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDINSTPRN",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDTAREFA",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ],
+          [
+            "QUANTIDADE",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "OBSERVACAO",
+            "CLOB",
+            4000,
+            "Y",
+            null
+          ],
+          [
+            "CODPROD",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "NUNOTA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "183ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "CA766D0C6989E3F35F5C4BA5238064B5",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "FK",
+            "CODPROD",
+            "TGFPRO",
+            "CODPROD"
+          ],
+          [
+            "PK",
+            "CODREGISTRO",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTPRN",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTTAR",
+            null,
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "1,589s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": null
+  },
+  "AD_SOLICITACAOADIANTAMENTO": {
+    "tabela": "AD_SOLICITACAOADIANTAMENTO",
+    "total": 0,
+    "campos": [
+      {
+        "campo": "IDINSTPRN",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDINSTTAR",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODREGISTRO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDTAREFA",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      },
+      {
+        "campo": "DATAINICIO",
+        "tipo": "DATE",
+        "tamanho": 7
+      },
+      {
+        "campo": "DATAFIM",
+        "tipo": "DATE",
+        "tamanho": 7
+      },
+      {
+        "campo": "VALORADIANTAMENTO",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "OBSERVACOES",
+        "tipo": "CLOB",
+        "tamanho": 4000
+      },
+      {
+        "campo": "SITUACAO",
+        "tipo": "VARCHAR2",
+        "tamanho": 10
+      },
+      {
+        "campo": "JUTIFICATIVAAPROVACAO",
+        "tipo": "CLOB",
+        "tamanho": 4000
+      },
+      {
+        "campo": "NUFIN_AD_R",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "NUFIN_AD_D",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "NUFIN_AC_D",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "NUFIN_CP",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      }
+    ],
+    "pks": [
+      "CODREGISTRO",
+      "IDINSTPRN",
+      "IDINSTTAR"
+    ],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "DC8446DB3EFF0C5F8C7B6537AEB2459C",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "IDINSTPRN",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDINSTTAR",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "CODREGISTRO",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDTAREFA",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ],
+          [
+            "DATAINICIO",
+            "DATE",
+            7,
+            "Y",
+            null
+          ],
+          [
+            "DATAFIM",
+            "DATE",
+            7,
+            "Y",
+            null
+          ],
+          [
+            "VALORADIANTAMENTO",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "OBSERVACOES",
+            "CLOB",
+            4000,
+            "Y",
+            null
+          ],
+          [
+            "SITUACAO",
+            "VARCHAR2",
+            10,
+            "Y",
+            null
+          ],
+          [
+            "JUTIFICATIVAAPROVACAO",
+            "CLOB",
+            4000,
+            "Y",
+            null
+          ],
+          [
+            "NUFIN_AD_R",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "NUFIN_AD_D",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "NUFIN_AC_D",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "NUFIN_CP",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "260ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "523C0D6638F8861B6343BC914BFF9495",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "PK",
+            "CODREGISTRO",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTPRN",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDINSTTAR",
+            null,
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "2,01s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": null
+  },
+  "AD_BKP_TGWEXP_12012026": {
+    "tabela": "AD_BKP_TGWEXP_12012026",
+    "total": 40432998,
+    "campos": [
+      {
+        "campo": "CODEND",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODPROD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "ATIVO",
+        "tipo": "VARCHAR2",
+        "tamanho": 1
+      },
+      {
+        "campo": "DTINICIO",
+        "tipo": "DATE",
+        "tamanho": 7
+      },
+      {
+        "campo": "DTFIM",
+        "tipo": "DATE",
+        "tamanho": 7
+      },
+      {
+        "campo": "ESTMIN",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "ESTMAX",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODVOL",
+        "tipo": "VARCHAR2",
+        "tamanho": 6
+      },
+      {
+        "campo": "ESTMINVOLPAD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "ESTMAXVOLPAD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "ORDEM",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CONTROLE",
+        "tipo": "VARCHAR2",
+        "tamanho": 17
+      }
+    ],
+    "pks": [],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "9A0E44E62C4E44A91D13D7CF84CDF80D",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "CODEND",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "CODPROD",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "ATIVO",
+            "VARCHAR2",
+            1,
+            "N",
+            null
+          ],
+          [
+            "DTINICIO",
+            "DATE",
+            7,
+            "N",
+            null
+          ],
+          [
+            "DTFIM",
+            "DATE",
+            7,
+            "Y",
+            null
+          ],
+          [
+            "ESTMIN",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "ESTMAX",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "CODVOL",
+            "VARCHAR2",
+            6,
+            "N",
+            null
+          ],
+          [
+            "ESTMINVOLPAD",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "ESTMAXVOLPAD",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "ORDEM",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CONTROLE",
+            "VARCHAR2",
+            17,
+            "N",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "278ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "7D079CC041FCE26680B3DDB9CF7DF78B",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [],
+        "burstLimit": false,
+        "timeQuery": "1,689s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "19791DACF3029755B467F141404B1D99",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CODEND",
+            "description": "CODEND",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "CODPROD",
+            "description": "CODPROD",
+            "order": 2,
+            "userType": "I"
+          },
+          {
+            "name": "ATIVO",
+            "description": "ATIVO",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "DTINICIO",
+            "description": "DTINICIO",
+            "order": 4,
+            "userType": "H"
+          },
+          {
+            "name": "DTFIM",
+            "description": "DTFIM",
+            "order": 5,
+            "userType": "H"
+          },
+          {
+            "name": "ESTMIN",
+            "description": "ESTMIN",
+            "order": 6,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "ESTMAX",
+            "description": "ESTMAX",
+            "order": 7,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CODVOL",
+            "description": "CODVOL",
+            "order": 8,
+            "userType": "S"
+          },
+          {
+            "name": "ESTMINVOLPAD",
+            "description": "ESTMINVOLPAD",
+            "order": 9,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "ESTMAXVOLPAD",
+            "description": "ESTMAXVOLPAD",
+            "order": 10,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "ORDEM",
+            "description": "ORDEM",
+            "order": 11,
+            "userType": "I"
+          },
+          {
+            "name": "CONTROLE",
+            "description": "CONTROLE",
+            "order": 12,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            6052,
+            131799,
+            "S",
+            "30102025 00:00:00",
+            null,
+            20,
+            100,
+            "UN",
+            20,
+            100,
+            null,
+            " "
+          ],
+          [
+            52349,
+            123053,
+            "S",
+            "31102025 00:00:00",
+            null,
+            20,
+            100,
+            "UN",
+            20,
+            100,
+            null,
+            " "
+          ],
+          [
+            5,
+            29233,
+            "S",
+            "11112025 00:00:00",
+            null,
+            1,
+            2,
+            "UN",
+            1,
+            2,
+            null,
+            " "
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "3ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_LOG_TGFPAP_1601_MMA": {
+    "tabela": "AD_LOG_TGFPAP_1601_MMA",
+    "total": 1636112,
+    "campos": [
+      {
+        "campo": "CODPARC",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODPROD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "UNIDADEPARC",
+        "tipo": "VARCHAR2",
+        "tamanho": 30
+      },
+      {
+        "campo": "SEQUENCIA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "STATUS",
+        "tipo": "CHAR",
+        "tamanho": 1
+      },
+      {
+        "campo": "MSG",
+        "tipo": "VARCHAR2",
+        "tamanho": 4000
+      },
+      {
+        "campo": "DTLOG",
+        "tipo": "DATE",
+        "tamanho": 7
+      }
+    ],
+    "pks": [],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "B521DBE1162A5CD28388F5330591AE5D",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "CODPARC",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CODPROD",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "UNIDADEPARC",
+            "VARCHAR2",
+            30,
+            "Y",
+            null
+          ],
+          [
+            "SEQUENCIA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "STATUS",
+            "CHAR",
+            1,
+            "Y",
+            null
+          ],
+          [
+            "MSG",
+            "VARCHAR2",
+            4000,
+            "Y",
+            null
+          ],
+          [
+            "DTLOG",
+            "DATE",
+            7,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "177ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "5FDAD23F2BEEDF8E763B3C7776CC32B2",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [],
+        "burstLimit": false,
+        "timeQuery": "1,776s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "3FAC27B9BF2A2B5D8295EA6A3BF41F9F",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CODPARC",
+            "description": "CODPARC",
+            "order": 1,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CODPROD",
+            "description": "CODPROD",
+            "order": 2,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "UNIDADEPARC",
+            "description": "UNIDADEPARC",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "SEQUENCIA",
+            "description": "SEQUENCIA",
+            "order": 4,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "STATUS",
+            "description": "STATUS",
+            "order": 5,
+            "userType": "S"
+          },
+          {
+            "name": "MSG",
+            "description": "MSG",
+            "order": 6,
+            "userType": "S"
+          },
+          {
+            "name": "DTLOG",
+            "description": "DTLOG",
+            "order": 7,
+            "userType": "H"
+          }
+        ],
+        "rows": [
+          [
+            334,
+            37,
+            "UN",
+            18,
+            "E",
+            "ORA-01400: cannot insert NULL into (\"SANKHYA\".\"TGFPAP\".\"IMPLAUDOLOTE\")",
+            "16012026 17:00:59"
+          ],
+          [
+            658,
+            37,
+            "PC",
+            17,
+            "E",
+            "ORA-01400: cannot insert NULL into (\"SANKHYA\".\"TGFPAP\".\"IMPLAUDOLOTE\")",
+            "16012026 17:00:59"
+          ],
+          [
+            658,
+            37,
+            "UN",
+            18,
+            "E",
+            "ORA-01400: cannot insert NULL into (\"SANKHYA\".\"TGFPAP\".\"IMPLAUDOLOTE\")",
+            "16012026 17:00:59"
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "3ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_TGFPROAUXMMA": {
+    "tabela": "AD_TGFPROAUXMMA",
+    "total": 1145087,
+    "campos": [
+      {
+        "campo": "CODPROD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "IDNUMAUX",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "NUMAUX",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      },
+      {
+        "campo": "CODIGO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "OBSERVACAO",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      },
+      {
+        "campo": "ORIGEM",
+        "tipo": "VARCHAR2",
+        "tamanho": 100
+      }
+    ],
+    "pks": [
+      "CODPROD",
+      "IDNUMAUX"
+    ],
+    "fks": [
+      {
+        "campo": "CODIGO",
+        "ref": "TGFMAR.CODIGO"
+      },
+      {
+        "campo": "CODPROD",
+        "ref": "TGFPRO.CODPROD"
+      }
+    ],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "0471E7725244A158F170FDFF22D12B83",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "CODPROD",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "IDNUMAUX",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "NUMAUX",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ],
+          [
+            "CODIGO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "OBSERVACAO",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ],
+          [
+            "ORIGEM",
+            "VARCHAR2",
+            100,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "195ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "B3C7C9A0A474C0DF6236B6D26F2A6C6F",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "FK",
+            "CODIGO",
+            "TGFMAR",
+            "CODIGO"
+          ],
+          [
+            "FK",
+            "CODPROD",
+            "TGFPRO",
+            "CODPROD"
+          ],
+          [
+            "PK",
+            "CODPROD",
+            null,
+            null
+          ],
+          [
+            "PK",
+            "IDNUMAUX",
+            null,
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "1,539s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "CB2E3B12899DCF65B3CC8AA18556AE0F",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CODPROD",
+            "description": "CODPROD",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "IDNUMAUX",
+            "description": "IDNUMAUX",
+            "order": 2,
+            "userType": "I"
+          },
+          {
+            "name": "NUMAUX",
+            "description": "NUMAUX",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CODIGO",
+            "description": "CODIGO",
+            "order": 4,
+            "userType": "I"
+          },
+          {
+            "name": "OBSERVACAO",
+            "description": "OBSERVACAO",
+            "order": 5,
+            "userType": "S"
+          },
+          {
+            "name": "ORIGEM",
+            "description": "ORIGEM",
+            "order": 6,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            475,
+            3393,
+            "RHEMA  154 MODELO RH 100",
+            984,
+            null,
+            null
+          ],
+          [
+            476,
+            3394,
+            "77596615",
+            524,
+            null,
+            null
+          ],
+          [
+            476,
+            3395,
+            "BC048037500361420",
+            525,
+            null,
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "7ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_IMPNUMAUX_MMA": {
+    "tabela": "AD_IMPNUMAUX_MMA",
+    "total": 1048301,
+    "campos": [
+      {
+        "campo": "COMANDOINSERT",
+        "tipo": "VARCHAR2",
+        "tamanho": 4000
+      }
+    ],
+    "pks": [],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "7D28634D24BC096334AEF4051AB5F77A",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "COMANDOINSERT",
+            "VARCHAR2",
+            4000,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "157ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "7FB73D0D3009494D0D338A53AA20BBAB",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [],
+        "burstLimit": false,
+        "timeQuery": "1,467s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "36F363CC4F795F7085C206D034964184",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "COMANDOINSERT",
+            "description": "COMANDOINSERT",
+            "order": 1,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "INSERT INTO AD_TGFPROAUXMMA (CODPROD, NUMERO, CODMARCA) VALUES (375953, '0004303607', (SELECT M.CODIGO FROM TGFMAR M WHERE M.AD_IDEXTERNO = '157'));"
+          ],
+          [
+            "INSERT INTO AD_TGFPROAUXMMA (CODPROD, NUMERO, CODMARCA) VALUES (446922, '0109072', (SELECT M.CODIGO FROM TGFMAR M WHERE M.AD_IDEXTERNO = '792'));"
+          ],
+          [
+            "INSERT INTO AD_TGFPROAUXMMA (CODPROD, NUMERO, CODMARCA) VALUES (436078, '24007', (SELECT M.CODIGO FROM TGFMAR M WHERE M.AD_IDEXTERNO = '249'));"
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "3ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_TGFEXC_GERAL_0401": {
+    "tabela": "AD_TGFEXC_GERAL_0401",
+    "total": 999249,
+    "campos": [
+      {
+        "campo": "CODEMP",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "PRODUTO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VALORVENDA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      }
+    ],
+    "pks": [],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "66BDEBB6764B91917D7B27351D04DED5",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "CODEMP",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "PRODUTO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VALORVENDA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "206ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "6556C458026A84B949F424B9DD9D11C1",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [],
+        "burstLimit": false,
+        "timeQuery": "2,174s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "61C92A607A1C810B2CE46416D0E014B6",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CODEMP",
+            "description": "CODEMP",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "PRODUTO",
+            "description": "PRODUTO",
+            "order": 2,
+            "userType": "I"
+          },
+          {
+            "name": "VALORVENDA",
+            "description": "VALORVENDA",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            4,
+            1537,
+            233.5
+          ],
+          [
+            4,
+            1539,
+            0.31
+          ],
+          [
+            4,
+            1541,
+            12.12
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "4ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_TGFITE_0401": {
+    "tabela": "AD_TGFITE_0401",
+    "total": 978200,
+    "campos": [
+      {
+        "campo": "CODEMP",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CONTROLE",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "TIPO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "NF",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CHAVE",
+        "tipo": "VARCHAR2",
+        "tamanho": 240
+      },
+      {
+        "campo": "SEQNOTA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "PRODUTO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "USOPROD",
+        "tipo": "VARCHAR2",
+        "tamanho": 26
+      },
+      {
+        "campo": "CFOP",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "QTDENEG",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VLUNIT",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VLTOTAL",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "BASEIPI",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VALORIPI",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "BASEICM",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VLICM",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VLDESC",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "PERCDESC",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VLBASEST",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VALORST",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "ALIQICM",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "ALIQIPI",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODVOL",
+        "tipo": "VARCHAR2",
+        "tamanho": 26
+      },
+      {
+        "campo": "CST",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "OBS",
+        "tipo": "VARCHAR2",
+        "tamanho": 26
+      },
+      {
+        "campo": "CSTIPI",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "SEQFISCAL",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "ORIGEM",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "STEXTRANOTA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSTONOTA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      }
+    ],
+    "pks": [],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "66A353A2688CB8F8B1FE58F417C073B7",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "CODEMP",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CONTROLE",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "TIPO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "NF",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CHAVE",
+            "VARCHAR2",
+            240,
+            "Y",
+            null
+          ],
+          [
+            "SEQNOTA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "PRODUTO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "USOPROD",
+            "VARCHAR2",
+            26,
+            "Y",
+            null
+          ],
+          [
+            "CFOP",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "QTDENEG",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VLUNIT",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VLTOTAL",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "BASEIPI",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VALORIPI",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "BASEICM",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VLICM",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VLDESC",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "PERCDESC",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VLBASEST",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VALORST",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "ALIQICM",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "ALIQIPI",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CODVOL",
+            "VARCHAR2",
+            26,
+            "Y",
+            null
+          ],
+          [
+            "CST",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "OBS",
+            "VARCHAR2",
+            26,
+            "Y",
+            null
+          ],
+          [
+            "CSTIPI",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "SEQFISCAL",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "ORIGEM",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "STEXTRANOTA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSTONOTA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "167ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "B8494902762CCC5A9889368E603AD19B",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [],
+        "burstLimit": false,
+        "timeQuery": "2,163s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "63549B5D56917134C4FBBD69AAD97868",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CODEMP",
+            "description": "CODEMP",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "CONTROLE",
+            "description": "CONTROLE",
+            "order": 2,
+            "userType": "I"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 3,
+            "userType": "I"
+          },
+          {
+            "name": "NF",
+            "description": "NF",
+            "order": 4,
+            "userType": "I"
+          },
+          {
+            "name": "CHAVE",
+            "description": "CHAVE",
+            "order": 5,
+            "userType": "S"
+          },
+          {
+            "name": "SEQNOTA",
+            "description": "SEQNOTA",
+            "order": 6,
+            "userType": "I"
+          },
+          {
+            "name": "PRODUTO",
+            "description": "PRODUTO",
+            "order": 7,
+            "userType": "I"
+          },
+          {
+            "name": "USOPROD",
+            "description": "USOPROD",
+            "order": 8,
+            "userType": "S"
+          },
+          {
+            "name": "CFOP",
+            "description": "CFOP",
+            "order": 9,
+            "userType": "I"
+          },
+          {
+            "name": "QTDENEG",
+            "description": "QTDENEG",
+            "order": 10,
+            "userType": "I"
+          },
+          {
+            "name": "VLUNIT",
+            "description": "VLUNIT",
+            "order": 11,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "VLTOTAL",
+            "description": "VLTOTAL",
+            "order": 12,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "BASEIPI",
+            "description": "BASEIPI",
+            "order": 13,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "VALORIPI",
+            "description": "VALORIPI",
+            "order": 14,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "BASEICM",
+            "description": "BASEICM",
+            "order": 15,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "VLICM",
+            "description": "VLICM",
+            "order": 16,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "VLDESC",
+            "description": "VLDESC",
+            "order": 17,
+            "userType": "I"
+          },
+          {
+            "name": "PERCDESC",
+            "description": "PERCDESC",
+            "order": 18,
+            "userType": "I"
+          },
+          {
+            "name": "VLBASEST",
+            "description": "VLBASEST",
+            "order": 19,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "VALORST",
+            "description": "VALORST",
+            "order": 20,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "ALIQICM",
+            "description": "ALIQICM",
+            "order": 21,
+            "userType": "I"
+          },
+          {
+            "name": "ALIQIPI",
+            "description": "ALIQIPI",
+            "order": 22,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CODVOL",
+            "description": "CODVOL",
+            "order": 23,
+            "userType": "S"
+          },
+          {
+            "name": "CST",
+            "description": "CST",
+            "order": 24,
+            "userType": "I"
+          },
+          {
+            "name": "OBS",
+            "description": "OBS",
+            "order": 25,
+            "userType": "S"
+          },
+          {
+            "name": "CSTIPI",
+            "description": "CSTIPI",
+            "order": 26,
+            "userType": "I"
+          },
+          {
+            "name": "SEQFISCAL",
+            "description": "SEQFISCAL",
+            "order": 27,
+            "userType": "I"
+          },
+          {
+            "name": "ORIGEM",
+            "description": "ORIGEM",
+            "order": 28,
+            "userType": "I"
+          },
+          {
+            "name": "STEXTRANOTA",
+            "description": "STEXTRANOTA",
+            "order": 29,
+            "userType": "I"
+          },
+          {
+            "name": "CUSTONOTA",
+            "description": "CUSTONOTA",
+            "order": 30,
+            "userType": "I"
+          }
+        ],
+        "rows": [
+          [
+            1,
+            559009,
+            1,
+            2349,
+            "155900912349    ",
+            1,
+            255781,
+            "R",
+            1202,
+            1,
+            835,
+            835,
+            0,
+            0,
+            556.69,
+            100.2,
+            0,
+            0,
+            0,
+            0,
+            18,
+            0,
+            "UN",
+            20,
+            null,
+            49,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            559013,
+            1,
+            95298,
+            "1559013195298    ",
+            2,
+            26702,
+            "R",
+            1403,
+            1,
+            301.19,
+            301.19,
+            301.19,
+            9.79,
+            0,
+            0,
+            0,
+            0,
+            535.35,
+            42.15,
+            18,
+            3.25,
+            "UN",
+            60,
+            null,
+            49,
+            1,
+            2,
+            0,
+            0
+          ],
+          [
+            1,
+            559013,
+            1,
+            95298,
+            "1559013195298    ",
+            2,
+            109309,
+            "R",
+            1403,
+            1,
+            584.7,
+            584.7,
+            584.7,
+            19,
+            0,
+            0,
+            0,
+            0,
+            1039.27,
+            81.82,
+            18,
+            3.25,
+            "UN",
+            60,
+            null,
+            49,
+            2,
+            2,
+            0,
+            0
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "6ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_CUSTOIMP_2312_MMA": {
+    "tabela": "AD_CUSTOIMP_2312_MMA",
+    "total": 710194,
+    "campos": [
+      {
+        "campo": "CODPROD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "EMP",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "DATA",
+        "tipo": "VARCHAR2",
+        "tamanho": 26
+      },
+      {
+        "campo": "CUSTOCOMICM",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSTOREP",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSTOSEMICM",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSTOGER",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSTOVAR",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSTOMEDSEMICM",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      }
+    ],
+    "pks": [],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "E7E6CA4E74E3D95632687F3CB76DB348",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "CODPROD",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "EMP",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "DATA",
+            "VARCHAR2",
+            26,
+            "Y",
+            null
+          ],
+          [
+            "CUSTOCOMICM",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSTOREP",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSTOSEMICM",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSTOGER",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSTOVAR",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSTOMEDSEMICM",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "343ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "3B367BFDD5A8B7BC5132157CD5555E4D",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [],
+        "burstLimit": false,
+        "timeQuery": "1,614s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "FAF80A6CA9D831E8EC5A0CE43029DD73",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CODPROD",
+            "description": "CODPROD",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "EMP",
+            "description": "EMP",
+            "order": 2,
+            "userType": "I"
+          },
+          {
+            "name": "DATA",
+            "description": "DATA",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CUSTOCOMICM",
+            "description": "CUSTOCOMICM",
+            "order": 4,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSTOREP",
+            "description": "CUSTOREP",
+            "order": 5,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSTOSEMICM",
+            "description": "CUSTOSEMICM",
+            "order": 6,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSTOGER",
+            "description": "CUSTOGER",
+            "order": 7,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSTOVAR",
+            "description": "CUSTOVAR",
+            "order": 8,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSTOMEDSEMICM",
+            "description": "CUSTOMEDSEMICM",
+            "order": 9,
+            "userType": "F",
+            "precision": 2
+          }
+        ],
+        "rows": [
+          [
+            120,
+            1,
+            "2021-12-15 00:00:00.000",
+            55.99,
+            69.57,
+            55.99,
+            80.03,
+            88.79,
+            62.48
+          ],
+          [
+            120,
+            1,
+            "2021-12-20 00:00:00.000",
+            55.99,
+            69.57,
+            55.99,
+            80.02,
+            88.79,
+            62.77
+          ],
+          [
+            120,
+            1,
+            "2021-12-27 00:00:00.000",
+            55.99,
+            69.57,
+            55.99,
+            80.03,
+            88.79,
+            63.02
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "3ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_TGFCUSMMA": {
+    "tabela": "AD_TGFCUSMMA",
+    "total": 709230,
+    "campos": [
+      {
+        "campo": "SEQUENCIA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODPROD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODEMP",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSCOMICM",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSREP",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSSEMICM",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSGER",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSVARIAVEL",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "CUSMEDSEMICM",
+        "tipo": "FLOAT",
+        "tamanho": 22
+      },
+      {
+        "campo": "DTATUAL",
+        "tipo": "DATE",
+        "tamanho": 7
+      }
+    ],
+    "pks": [
+      "SEQUENCIA"
+    ],
+    "fks": [
+      {
+        "campo": "CODEMP",
+        "ref": "TSIEMP.CODEMP"
+      },
+      {
+        "campo": "CODPROD",
+        "ref": "TGFPRO.CODPROD"
+      }
+    ],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "B89D285A24DEF42C9CF48D25924DCD6E",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "SEQUENCIA",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "CODPROD",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CODEMP",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSCOMICM",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSREP",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSSEMICM",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSGER",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSVARIAVEL",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CUSMEDSEMICM",
+            "FLOAT",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "DTATUAL",
+            "DATE",
+            7,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "136ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "B2B659D314B89B458DC84860EAD3915E",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "FK",
+            "CODEMP",
+            "TSIEMP",
+            "CODEMP"
+          ],
+          [
+            "FK",
+            "CODPROD",
+            "TGFPRO",
+            "CODPROD"
+          ],
+          [
+            "PK",
+            "SEQUENCIA",
+            null,
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "1,941s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "B6576E25CFD234170706377E0BA145DF",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "SEQUENCIA",
+            "description": "SEQUENCIA",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "CODPROD",
+            "description": "CODPROD",
+            "order": 2,
+            "userType": "I"
+          },
+          {
+            "name": "CODEMP",
+            "description": "CODEMP",
+            "order": 3,
+            "userType": "I"
+          },
+          {
+            "name": "CUSCOMICM",
+            "description": "CUSCOMICM",
+            "order": 4,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSREP",
+            "description": "CUSREP",
+            "order": 5,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSSEMICM",
+            "description": "CUSSEMICM",
+            "order": 6,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSGER",
+            "description": "CUSGER",
+            "order": 7,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSVARIAVEL",
+            "description": "CUSVARIAVEL",
+            "order": 8,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "CUSMEDSEMICM",
+            "description": "CUSMEDSEMICM",
+            "order": 9,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "DTATUAL",
+            "description": "DTATUAL",
+            "order": 10,
+            "userType": "H"
+          }
+        ],
+        "rows": [
+          [
+            10850,
+            4993,
+            1,
+            24.18,
+            29.967,
+            24.18,
+            34.472,
+            32.003,
+            279.81,
+            "08082025 00:00:00"
+          ],
+          [
+            10851,
+            4993,
+            1,
+            22.79,
+            28.244,
+            22.79,
+            32.49,
+            32.003,
+            269.513,
+            "16102025 00:00:00"
+          ],
+          [
+            10852,
+            4993,
+            1,
+            22.79,
+            28.244,
+            22.79,
+            32.49,
+            32.003,
+            264.341,
+            "24102025 00:00:00"
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "6ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_DUPLICATAS3_MMA": {
+    "tabela": "AD_DUPLICATAS3_MMA",
+    "total": 425373,
+    "campos": [
+      {
+        "campo": "EMPRESA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "TIPODUPLICATA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODDUPLICATA",
+        "tipo": "VARCHAR2",
+        "tamanho": 26
+      },
+      {
+        "campo": "NUMDOCUMENTO",
+        "tipo": "VARCHAR2",
+        "tamanho": 26
+      },
+      {
+        "campo": "CODCONTROLE",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CNPJ",
+        "tipo": "VARCHAR2",
+        "tamanho": 26
+      },
+      {
+        "campo": "EMISSAO",
+        "tipo": "DATE",
+        "tamanho": 7
+      },
+      {
+        "campo": "VENCIMENTO",
+        "tipo": "DATE",
+        "tamanho": 7
+      },
+      {
+        "campo": "PAGAMENTO",
+        "tipo": "DATE",
+        "tamanho": 7
+      },
+      {
+        "campo": "VALORDUPLICATA",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VALORRECEBIDO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VALORBASECOMISSAO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VALORCOMISSAOINTERNO",
+        "tipo": "VARCHAR2",
+        "tamanho": 26
+      },
+      {
+        "campo": "CODVENDINTERNO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CODVENDPARCEIRO",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "VENDEDOR",
+        "tipo": "VARCHAR2",
+        "tamanho": 128
+      }
+    ],
+    "pks": [],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "DDDFE7D859C83F2BFEF4FBB94A17CBA7",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "EMPRESA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "TIPODUPLICATA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CODDUPLICATA",
+            "VARCHAR2",
+            26,
+            "Y",
+            null
+          ],
+          [
+            "NUMDOCUMENTO",
+            "VARCHAR2",
+            26,
+            "Y",
+            null
+          ],
+          [
+            "CODCONTROLE",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CNPJ",
+            "VARCHAR2",
+            26,
+            "Y",
+            null
+          ],
+          [
+            "EMISSAO",
+            "DATE",
+            7,
+            "Y",
+            null
+          ],
+          [
+            "VENCIMENTO",
+            "DATE",
+            7,
+            "Y",
+            null
+          ],
+          [
+            "PAGAMENTO",
+            "DATE",
+            7,
+            "Y",
+            null
+          ],
+          [
+            "VALORDUPLICATA",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VALORRECEBIDO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VALORBASECOMISSAO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VALORCOMISSAOINTERNO",
+            "VARCHAR2",
+            26,
+            "Y",
+            null
+          ],
+          [
+            "CODVENDINTERNO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "CODVENDPARCEIRO",
+            "NUMBER",
+            22,
+            "Y",
+            null
+          ],
+          [
+            "VENDEDOR",
+            "VARCHAR2",
+            128,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "173ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "AF9197878809C3AA243B4487116D3882",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [],
+        "burstLimit": false,
+        "timeQuery": "1,761s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "A5CB5DE5BA873BD48AAF6D6C307C0702",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "EMPRESA",
+            "description": "EMPRESA",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "TIPODUPLICATA",
+            "description": "TIPODUPLICATA",
+            "order": 2,
+            "userType": "I"
+          },
+          {
+            "name": "CODDUPLICATA",
+            "description": "CODDUPLICATA",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "NUMDOCUMENTO",
+            "description": "NUMDOCUMENTO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "CODCONTROLE",
+            "description": "CODCONTROLE",
+            "order": 5,
+            "userType": "I"
+          },
+          {
+            "name": "CNPJ",
+            "description": "CNPJ",
+            "order": 6,
+            "userType": "S"
+          },
+          {
+            "name": "EMISSAO",
+            "description": "EMISSAO",
+            "order": 7,
+            "userType": "H"
+          },
+          {
+            "name": "VENCIMENTO",
+            "description": "VENCIMENTO",
+            "order": 8,
+            "userType": "H"
+          },
+          {
+            "name": "PAGAMENTO",
+            "description": "PAGAMENTO",
+            "order": 9,
+            "userType": "H"
+          },
+          {
+            "name": "VALORDUPLICATA",
+            "description": "VALORDUPLICATA",
+            "order": 10,
+            "userType": "I"
+          },
+          {
+            "name": "VALORRECEBIDO",
+            "description": "VALORRECEBIDO",
+            "order": 11,
+            "userType": "I"
+          },
+          {
+            "name": "VALORBASECOMISSAO",
+            "description": "VALORBASECOMISSAO",
+            "order": 12,
+            "userType": "I"
+          },
+          {
+            "name": "VALORCOMISSAOINTERNO",
+            "description": "VALORCOMISSAOINTERNO",
+            "order": 13,
+            "userType": "S"
+          },
+          {
+            "name": "CODVENDINTERNO",
+            "description": "CODVENDINTERNO",
+            "order": 14,
+            "userType": "I"
+          },
+          {
+            "name": "CODVENDPARCEIRO",
+            "description": "CODVENDPARCEIRO",
+            "order": 15,
+            "userType": "I"
+          },
+          {
+            "name": "VENDEDOR",
+            "description": "VENDEDOR",
+            "order": 16,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            "000157/17",
+            "NF000157       ",
+            569285,
+            "44414986000111",
+            "28052024 00:00:00",
+            "28052024 00:00:00",
+            "04072024 00:00:00",
+            -72000,
+            -72000,
+            72000,
+            "-12.96",
+            420,
+            0,
+            "JOAO FELIPE SILVA"
+          ],
+          [
+            1,
+            2,
+            "000166/17",
+            "NF000166       ",
+            569283,
+            "44414986000111",
+            "28052024 00:00:00",
+            "13062024 00:00:00",
+            "31052024 00:00:00",
+            -51666,
+            -51666,
+            51666,
+            "-5.17",
+            420,
+            0,
+            "JOAO FELIPE SILVA"
+          ],
+          [
+            1,
+            2,
+            "000166/22",
+            "NF000166       ",
+            569283,
+            "44414986000111",
+            "28052024 00:00:00",
+            "13072024 00:00:00",
+            "31052024 00:00:00",
+            -51667,
+            -51667,
+            51667,
+            "-5.17",
+            420,
+            0,
+            "JOAO FELIPE SILVA"
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "6ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  },
+  "AD_PRODCESTRSYS_MMA": {
+    "tabela": "AD_PRODCESTRSYS_MMA",
+    "total": 407860,
+    "campos": [
+      {
+        "campo": "CODPROD",
+        "tipo": "NUMBER",
+        "tamanho": 22
+      },
+      {
+        "campo": "CEST",
+        "tipo": "VARCHAR2",
+        "tamanho": 7
+      }
+    ],
+    "pks": [],
+    "fks": [],
+    "estrutura": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "15F630875E6F3F9ED69BC3883074C551",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TAMANHO",
+            "description": "TAMANHO",
+            "order": 3,
+            "userType": "F",
+            "precision": 2
+          },
+          {
+            "name": "PERMITE_NULO",
+            "description": "PERMITE_NULO",
+            "order": 4,
+            "userType": "S"
+          },
+          {
+            "name": "COMENTARIO",
+            "description": "COMENTARIO",
+            "order": 5,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            "CODPROD",
+            "NUMBER",
+            22,
+            "N",
+            null
+          ],
+          [
+            "CEST",
+            "VARCHAR2",
+            7,
+            "Y",
+            null
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "156ms",
+        "timeResultSet": "1ms"
+      }
+    },
+    "chaves": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "43613932469262C9EDDEB28A7BFEDD63",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "TIPO",
+            "description": "TIPO",
+            "order": 1,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO",
+            "description": "CAMPO",
+            "order": 2,
+            "userType": "S"
+          },
+          {
+            "name": "TABELA_REF",
+            "description": "TABELA_REF",
+            "order": 3,
+            "userType": "S"
+          },
+          {
+            "name": "CAMPO_REF",
+            "description": "CAMPO_REF",
+            "order": 4,
+            "userType": "S"
+          }
+        ],
+        "rows": [],
+        "burstLimit": false,
+        "timeQuery": "1,706s",
+        "timeResultSet": "1ms"
+      }
+    },
+    "sample": {
+      "serviceName": "DbExplorerSP.executeQuery",
+      "status": "1",
+      "pendingPrinting": "false",
+      "transactionId": "4D41BD5BFECC36EEB0256C0CA361DFD8",
+      "responseBody": {
+        "fieldsMetadata": [
+          {
+            "name": "CODPROD",
+            "description": "CODPROD",
+            "order": 1,
+            "userType": "I"
+          },
+          {
+            "name": "CEST",
+            "description": "CEST",
+            "order": 2,
+            "userType": "S"
+          }
+        ],
+        "rows": [
+          [
+            1875,
+            "0107500"
+          ],
+          [
+            1876,
+            "0107500"
+          ],
+          [
+            1877,
+            "0107500"
+          ]
+        ],
+        "burstLimit": false,
+        "timeQuery": "5ms",
+        "timeResultSet": "1ms"
+      }
+    }
+  }
+}

@@ -1,0 +1,544 @@
+{
+  "aprovacao": {
+    "notas_pendentes_por_tipmov": [
+      [
+        "V",
+        798,
+        2768429.34
+      ],
+      [
+        "C",
+        265,
+        1986291.94
+      ],
+      [
+        "Z",
+        139,
+        0
+      ],
+      [
+        "D",
+        24,
+        25886.82
+      ],
+      [
+        "P",
+        14,
+        308187.36
+      ]
+    ],
+    "pendente_aprovado": [
+      [
+        "S",
+        "S",
+        317748
+      ],
+      [
+        "N",
+        "N",
+        20460
+      ],
+      [
+        "S",
+        "N",
+        5708
+      ],
+      [
+        "N",
+        "S",
+        50
+      ]
+    ],
+    "count_TGFLIB": 0,
+    "count_AD_APROVACAO": 0,
+    "count_AD_LIBERACOESVENDA": 0,
+    "notas_compra_liberadas": [
+      [
+        1195240,
+        1068122061,
+        1427,
+        "L",
+        "S",
+        "N",
+        "06022026 00:00:00",
+        780.2
+      ],
+      [
+        1195220,
+        1302260364,
+        1427,
+        "L",
+        "S",
+        "N",
+        "06022026 00:00:00",
+        1383.22
+      ],
+      [
+        1195124,
+        1295758536,
+        1427,
+        "L",
+        "S",
+        "N",
+        "06022026 00:00:00",
+        293.1
+      ],
+      [
+        1197314,
+        4091296138,
+        1427,
+        "L",
+        "S",
+        "N",
+        "05022026 00:00:00",
+        84.79
+      ],
+      [
+        1196962,
+        4330,
+        1440,
+        "L",
+        "N",
+        "N",
+        "05022026 00:00:00",
+        1800
+      ],
+      [
+        1195214,
+        233980547,
+        1427,
+        "L",
+        "S",
+        "N",
+        "05022026 00:00:00",
+        124.21
+      ],
+      [
+        1195203,
+        1271122844,
+        1427,
+        "L",
+        "S",
+        "N",
+        "05022026 00:00:00",
+        2490.25
+      ],
+      [
+        1196884,
+        11914,
+        1500,
+        "L",
+        "N",
+        "N",
+        "05022026 00:00:00",
+        3188.17
+      ],
+      [
+        1196968,
+        60,
+        1404,
+        "L",
+        "N",
+        "N",
+        "05022026 00:00:00",
+        80
+      ],
+      [
+        1196991,
+        34270,
+        2000,
+        "L",
+        "N",
+        "N",
+        "05022026 00:00:00",
+        513.25
+      ]
+    ],
+    "count_TGFALL": 0
+  },
+  "solicitacao": {
+    "por_status": [
+      [
+        "L",
+        2869,
+        6085019.44
+      ],
+      [
+        "A",
+        9,
+        5131.47
+      ]
+    ],
+    "por_ano": [
+      [
+        "2026",
+        2875,
+        6081755.59
+      ],
+      [
+        "2025",
+        3,
+        8395.32
+      ]
+    ],
+    "por_empresa": [
+      [
+        1,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        1411
+      ],
+      [
+        7,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        949
+      ],
+      [
+        2,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        314
+      ],
+      [
+        4,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        147
+      ],
+      [
+        8,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        56
+      ],
+      [
+        6,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        1
+      ]
+    ],
+    "exemplo_solicitacao": [
+      [
+        1197416,
+        2945,
+        "06022026 00:00:00",
+        "L",
+        65.1,
+        22507,
+        "EMPENHO"
+      ],
+      [
+        1197311,
+        2937,
+        "06022026 00:00:00",
+        "L",
+        1099,
+        22507,
+        "EMPENHO"
+      ],
+      [
+        1197373,
+        2941,
+        "06022026 00:00:00",
+        "L",
+        8.28,
+        22507,
+        "EMPENHO"
+      ]
+    ]
+  },
+  "cotacao": {
+    "por_situacao": [
+      [
+        "F",
+        1526
+      ],
+      [
+        "C",
+        848
+      ],
+      [
+        "A",
+        399
+      ],
+      [
+        "E",
+        59
+      ],
+      [
+        "P",
+        17
+      ]
+    ],
+    "por_ano": [
+      [
+        "2026",
+        2849
+      ]
+    ],
+    "vinculo_solicitacao": [
+      [
+        "Sem origem",
+        1
+      ],
+      [
+        "Com origem",
+        2848
+      ]
+    ],
+    "exemplo_cotacao": [
+      [
+        2845,
+        "06022026 00:00:00",
+        null,
+        "A",
+        1197373,
+        null,
+        "P-69789"
+      ],
+      [
+        2840,
+        "06022026 00:00:00",
+        null,
+        "A",
+        1197307,
+        null,
+        null
+      ],
+      [
+        2852,
+        "06022026 00:00:00",
+        null,
+        "A",
+        1197428,
+        null,
+        null
+      ]
+    ],
+    "pesos": [
+      [
+        2855,
+        1,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        2854,
+        1,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        2853,
+        1,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        2852,
+        1,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        2851,
+        1,
+        null,
+        null,
+        null,
+        null
+      ]
+    ]
+  },
+  "custos": {
+    "por_empresa": [
+      [
+        1,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        430896
+      ],
+      [
+        2,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        96253
+      ],
+      [
+        7,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        94130
+      ],
+      [
+        4,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        84114
+      ],
+      [
+        8,
+        "MMARRA DISTRIBUIDORA AUTOMOTIVA LTDA",
+        3837
+      ]
+    ],
+    "produtos_com_custo": 61159,
+    "periodo": [
+      [
+        "02012020 00:00:00",
+        "10122025 00:00:00"
+      ]
+    ],
+    "exemplo_historico": [
+      [
+        "03122025 00:00:00",
+        569.53,
+        569.53,
+        738.9
+      ],
+      [
+        "25112025 00:00:00",
+        569.535,
+        569.535,
+        738.9
+      ],
+      [
+        "17112025 00:00:00",
+        569.53,
+        569.53,
+        738.9
+      ],
+      [
+        "31102025 00:00:00",
+        571.07,
+        571.07,
+        738.89
+      ],
+      [
+        "24102025 00:00:00",
+        571.61,
+        571.61,
+        746.75
+      ]
+    ]
+  },
+  "codigos_auxiliares": {
+    "distribuicao": [
+      [
+        "2-5 codigos",
+        125757
+      ],
+      [
+        "6-10 codigos",
+        33480
+      ],
+      [
+        "10+ codigos",
+        23422
+      ],
+      [
+        "1 codigo",
+        21315
+      ]
+    ],
+    "por_marca": [
+      [
+        520,
+        "MERCEDES BENZ",
+        56231
+      ],
+      [
+        2,
+        "VW",
+        47542
+      ],
+      [
+        3,
+        "FORD",
+        38549
+      ],
+      [
+        1029,
+        "EURORICAMBI",
+        25910
+      ],
+      [
+        6,
+        "EATON",
+        24250
+      ],
+      [
+        620,
+        "VOLVO",
+        22706
+      ],
+      [
+        577,
+        "LNG",
+        21498
+      ],
+      [
+        92,
+        "SCANIA",
+        17674
+      ],
+      [
+        793,
+        "RP IMPORTS",
+        17370
+      ],
+      [
+        32,
+        "CUMMINS",
+        15927
+      ]
+    ],
+    "exemplo_produto": [
+      [
+        "078115561J",
+        null,
+        null
+      ],
+      [
+        "07811561J",
+        null,
+        null
+      ],
+      [
+        "1,05001E+11",
+        null,
+        null
+      ],
+      [
+        "1,06001E+11",
+        null,
+        null
+      ],
+      [
+        "1,06E+12",
+        null,
+        null
+      ]
+    ],
+    "exemplo_busca": [
+      [
+        "RHEMA  154 MODELO RH 100",
+        475,
+        "RETIFICADORA DE COLO DE CAMISA RHEMA  154 MODELO RH 100",
+        "FERRAMENTAS OFICINA"
+      ],
+      [
+        "77596615",
+        476,
+        "JOGO BRONZINA MANCAL STD MOTOR",
+        "KS"
+      ],
+      [
+        "BC048037500361420",
+        476,
+        "JOGO BRONZINA MANCAL STD MOTOR",
+        "MAHLE"
+      ]
+    ]
+  }
+}

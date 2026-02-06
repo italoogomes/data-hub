@@ -3,7 +3,24 @@
     "allow": [
       "WebFetch(domain:developer.sankhya.com.br)",
       "Bash(conda run:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(dir:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(cmd /c \"dir llm_completo\")",
+      "Bash(pip install:*)",
+      "Bash(chcp:*)",
+      "Bash(set:*)",
+      "Bash(cmd /c \"chcp 65001 && set PYTHONIOENCODING=utf-8 && python -m src.llm.chat \"\"Quais tabelas já foram documentadas?\"\"\")",
+      "Bash(PYTHONIOENCODING=utf-8 python:*)",
+      "Bash(PYTHONIOENCODING=utf-8 PYTHONLEGACYWINDOWSSTDIO=utf-8 python:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(cmd /c \"taskkill /PID 10916 /F\")",
+      "Bash(ollama:*)"
     ]
   }
 }

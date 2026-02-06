@@ -261,16 +261,80 @@ mmarra-data-hub/
 
 ---
 
+## LLM AGENTE
+
+O assistente LLM e um **agente** que decide entre:
+1. Responder com documentacao (RAG)
+2. Consultar o banco Sankhya em tempo real (SQL)
+
+### Como usar
+
+**CLI (apenas documentacao):**
+```bash
+python -m src.llm.chat "Como funciona o fluxo de compras?"
+python -m src.llm.chat  # modo interativo
+```
+
+**Interface Web (agente completo com SQL):**
+```bash
+python -m src.api.app
+# Acessar http://localhost:8000
+```
+
+### Arquivos
+
+| Arquivo | Descricao |
+|---------|-----------|
+| `src/llm/agent.py` | Agente LLM (decide DOC vs SQL) |
+| `src/llm/chat.py` | Motor de chat com RAG (TF-IDF + Groq) |
+| `src/llm/query_executor.py` | Executor seguro de SQL (SELECT only) |
+| `src/api/app.py` | API FastAPI v2.0 (usa agente) |
+| `src/api/static/index.html` | Frontend com queries colapsaveis |
+
+### Configuracao (.env)
+
+```
+GROQ_API_KEY=sua_chave_aqui
+LLM_MODEL=llama-3.1-8b-instant  # opcional
+SANKHYA_CLIENT_ID=...
+SANKHYA_CLIENT_SECRET=...
+SANKHYA_X_TOKEN=...
+```
+
+### Funcionamento do Agente
+
+1. Carrega documentos de knowledge/ e queries/ (TF-IDF)
+2. Recebe pergunta do usuario
+3. **Etapa 1 - Classificacao:**
+   - LLM analisa pergunta + contexto
+   - Retorna JSON: `{"tipo": "documentacao"|"consulta_banco", ...}`
+4. **Etapa 2 - Execucao (se SQL):**
+   - Valida query (SELECT only, sem comentarios, limite 500 rows)
+   - Executa via API Sankhya (DbExplorerSP.executeQuery)
+   - Formata resultado como relatorio
+5. Retorna resposta + query executada (se houver)
+
+### Seguranca do Query Executor
+
+- SOMENTE SELECT permitido
+- Bloqueio: INSERT, UPDATE, DELETE, DROP, TRUNCATE, EXEC, etc
+- Bloqueio de comentarios SQL (--, /* */)
+- Limite automatico: ROWNUM <= 500
+- Timeout: 30 segundos
+- Whitelist de tabelas (opcional)
+
+---
+
 ## OBJETIVO FINAL
 
-Este repositório alimenta uma plataforma com:
+Este repositorio alimenta uma plataforma com:
 1. **Dashboards** - Substituir Power BI
-2. **LLM** - Chat que responde perguntas de negócio
+2. **Agente LLM** - Chat que responde perguntas e consulta banco em tempo real (FUNCIONANDO!)
 
 A LLM precisa saber:
 - Estrutura do banco (tabelas, campos)
 - Processos (como funciona compra, venda, empenho)
-- Glossário (o que significa cada termo)
+- Glossario (o que significa cada termo)
 - Regras (por que bloqueia, quando libera)
 - Erros (por que falhou, como resolver)
 
@@ -278,4 +342,4 @@ A LLM precisa saber:
 
 ---
 
-*Versão 3.0 - Fevereiro 2026*
+*Versao 3.1 - Fevereiro 2026*

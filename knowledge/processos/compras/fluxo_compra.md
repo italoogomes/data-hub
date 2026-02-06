@@ -9,28 +9,39 @@
 ## Visao Geral
 
 A compra na MMarra segue um fluxo que envolve:
-1. **Solicitacao de Compra** - Identificacao da necessidade
-2. **Pedido de Compra** - Negociacao com fornecedor
-3. **Recebimento** - Entrada da mercadoria e nota fiscal
-4. **Estoque** - Atualizacao da posicao de estoque (TGFEST)
-5. **Financeiro** - Geracao de titulo a pagar (TGFFIN)
+1. **Solicitacao de Compra** - Identificacao da necessidade (TGFCAB TIPMOV='J')
+2. **Cotacao** - Comparacao de precos entre fornecedores (TGFCOT)
+3. **Pedido de Compra** - Negociacao com fornecedor (TGFCAB TIPMOV='O')
+4. **Recebimento** - Entrada da mercadoria e nota fiscal (TGFCAB TIPMOV='C')
+5. **Estoque** - Atualizacao da posicao de estoque (TGFEST)
+6. **Financeiro** - Geracao de titulo a pagar (TGFFIN)
 
 ---
 
 ## Tabelas Envolvidas no Processo Completo
 
-| Tabela | Papel no Processo | Documentacao |
-|--------|-------------------|--------------|
-| **TGFCAB** | Cabecalho da nota/pedido | [TGFCAB.md](../../sankhya/tabelas/TGFCAB.md) |
-| **TGFITE** | Itens comprados | [TGFITE.md](../../sankhya/tabelas/TGFITE.md) |
-| **TGFPAR** | Fornecedor (CODPARC) | [TGFPAR.md](../../sankhya/tabelas/TGFPAR.md) |
-| **TGFPRO** | Produtos adquiridos | [TGFPRO.md](../../sankhya/tabelas/TGFPRO.md) |
-| **TGFVEN** | Comprador responsavel (TIPVEND = C) | [TGFVEN.md](../../sankhya/tabelas/TGFVEN.md) |
-| **TGFTOP** | Define comportamento da operacao | [TGFTOP.md](../../sankhya/tabelas/TGFTOP.md) |
-| **TSIEMP** | Empresa compradora | [TSIEMP.md](../../sankhya/tabelas/TSIEMP.md) |
-| **TGFEST** | Posicao de estoque | [TGFEST.md](../../sankhya/tabelas/TGFEST.md) |
-| **TGFFIN** | Titulos a pagar | [TGFFIN.md](../../sankhya/tabelas/TGFFIN.md) |
-| **TGFLIB** | Liberacoes/aprovacoes | Ver secao Aprovacoes |
+| Tabela | Papel no Processo | Registros | Documentacao |
+|--------|-------------------|-----------|--------------|
+| **TGFCAB** | Cabecalho da nota/pedido | 343k | [TGFCAB.md](../../sankhya/tabelas/TGFCAB.md) |
+| **TGFITE** | Itens comprados | 1.1M | [TGFITE.md](../../sankhya/tabelas/TGFITE.md) |
+| **TGFCOT** | Cotacoes de compra | 2.839 | [TGFCOT.md](../../sankhya/tabelas/TGFCOT.md) |
+| **TGFPAR** | Fornecedor (CODPARC) | 57k | [TGFPAR.md](../../sankhya/tabelas/TGFPAR.md) |
+| **TGFPRO** | Produtos adquiridos | 394k | [TGFPRO.md](../../sankhya/tabelas/TGFPRO.md) |
+| **TGFVEN** | Comprador responsavel (TIPVEND = C) | 20 | [TGFVEN.md](../../sankhya/tabelas/TGFVEN.md) |
+| **TGFTOP** | Define comportamento da operacao | 1.3k | [TGFTOP.md](../../sankhya/tabelas/TGFTOP.md) |
+| **TSIEMP** | Empresa compradora | 10 | [TSIEMP.md](../../sankhya/tabelas/TSIEMP.md) |
+| **TGFEST** | Posicao de estoque | 36.7k | [TGFEST.md](../../sankhya/tabelas/TGFEST.md) |
+| **TGFFIN** | Titulos a pagar | 54k | [TGFFIN.md](../../sankhya/tabelas/TGFFIN.md) |
+| **TGFLIB** | Liberacoes/aprovacoes (VAZIA) | 0 | [TGFLIB.md](../../sankhya/tabelas/TGFLIB.md) |
+
+### Tabelas de Solicitacao
+
+| Tabela | Status | Observacao |
+|--------|--------|------------|
+| **TGFSOL** | VAZIA | Tabela padrao nao utilizada |
+| **AD_SOLICITACAOCOMPRA** | Customizada | Verificar se utilizada |
+
+**Conclusao:** Solicitacoes de compra ficam em **TGFCAB com TIPMOV='J'**
 
 ---
 
@@ -83,27 +94,38 @@ A compra na MMarra segue um fluxo que envolve:
 
 ### TOPs de Solicitacao (TIPMOV = J)
 
-| CODTIPOPER | Descricao | ATUALEST | ATUALFIN | Qtd Notas |
-|------------|-----------|----------|----------|-----------|
-| **1804** | Solicitacao compra | N | 0 | 2.801 |
+| CODTIPOPER | Descricao | ATUALEST | ATUALFIN | Qtd Notas | Valor Total |
+|------------|-----------|----------|----------|-----------|-------------|
+| **1804** | Solicitacao de Compra | N | 0 | 2.868 | R$ 6.05M |
 
 **Comportamento:**
 - ATUALEST = N (Nao) - Nao afeta estoque
 - ATUALFIN = 0 - Nao gera financeiro
 - Apenas registro da necessidade
+- Tabela: **TGFCAB** (nao usa TGFSOL)
 
 ### TOPs de Pedido de Compra (TIPMOV = O)
 
+**Total:** 2.148 pedidos | R$ 15.43M
+
 | CODTIPOPER | Descricao | ATUALEST | ATUALFIN | Qtd Notas |
 |------------|-----------|----------|----------|-----------|
-| **1301** | Pedido compra revenda | N | 0 | - |
-| **1304** | Pedido compra servico | N | 0 | - |
-| **1313** | Pedido compra entrega futura | N | 0 | - |
+| **1313** | Pedido Compra - Entrega Futura (Empenho) | N | 0 | 751 |
+| **1301** | Pedido Compra - Revenda | N | 0 | 571 |
+| **1321** | Pedido Transferencia Entrada Empenho | N | 0 | 386 |
+| **1304** | Pedido Compra - Servico Diversos | N | 0 | 141 |
+| **1317** | Pedido Compra - Uso/Consumo Despesas | N | 0 | 82 |
+| **1961** | Pedido Transferencia Entre Filiais Entrada | N | 0 | 58 |
+| **1318** | Pedido Compra - Beneficios | N | 0 | 35 |
+| **1305** | Pedido Compra - Clara | N | 0 | 33 |
+| **1340** | Pedido Compra - Servico Prestacao | N | 0 | 32 |
+| **1310** | Pedido Compra - Telecomunicacoes | N | 0 | 29 |
 
 **Comportamento:**
 - ATUALEST = N - Nao afeta estoque (ainda)
 - ATUALFIN = 0 - Nao gera financeiro (ainda)
 - Compromisso com fornecedor
+- Tabela: **TGFCAB**
 
 ### TOPs de Entrada/Compra Efetiva (TIPMOV = C)
 
@@ -121,6 +143,49 @@ A compra na MMarra segue um fluxo que envolve:
 - ATUALEST = E (Entrada) - Adiciona ao estoque
 - ATUALFIN = -1 - Gera financeiro a pagar
 - NFE = N - NFe do fornecedor (entrada)
+
+---
+
+## Cotacao de Compra (TGFCOT)
+
+**Total:** 2.839 cotacoes
+
+### O que e Cotacao
+
+Processo de comparacao de precos e condicoes entre fornecedores antes de fechar pedido de compra.
+
+### Estrutura
+
+| Tabela | Descricao | Registros |
+|--------|-----------|-----------|
+| **TGFCOT** | Cabecalho da cotacao | 2.839 |
+| TGFCOI | Itens cotados | 0 (vazia) |
+| TGFCOC | Fornecedores cotados | 0 (vazia) |
+| AD_COTACOESDEITENS | Itens (customizada) | Verificar |
+
+Documentacao: [TGFCOT.md](../../sankhya/tabelas/TGFCOT.md)
+
+### Sistema de Pesos
+
+TGFCOT permite configurar pesos para avaliacao automatica:
+
+| Criterio | Campo |
+|----------|-------|
+| Preco | PESOPRECO |
+| Condicao Pagamento | PESOCONDPAG |
+| Prazo Entrega | PESOPRAZOENTREG |
+| Qualidade Produto | PESOQUALPROD |
+| Confiabilidade Fornecedor | PESOCONFIABFORN |
+
+### Fluxo com Cotacao
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ Solicitacao │───>│  Cotacao    │───>│  Melhor     │───>│  Pedido     │
+│  TIPMOV='J' │    │  TGFCOT     │    │  Proposta   │    │  TIPMOV='O' │
+│  TOP 1804   │    │             │    │  Avaliada   │    │  TOP 1301   │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
 
 ---
 
@@ -278,9 +343,11 @@ INSERT INTO TGFFIN (
 
 ---
 
-## Sistema de Aprovacoes (TGFLIB)
+## Sistema de Aprovacoes
 
-### Estrutura TGFLIB
+### TGFLIB (Tabela Padrao Sankhya)
+
+**Status:** VAZIA (0 registros) - MMarra nao usa sistema padrao
 
 | Campo | Tipo | Descricao |
 |-------|------|-----------|
@@ -290,20 +357,24 @@ INSERT INTO TGFFIN (
 | LIBERACOES | VARCHAR2(50) | Tipo de liberacao |
 | OBS | VARCHAR2(255) | Observacao |
 
-### Tabelas de Aprovacao Customizadas MMarra
+Documentacao: [TGFLIB.md](../../sankhya/tabelas/TGFLIB.md)
+
+### Sistema Customizado MMarra
 
 | Tabela | Uso |
 |--------|-----|
 | AD_APROVACAO | Aprovacoes customizadas |
 | AD_LIBERACOESVENDA | Liberacoes de venda |
 
+**MMarra utiliza tabelas AD_* para aprovacoes, nao o sistema padrao TGFLIB.**
+
 ### Fluxo com Aprovacao
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
 │   Nota      │───>│  Pendente   │───>│  Aprovacao  │───>│  Liberada   │
-│ STATUSNOTA  │    │ STATUSNOTA  │    │   TGFLIB    │    │ STATUSNOTA  │
-│    = 'A'    │    │    = 'P'    │    │   criado    │    │    = 'L'    │
+│ STATUSNOTA  │    │ STATUSNOTA  │    │  AD_* ou    │    │ STATUSNOTA  │
+│    = 'A'    │    │    = 'P'    │    │  manual     │    │    = 'L'    │
 └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
 ```
 
@@ -462,17 +533,19 @@ Baseado nos dados extraidos (TIPVEND = C):
 
 | Metrica | Valor |
 |---------|-------|
-| Total compras (TOP 1209) | 47.523 notas |
-| Valor total compras | R$ 382M |
-| Transferencias entrada | 21.276 notas |
-| Valor transferencias | R$ 46M |
-| Solicitacoes compra | 2.801 |
+| **Solicitacoes compra (TIPMOV=J)** | 2.868 (R$ 6.05M) |
+| **Cotacoes (TGFCOT)** | 2.839 |
+| **Pedidos compra (TIPMOV=O)** | 2.148 (R$ 15.43M) |
+| **Compras efetivas (TOP 1209)** | 47.523 (R$ 382M) |
+| Transferencias entrada | 21.276 (R$ 46M) |
 | Qtd compradores | 20 |
 | Posicoes estoque (TGFEST) | 36.769 |
 | Titulos a pagar (TGFFIN) | 17.906 (R$ 113M) |
 | Notas liberadas | 76.313 |
 | Notas pendentes | 242 |
 | Notas abertas | 165 |
+| TGFLIB (aprovacoes) | 0 (vazia, usa AD_*) |
+| TGFSOL (solicitacoes) | 0 (vazia, usa TGFCAB) |
 
 ---
 
@@ -513,6 +586,8 @@ Os produtos MMarra vem principalmente de:
 
 - [TGFCAB](../../sankhya/tabelas/TGFCAB.md) - Cabecalho das notas
 - [TGFITE](../../sankhya/tabelas/TGFITE.md) - Itens das notas
+- [TGFCOT](../../sankhya/tabelas/TGFCOT.md) - Cotacoes de compra
+- [TGFLIB](../../sankhya/tabelas/TGFLIB.md) - Liberacoes/aprovacoes
 - [TGFPAR](../../sankhya/tabelas/TGFPAR.md) - Parceiros/Fornecedores
 - [TGFPRO](../../sankhya/tabelas/TGFPRO.md) - Produtos
 - [TGFTOP](../../sankhya/tabelas/TGFTOP.md) - Tipos de operacao
