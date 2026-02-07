@@ -32,6 +32,8 @@ A compra na MMarra segue um fluxo que envolve:
 | **TSIEMP** | Empresa compradora | 10 | [TSIEMP.md](../../sankhya/tabelas/TSIEMP.md) |
 | **TGFEST** | Posicao de estoque | 36.7k | [TGFEST.md](../../sankhya/tabelas/TGFEST.md) |
 | **TGFFIN** | Titulos a pagar | 54k | [TGFFIN.md](../../sankhya/tabelas/TGFFIN.md) |
+| **TGFVAR** | Variacoes/Atendimentos de pedido | 28k | [TGFVAR.md](../../sankhya/tabelas/TGFVAR.md) |
+| **TGFMAR** | Marcas de produtos | 1.4k | [TGFMAR.md](../../sankhya/tabelas/TGFMAR.md) |
 | **TGFLIB** | Liberacoes/aprovacoes (VAZIA) | 0 | [TGFLIB.md](../../sankhya/tabelas/TGFLIB.md) |
 
 ### Tabelas de Solicitacao
@@ -53,14 +55,14 @@ A compra na MMarra segue um fluxo que envolve:
 |------------|-------------|------------|
 | **L** | Liberada/Confirmada | 76.313 |
 | **P** | Pendente | 242 |
-| **A** | Aberta/Em digitacao | 165 |
+| **A** | Atendimento | 165 |
 
 ### Transicoes de Status
 
 ```
 ┌──────────┐     ┌──────────┐     ┌──────────┐
 │    A     │────>│    P     │────>│    L     │
-│ (Aberta) │     │(Pendente)│     │(Liberada)│
+│(Atendim.)│     │(Pendente)│     │(Liberada)│
 └──────────┘     └──────────┘     └──────────┘
       │
       └────────────────────────────────┘
@@ -68,7 +70,7 @@ A compra na MMarra segue um fluxo que envolve:
 ```
 
 **Fluxo de Status:**
-1. **A (Aberta)** - Nota em digitacao, pode ser editada
+1. **A (Atendimento)** - Nota em atendimento/digitacao
 2. **P (Pendente)** - Aguardando aprovacao/liberacao
 3. **L (Liberada)** - Confirmada, gerou estoque/financeiro
 
@@ -258,6 +260,109 @@ TGFCOT permite configurar pesos para avaliacao automatica:
 
 ---
 
+## Previsao de Entrega e Atendimento de Pedidos
+
+### DTPREVENT - Previsao de Entrega
+
+Campo TGFCAB.DTPREVENT armazena a data prevista de entrega do pedido de compra.
+
+**Caracteristicas:**
+- Tipo: Data (pode ser NULL)
+- Preenchido pelo comprador apos contato com fornecedor
+- NULL = sem previsao informada
+- Presente em pedidos de compra (TIPMOV = 'O') e notas de compra (TIPMOV = 'C')
+
+**Query: Pedidos com previsao de entrega**
+```sql
+SELECT C.NUNOTA, P.NOMEPARC, C.VLRNOTA, C.DTPREVENT,
+  TO_CHAR(C.DTPREVENT, 'MM/YYYY') AS MES_PREVISAO
+FROM TGFCAB C
+JOIN TGFPAR P ON C.CODPARC = P.CODPARC
+WHERE C.TIPMOV = 'O'
+  AND C.PENDENTE = 'S'
+  AND C.STATUSNOTA <> 'C'
+  AND C.DTPREVENT IS NOT NULL
+ORDER BY C.DTPREVENT
+```
+
+**Query: Pedidos atrasados (previsao passou)**
+```sql
+SELECT C.NUNOTA, P.NOMEPARC, C.VLRNOTA, C.DTPREVENT,
+  TRUNC(SYSDATE) - TRUNC(C.DTPREVENT) AS DIAS_ATRASO
+FROM TGFCAB C
+JOIN TGFPAR P ON C.CODPARC = P.CODPARC
+WHERE C.TIPMOV = 'O'
+  AND C.PENDENTE = 'S'
+  AND C.STATUSNOTA <> 'C'
+  AND C.DTPREVENT < TRUNC(SYSDATE)
+ORDER BY DIAS_ATRASO DESC
+```
+
+### TGFVAR - Atendimento/Entrega Parcial de Pedidos
+
+A tabela TGFVAR registra as entregas parciais (variacoes) de cada item do pedido.
+
+**Estrutura:**
+- NUNOTAORIG + SEQUENCIAORIG = item original do pedido
+- NUNOTA + SEQUENCIA = item da nota de atendimento (entrega)
+- QTDATENDIDA = quantidade entregue nessa variacao
+
+**Formula de Quantidade Pendente:**
+```
+QTD_PENDENTE = TGFITE.QTDNEG - SUM(TGFVAR.QTDATENDIDA)
+```
+
+**Regras:**
+- SEMPRE usar LEFT JOIN na TGFVAR (nem todo item tem entrega)
+- Filtrar apenas variacoes de notas NAO canceladas (STATUSNOTA <> 'C')
+- NVL(SUM(QTDATENDIDA), 0) para tratar itens sem nenhuma entrega
+
+**Query: Itens pendentes de entrega**
+```sql
+SELECT I.NUNOTA, PR.DESCRPROD, M.DESCRICAO AS MARCA,
+  I.QTDNEG AS QTD_PEDIDA,
+  NVL(V_AGG.TOTAL_ATENDIDO, 0) AS QTD_ENTREGUE,
+  I.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0) AS QTD_PENDENTE
+FROM TGFCAB C
+JOIN TGFITE I ON C.NUNOTA = I.NUNOTA
+JOIN TGFPRO PR ON I.CODPROD = PR.CODPROD
+LEFT JOIN TGFMAR M ON PR.CODMARCA = M.CODIGO
+LEFT JOIN (
+  SELECT V.NUNOTAORIG, V.SEQUENCIAORIG, SUM(V.QTDATENDIDA) AS TOTAL_ATENDIDO
+  FROM TGFVAR V
+  JOIN TGFCAB CV ON CV.NUNOTA = V.NUNOTA
+  WHERE CV.STATUSNOTA <> 'C'
+  GROUP BY V.NUNOTAORIG, V.SEQUENCIAORIG
+) V_AGG ON V_AGG.NUNOTAORIG = I.NUNOTA AND V_AGG.SEQUENCIAORIG = I.SEQUENCIA
+WHERE C.TIPMOV = 'O'
+  AND C.PENDENTE = 'S'
+  AND C.STATUSNOTA <> 'C'
+  AND I.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0) > 0
+ORDER BY QTD_PENDENTE DESC
+```
+
+### Fluxo de Entrega
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  Pedido     │───>│  Fornecedor │───>│  Entrega    │───>│  Conferencia│
+│  TIPMOV=O   │    │  informa    │    │  parcial    │    │  final      │
+│  PENDENTE   │    │  prazo      │    │  TGFVAR     │    │  PENDENTE   │
+│    = S      │    │  DTPREVENT  │    │  QTDATENDIDA│    │    = N      │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+### Tabelas Envolvidas no Atendimento
+
+| Tabela | Papel | Documentacao |
+|--------|-------|--------------|
+| **TGFCAB** | Pedido original + DTPREVENT | [TGFCAB.md](../../sankhya/tabelas/TGFCAB.md) |
+| **TGFITE** | Itens pedidos (QTDNEG) | [TGFITE.md](../../sankhya/tabelas/TGFITE.md) |
+| **TGFVAR** | Entregas parciais (QTDATENDIDA) | [TGFVAR.md](../../sankhya/tabelas/TGFVAR.md) |
+| **TGFMAR** | Marca dos produtos | [TGFMAR.md](../../sankhya/tabelas/TGFMAR.md) |
+
+---
+
 ## Impacto no Estoque (TGFEST)
 
 ### Compra Efetiva (TOP 1209, 1401, 1452)
@@ -389,7 +494,7 @@ Documentacao: [TGFLIB.md](../../sankhya/tabelas/TGFLIB.md)
 | NUNOTA | Numero unico da nota | Sequencial |
 | CODTIPOPER | TOP usada | 1209, 1401, 1804... |
 | TIPMOV | Tipo movimento | C (compra), O (pedido), J (solicitacao) |
-| STATUSNOTA | Status | A (aberta), P (pendente), L (liberada) |
+| STATUSNOTA | Status | A (atendimento), P (pendente), L (liberada) |
 | CODPARC | Fornecedor | FK para TGFPAR |
 | CODVEND | Comprador | FK para TGFVEN (TIPVEND = C) |
 | CODEMP | Empresa compradora | FK para TSIEMP |
@@ -595,3 +700,5 @@ Os produtos MMarra vem principalmente de:
 - [TSIEMP](../../sankhya/tabelas/TSIEMP.md) - Empresas
 - [TGFEST](../../sankhya/tabelas/TGFEST.md) - Estoque
 - [TGFFIN](../../sankhya/tabelas/TGFFIN.md) - Financeiro
+- [TGFVAR](../../sankhya/tabelas/TGFVAR.md) - Variacoes/Atendimentos de pedido
+- [TGFMAR](../../sankhya/tabelas/TGFMAR.md) - Marcas de produtos

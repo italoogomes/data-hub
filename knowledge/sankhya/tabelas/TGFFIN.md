@@ -1,421 +1,445 @@
 # TGFFIN
 
-**Descricao:** Titulos financeiros (contas a receber e a pagar). Armazena todas as parcelas, vencimentos, baixas e informacoes de cobranca.
-
-**Total de registros:** 54.441
-
----
-
-## Resumo por Tipo
-
-| RECDESP | Tipo | Qtd Titulos | Valor Total |
-|---------|------|-------------|-------------|
-| 1 | A Receber | 36.408 | R$ 46.482.415,97 |
-| -1 | A Pagar | 17.906 | R$ 113.433.634,72 |
-| 0 | Outros | 127 | R$ 156.236,76 |
-
----
+**Descricao:** Titulos Financeiros
+**Total de campos no dicionario:** 298
 
 ## Campos Principais
 
-| Campo | Tipo | Tamanho | Obrig. | PK | Descricao |
-|-------|------|---------|--------|----|----|
-| NUFIN | NUMBER | 22 | Sim | PK | Numero unico do titulo |
-| CODEMP | NUMBER | 22 | Sim | FK | Empresa do titulo |
-| NUNOTA | NUMBER | 22 | Nao | FK | Nota de origem |
-| CODPARC | NUMBER | 22 | Sim | FK | Parceiro (cliente/fornecedor) |
-| RECDESP | NUMBER | 22 | Sim | - | 1=Receber, -1=Pagar, 0=Outros |
-| VLRDESDOB | FLOAT | 22 | Sim | - | Valor do desdobramento/parcela |
-| DTVENC | DATE | 7 | Nao | - | Data de vencimento |
-| DTNEG | DATE | 7 | Sim | - | Data da negociacao |
-| PROVISAO | VARCHAR2 | 1 | Sim | - | S=Provisao, N=Real |
+| Campo | Tipo | Descricao |
+|-------|------|-----------|
+| ABATIMENTO | Decimal | Abatimento (Cob. Registrada) |
+| ABATIMENTOCAN | Decimal | Abatimento Cancelado (Cob. Registrada) |
+| AGENCIA_CMC7 | Texto | Agência CMC7 |
+| ALIQICMS | Decimal | % ICMS |
+| ANTECIPADO | Texto | Antecipado |
+| ATRASO | Inteiro | Atraso (dias) |
+| ATRASOINICIAL | Inteiro | Atraso 1º Vencto (dias) |
+| AUTORIZADO | Texto | Autorizado |
+| BAIXAAPI | Texto | Baixa via API |
+| BASEICMS | Decimal | Base ICMS |
+| BASEINSS | Decimal | Base INSS |
+| BASEIRF | Decimal | Base IRF |
+| BLOQVAR | Texto | Bloq. Calculo Variação |
+| CARTA | Inteiro | Nro Carta |
+| CARTAODESC | Decimal | Taxa Administradora |
+| CGC_CPF_CMC7 | Texto | CNPJ/CPF CMC7 |
+| CGC_CPF_PARC | Texto | CNPJ / CPF |
+| CHAVECTE | Texto | Chave CT-e |
+| CHAVECTEREF | Texto | Chave CT-e de referência |
+| CHAVENFEGNRE | Texto | Chave de acesso NFe |
+| CHAVEPIX | Texto | Chave Pix |
+| CHEQUERASTREADO_CMC7 | Texto | Cheque rastreado |
+| CLASSIFCESSAOOBRA | Inteiro | Classificação Cessão M.d.Obra |
+| CODBARRA | Texto | Código de Barras |
+| CODBCO | Inteiro | Banco |
+| CODBCO_CMC7 | Inteiro | Código Banco CMC7 |
+| CODCBE | Inteiro | Acerto Benefício |
+| CODCC | Inteiro | CODCC |
+| CODCENCUS | Inteiro | Centro Resultado |
+| CODCFO | Inteiro | CFOP |
+| CODCIDFIMCTE | Inteiro | Cód. Cid. Fim CT-e |
+| CODCIDINICTE | Inteiro | Cód. Cid. Inicio CT-e |
+| CODCONTATO | Inteiro | Contato |
+| CODCTABCOINT | Inteiro | Conta Bancária |
+| CODEMP | Inteiro | Empresa |
+| CODEMPBAIXA | Inteiro | Emp. da Baixa |
+| CODFUNC | Inteiro | Funcionário |
+| CODHISTAC | Inteiro | Histórico |
+| CODIGOBARRA | Texto | Cód. Barras Receb. |
+| CODIMOVELRURAL | Inteiro | Imóvel Rural |
+| CODIPTU | Inteiro | Conta IPTU |
+| CODLANC | Inteiro | Cód. Lançamento |
+| CODLST | Inteiro | Tipo de Serviço |
+| CODMOEDA | Inteiro | Moeda |
+| CODNAT | Inteiro | Natureza |
+| CODOBRA | Texto | Cód. da Obra |
+| CODOBSPADRAO | Inteiro | Observação padrão |
+| CODOPERACAOVENDAMAIS | Texto | Código da Operação |
+| CODPARC | Inteiro | Parceiro |
+| CODPARCMATRIZ | Inteiro | Cod. Parceiro Matriz |
+| CODPROJ | Inteiro | Projeto |
+| CODPROR | Texto | Cód. Prorrogação VM |
+| CODRECEITA | Texto | Código receita Darf |
+| CODREGUA | Inteiro | Régua |
+| CODTIPOPER | Inteiro | Tipo Operação |
+| CODTIPOPERBAIXA | Inteiro | Tipo Operação Baixa |
+| CODTIPTIT | Inteiro | Tipo de Título |
+| CODTRIB | Inteiro | Tributação CT-e |
+| CODUSU | Inteiro | Cód. Usuário |
+| CODUSUBAIXA | Inteiro | Usuário Baixa |
+| CODUSUCOBR | Inteiro | CODUSUCOBR |
+| CODUSUPROR | Inteiro | Prorrogado por |
+| CODVEICULO | Inteiro | Veículo |
+| CODVEND | Inteiro | Vendedor |
+| CONCILIADO | Texto | Conciliado |
+| CONTABILIZADO | Texto | Contabilizado? |
+| CONTABILIZADOPDD | Texto | Título contabilizado PDD |
+| CONTA_CMC7 | Texto | Conta CMC7 |
+| CTABCOBAIXA | Texto | Conta Baixa |
+| CUSTASPROCESSUAIS | Texto | Custas Processuais? |
+| DEPOSITOJUDICIAL | Texto | Depósito Judicial? |
+| DESCALINEACHEQDEV | Texto | Alínea Dev. Cheque |
+| DESCRHISTAC | Texto | Descrição histórico |
+| DESCRLANCBCO | Texto | Desc. Lanc. Bancário |
+| DESCRTPAGNFCE | Texto | Descrição do Tipo de Pagto NFC-e/NF-e/CF-e (Outros) |
+| DESDOBDUPL | Texto | Desdob. Duplicata |
+| DESDOBRAMENTO | Texto | Desdob. |
+| DESPADVOGADO | Texto | Desp. com Advogado(s)? |
+| DESPCART | Decimal | Despesas c/ Cartório |
+| DHAPROVACAOVENDAMAIS | Data/Hora | Dt. Aprovação |
+| DHBAIXA | Data | Data Baixa |
+| DHCONCIL | Data/Hora | Dh. Conciliação |
+| DH_IMPRESSAO | Data | Data Impressão |
+| DHMOV | Data/Hora | Dt/Hr Movimentação |
+| DHTIPOPER | Data/Hora | Dt/Hr Operação |
+| DHTIPOPERBAIXA | Data/Hora | Dt/Hr Tipo Operação |
+| DIGSAFRA | Texto | Dígito Safra |
+| DTALTER | Data/Hora | Últ. Alteração |
+| DTANTECIPACAO | Data | Dt. antecipação |
+| DTBAIXAPREV | Data/Hora | Dt. Prevista p/ Baixa |
+| DTCONTAB | Data/Hora | Dt. Contabilização |
+| DTCONTABBAIXA | Data/Hora | Dt. Contabilização Baixa |
+| DTENTSAI | Data | Dt. Entrada e Saída |
+| DTENTSAIINFO | Data | Data Extemporânea |
+| DTINITREFAPURACAO | Data/Hora | Data apuração |
+| DTINTEGRACAOIPI | Data | Data integração |
+| DTNEG | Data | Dt. Negociação |
+| DTNEGFILTER | Data | Filtro p/ Dt Negociação |
+| DTPRAZO | Data | Dt. Prazo |
+| DTPROR | Data/Hora | Prorrogado em |
+| DTREFERENCIA | Data | Período de referência |
+| DTVENC | Data | Dt. Vencimento |
+| DTVENCINIC | Data/Hora | Dt. Venc. Inicial |
+| EMVPIX | Texto | PIX Copia e Cola |
+| EXIGEISSQN | Texto | Exigibilidade do ISSQN DES-BH |
+| HISTORICO | Texto | Histórico |
+| IDLOTEFDIC | Inteiro | Identificador do Lote FDIC |
+| IDTRANSACAOPIX | Texto | TXID Pix |
+| IDUNICO | Inteiro | Identificador boleto rápido |
+| INDRECEFDCONT | Texto | Indicador de Receita (registro F525 - EFD Cont.) |
+| INFCOMPLEFDCONT | Texto | Informação complementar do Indic. comp. receita recebida |
+| INSSRETIDO | Texto | INSS Retido |
+| IRFRETIDO | Texto | IRRF Retido |
+| ISSRETIDO | Texto | ISS Retido |
+| JUROSAVP | Decimal | Juros Ajuste do Valor Presente |
+| LINHADIGITAVEL | Texto | Linha Dig. Receb. |
+| METODOCALCIRRF | Texto | Método de Cálculo IRRF |
+| MODELONFDES | Texto | Modelo NF DES-BH |
+| MONIOCOREM | Texto | Monitora Ocorrência de Remessa |
+| MOSTRARENEG | Texto | Mostrar Renegociados |
+| MOTNAORETERISSQN | Texto | Motivo de não Retenção ISSQN DES-BH |
+| M2 | Decimal | Metro Quadrado |
+| NATUREZAOPERDES | Texto | Natureza Oper. DES-BH |
+| NFCOMPLFIX | Inteiro | Nf. Complemento Fixação |
+| NFENTSEQFIX | Texto | Nf. Entrada Fixação/Sequência |
+| NOMEEMITENTE_CMC7 | Texto | Nome Emitente CMC7 |
+| NOSSONUM | Texto | Nosso Número |
+| NROCESSAOFDIC | Texto | Nro. Cessao FDIC |
+| NROIMPORT | Inteiro | Nro da importação |
+| NROLOTEGNRE | Inteiro | Número Lote GNRE |
+| NUANTBANC | Inteiro | Nro. único antecipação |
+| NUAPONTA | Inteiro | Nro Único Apontamento |
+| NUBCO | Inteiro | Nro Único Bancário |
+| NUCAIXA | Inteiro | Núm. Caixa |
+| NUCCR | Inteiro | Nro do cartão de crédito |
+| NUCHQ | Inteiro | Nro. cheque |
+| NUCKC | Inteiro | Nro. Checkout |
+| NUCOMPENS | Inteiro | Nro Compensação/Acerto |
+| NUDEV | Inteiro | Nro Único Devolução |
+| NUFIN | Inteiro | Nro Único |
+| NUFTC | Inteiro | Nro único da fatura |
+| NUMBOR | Inteiro | Nro Borderô |
+| NUMCOMPLFIX | Inteiro | Nro Nota Complemento Fixação |
+| NUMCONTRATO | Inteiro | Nro Contrato |
+| NUMDOCARRECAD | Texto | Nro Documento de arrecadação |
+| NUMDUPL | Inteiro | Nro Duplicata |
+| NUMENTSAFFIX | Inteiro | Nro Nota Entrada Fixação |
+| NUMNFSE | Texto | Nro. NFS-e |
+| NUMNOTA | Inteiro | Nro Nota |
+| NUMOCORRENCIAS | Texto | Nr. da Ocorrência Caixa |
+| NUMOS | Inteiro | Nro da OS |
+| NUMPROCADMJUDIC | Texto | Nº Processo Administrativo/Judicial |
+| NUMREMESSA | Inteiro | Nro Remessa |
+| NUMTRANSF | Inteiro | Nro da Transferência |
+| NUNOTA | Inteiro | Nro Único Nota |
+| NUPED | Inteiro | Número Único do Pedido |
+| NURENEG | Inteiro | Nro Renegociação |
+| NUVERBA | Inteiro | Nro. Verba |
+| NVDTVENC | Data | Nova data de vencimento |
+| OBRACONSTCIVIL | Inteiro | Obra de Construção Civil |
+| OBSERVACAOAC | Texto | Observação |
+| ORDEMCARGA | Inteiro | Ordem de Carga |
+| ORIGEM | Texto | Origem |
+| PARCRENEG | Texto | Parcelas da Renegociação |
+| PDD | Texto | PDD |
+| PENDENTECRIARDESP | Texto | Prorrogado VM |
+| PERCDESC | Decimal | Percentual de Desconto |
+| PERTENCEAC | Texto | Pertence ao acerto de carga |
+| PIXTEF | Inteiro | Pix TEF |
+| PRAZO | Inteiro | Prazo |
+| PRAZOINICIAL | Inteiro | Prazo 1º Vencto |
+| PRORROGADO | Texto | Prorrogado VM |
+| PROVISAO | Texto | Provisão |
+| RATEADO | Texto | Rateado |
+| RATEADOCAB | Texto | Proveniente de nota rateada |
+| RECADIANTAMENTORURAL | Texto | Receita de Adiantamentos |
+| RECDESP | Inteiro | Receita/Despesa |
+| RECDESPFILTER | Texto | Rec Desp p/ o Filtro |
+| RECEBCARTAO | Texto | Recebim. c/ cartão |
+| RECEBIDO | Texto | Recebido |
+| REFATCON | Data | Ref. Faturamento do Contrato |
+| REGESPTRIBUT | Texto | Regime Especial de Tributação DES-BH |
+| REJEICAOGNRE | Texto | Motivo Rejeição GNRE |
+| RETORNADOAC | Texto | Retornado |
+| SANGDESPDV | Texto | Sangria de despesa PDV |
+| SEQCAIXA | Inteiro | Seq. Caixa |
+| SEQUENCIA | Inteiro | Sequência |
+| SERIEENTSAFFIX | Texto | Série Entrada Fixação |
+| SERIENFDES | Texto | Série NF DES-BH |
+| SERIENOTA | Texto | Série da Nota |
+| SERIENOTACOMPL | Texto | Série Complemento Fixação |
+| SITESPECIALRESP | Texto | Situação Especial de Responsabilidade DES-BH |
+| STATUSGNRE | Texto | Status GNRE |
+| STATUSLIB | Inteiro | Status liberação |
+| SUBTIPOVENDA | Decimal | Subtipo do Tipo de Título |
+| TAXAVENDAMAIS | Decimal | Taxa Venda Mais |
+| TIMBLOQUEADA | Texto | Bloqueada |
+| TIMCONTALANC | Inteiro | Conta Lançamento |
+| TIMCONTAREP | Inteiro | Conta rep. prop. |
+| TIMCONTRATOADM | Inteiro | Contrato Adm. |
+| TIMCONTRATOLOC | Inteiro | Contrato de Locação |
+| TIMCONTRATOLTV | Inteiro | Contrato de Venda Lotes |
+| TIMDATADEJUR | Data/Hora | Dt. Ida Jurídico |
+| TIMDHBAIXA | Data/Hora | Dt. Pagamento |
+| TIMDHGERREPASSE | Data/Hora | Dh. Ger. Repasse |
+| TIMDHGERREPPARCIAL | Data/Hora | Dh. Ger. Rep. Parcial |
+| TIMDTIMPBOL | Data/Hora | Dt. Impressão Boleto |
+| TIMDTIMPBOLLOCAL | Data/Hora | Dh. Imp. Local Boleto |
+| TIMDTREPASSE | Data | Dt. Repasse |
+| TIMDTREPPARCIAL | Data | Dt. Repasse Parcial |
+| TIMESTAGIO | Texto | Estágio |
+| TIMFECHAMENTO | Inteiro | Fechamento Cond. |
+| TIMFECHAMENTOALU | Inteiro | Fechamento Aluguel Perc. |
+| TIMFINGARANTORIG | Inteiro | Fin. Resp. Garantia |
+| TIMIMOVEL | Inteiro | Imóvel |
+| TIMNEGOCIACAO | Inteiro | Negociação |
+| TIMNOMEADVOGADO | Texto | Advogado |
+| TIMNUFINORIG | Inteiro | Financeiro Origem |
+| TIMNUMREG | Inteiro | Sequência Banco |
+| TIMORIGEM | Texto | Tipo Parcela |
+| TIMORIGRENEG | Texto | Repactuação |
+| TIMPARCELA | Inteiro | Parcela |
+| TIMRENEGCANCLOTE | Inteiro | Renegociado Por |
+| TIMRENEGIMV | Inteiro | Renegociação da venda do imóvel |
+| TIMRENEGLOTE | Inteiro | Renegociação Contrato |
+| TIMREPINTELIGENTE | Inteiro | Usuário Rep. Inteligente |
+| TIMREPPARCIAL | Texto | Repasse Parcial |
+| TIMRESCISAOLOC | Inteiro | Rescisão de Locação |
+| TIMRESCISAOLTV | Inteiro | Rescisão de Contrato |
+| TIMSAC | Inteiro | Atendimento ao cliente (OS) |
+| TIMTIPOINTERMED | Inteiro | Tipo de Intermediária |
+| TIMTXADMGERALU | Texto | Tx Adm pela Parcela |
+| TIMVENDAIMV | Inteiro | Contrato de venda do imóvel |
+| TIMVENDALOTE | Inteiro | Contrato de venda de lote |
+| TIMVLRALUGUEL | Decimal | Vlr. Aluguel |
+| TIMVLRAMORTCONTRATO | Decimal | Vlr. Amortização Contrato |
+| TIMVLRCORRMONET | Decimal | Vlr. Corr. Monetária |
+| TIMVLRJUROCONTRATO | Decimal | Vlr. Juro Contrato |
+| TIPAPURACAO | Texto | Tipo Apuração |
+| TIPJURO | Texto | Tipo Juro |
+| TIPMARCCHEQ | Texto | Tipo Marcação Cheque |
+| TIPMULTA | Texto | Tipo Multa |
+| TPAGNFCE | Texto | Tipo de pgto para NFC-e |
+| TROCOPDV | Decimal | Vlr Troco |
+| VALORPRESENTE | Decimal | Valor Presente |
+| VENDAMAIS | Texto | Venda Mais |
+| VLRALIBERAR | Decimal | Vlr. a liberar |
+| VLRATUAL | Inteiro | Vlr. Atual |
+| VLRBAIXA | Decimal | Vlr Baixa |
+| VLRCESSAO | Decimal | Vlr. Cessão FDIC |
+| VLRCHEQUE | Decimal | Vlr Cheque |
+| VLRDESC | Decimal | Vlr Desconto |
+| VLRDESCCALC | Decimal | Vlr. Desconto Calc. |
+| VLRDESCEMBUT | Decimal | Vlr Desc. Embutido |
+| VLRDESDOB | Decimal | Vlr do Desdobramento |
+| VLRDESDOBCALC | Decimal | Vlr do Desdobramento Calc |
+| VLRFATCARTAO | Decimal | Vlr. Fatura Cartão |
+| VLRGNREDOIS | Decimal | Vlr GNRE dois |
+| VLRICMS | Decimal | Vlr ICMS |
+| VLRICMSXMLCTE | Decimal | Vlr ICMS_XML |
+| VLRINSS | Decimal | Vlr INSS |
+| VLRIRF | Decimal | Vlr IRF |
+| VLRISS | Decimal | Vlr ISS |
+| VLRJURO | Decimal | Vlr Juros |
+| VLRJUROCALC | Decimal | Juros Calculados |
+| VLRJUROEMBUT | Decimal | Vlr Juros Embutidos |
+| VLRJUROLIB | Decimal | Vlr Perdão de Juros |
+| VLRJURONEGOC | Decimal | Vlr Juros Negociados |
+| VLRJUROSMAISMULTA | Decimal | Juros + Multa |
+| VLRLANCORIG | Decimal | Valor lançamento |
+| VLRLIQUIDO | Decimal | Valor Líquido |
+| VLRMOEDA | Decimal | Vlr Moeda |
+| VLRMOEDABAIXA | Decimal | Vlr Moeda na Baixa |
+| VLRMULTA | Decimal | Vlr Multa |
+| VLRMULTACALC | Decimal | Multa Calculada |
+| VLRMULTAEMBUT | Decimal | Vlr Multa Embutida |
+| VLRMULTALIB | Decimal | Vlr Perdão de Multa |
+| VLRMULTANEGOC | Decimal | Vlr Multa Negociada |
+| VLRPROV | Decimal | Vlr Provisão Financeira |
+| VLRTOTALCALC | Decimal | Total Calculado |
+| VLRTROCO | Decimal | Vlr Troco |
+| VLRVARCAMBIAL | Decimal | Variação Cambial |
+| VLRVENDOR | Decimal | Vlr Vendor |
 
----
-
-## Campos de Identificacao
-
-| Campo | Tipo | Tamanho | Descricao |
-|-------|------|---------|-----------|
-| NUFIN | NUMBER | 22 | PK - Numero unico do titulo |
-| CODEMP | NUMBER | 22 | Empresa dona do titulo |
-| NUMNOTA | NUMBER | 22 | Numero da nota fiscal |
-| SERIENOTA | VARCHAR2 | 3 | Serie da nota fiscal |
-| NUNOTA | NUMBER | 22 | FK para TGFCAB (nota origem) |
-| DESDOBRAMENTO | VARCHAR2 | 7 | Identificador da parcela (001, 002...) |
-| NUMDUPL | NUMBER | 22 | Numero da duplicata |
-| DESDOBDUPL | VARCHAR2 | 2 | Desdobramento da duplicata |
-| NOSSONUM | VARCHAR2 | 12 | Nosso numero (boleto bancario) |
-
----
-
-## Campos de Data
+## Campos Customizados (AD_) - 15 campos
 
 | Campo | Tipo | Descricao |
 |-------|------|-----------|
-| DTNEG | DATE | Data da negociacao/emissao |
-| DHMOV | DATE | Data/hora do movimento |
-| DTVENCINIC | DATE | Data vencimento inicial (original) |
-| DTVENC | DATE | Data vencimento atual |
-| DHBAIXA | DATE | Data/hora da baixa |
-| DTCONTAB | DATE | Data de contabilizacao |
-| DTCONTABBAIXA | DATE | Data contabilizacao da baixa |
-| DTBAIXAPREV | DATE | Data baixa prevista |
-| DTENTSAI | DATE | Data entrada/saida |
-| DTALTER | DATE | Data ultima alteracao |
-
----
-
-## Campos de Valor
-
-| Campo | Tipo | Descricao |
-|-------|------|-----------|
-| VLRDESDOB | FLOAT | Valor da parcela |
-| VLRBAIXA | FLOAT | Valor baixado |
-| VLRDESC | FLOAT | Valor de desconto |
-| VLRMULTA | FLOAT | Valor da multa |
-| VLRJURO | FLOAT | Valor de juros |
-| VLRIRF | FLOAT | Valor IRF retido |
-| VLRISS | FLOAT | Valor ISS retido |
-| VLRINSS | FLOAT | Valor INSS retido |
-| VLRVENDOR | FLOAT | Valor de vendor |
-| VLRCHEQUE | FLOAT | Valor em cheque |
-| VLRPROV | NUMBER | Valor provisionado |
-
----
-
-## Campos de Classificacao
-
-| Campo | Tipo | Tamanho | Descricao |
-|-------|------|---------|-----------|
-| CODPARC | NUMBER | 22 | FK - Parceiro |
-| CODTIPOPER | NUMBER | 22 | FK - Tipo de operacao |
-| DHTIPOPER | DATE | 7 | Data/hora da TOP |
-| CODBCO | NUMBER | 22 | FK - Banco |
-| CODCTABCOINT | NUMBER | 22 | FK - Conta bancaria |
-| CODNAT | NUMBER | 22 | FK - Natureza |
-| CODCENCUS | NUMBER | 22 | FK - Centro de custo |
-| CODPROJ | NUMBER | 22 | FK - Projeto |
-| CODVEND | NUMBER | 22 | FK - Vendedor |
-| CODMOEDA | NUMBER | 22 | FK - Moeda |
-| CODTIPTIT | NUMBER | 22 | FK - Tipo de titulo |
-
----
-
-## Campos de Controle
-
-| Campo | Tipo | Descricao |
-|-------|------|-----------|
-| RECDESP | NUMBER | Tipo: 1=Receber, -1=Pagar, 0=Outros |
-| PROVISAO | VARCHAR2(1) | S=Provisao, N=Real |
-| AUTORIZADO | VARCHAR2(1) | S=Autorizado, N=Nao |
-| ORIGEM | VARCHAR2(1) | E=Manual, N=Nota |
-| RATEADO | VARCHAR2(1) | S=Rateado, N=Nao |
-| FINCONFIRMADO | CHAR(1) | S=Confirmado, N=Nao |
-
----
-
-## Campos de Baixa
-
-| Campo | Tipo | Descricao |
-|-------|------|-----------|
-| DHBAIXA | DATE | Data/hora da baixa |
-| VLRBAIXA | FLOAT | Valor efetivamente baixado |
-| CODEMPBAIXA | NUMBER | Empresa da baixa |
-| CODTIPOPERBAIXA | NUMBER | TOP da baixa |
-| DHTIPOPERBAIXA | DATE | Data/hora TOP baixa |
-| CODUSUBAIXA | NUMBER | Usuario que baixou |
-
----
-
-## Chave Primaria
-
-```
-PK: NUFIN (campo unico sequencial)
-```
-
----
-
-## Relacionamentos (FKs)
-
-| Campo | Tabela | Campo Ref | Descricao |
-|-------|--------|-----------|-----------|
-| NUNOTA | TGFCAB | NUNOTA | Nota de origem |
-| CODPARC | TGFPAR | CODPARC | Parceiro |
-| CODEMP | TGFEMP | CODEMP | Empresa |
-| CODBCO | TSIBCO | CODBCO | Banco |
-| CODCTABCOINT | TSICTA | CODCTABCOINT | Conta bancaria |
-| CODNAT | TGFNAT | CODNAT | Natureza financeira |
-| CODCENCUS | TSICUS | CODCENCUS | Centro de custo |
-| CODPROJ | TCSPRJ | CODPROJ | Projeto |
-| CODVEND | TGFVEN | CODVEND | Vendedor |
-| CODMOEDA | TSIMOE | CODMOEDA | Moeda |
-| CODTIPTIT | TGFTIT | CODTIPTIT | Tipo de titulo |
-| CODTIPOPER | TGFTOP | CODTIPOPER+DHALTER | TOP de origem |
-
----
+| AD_CHAVENFEIMP | Texto | Chave nfe importação |
+| AD_CODPARCGRUECONOMICO | Texto | Código Grupo Econômico |
+| AD_CODPARCMATRIZ | Texto | Código Parceiro Matriz |
+| AD_CODVEND_MMA | Decimal | Codigo Vendedor Legado |
+| AD_DDACNPJ | Texto | CNPJ DDA |
+| AD_DDARAZAOSOCIAL | Texto | Razão Social DDA |
+| AD_IDEXTERNO | Texto | ID_legado |
+| AD_NOMEARQ | Texto | Nome do Arquivo |
+| AD_NOMEPARCGRUECONOMICO | Texto | Nome do Parc. Grupo Econômico |
+| AD_NOMEVEND_MMA | Texto | Nome vendedor sistema legado |
+| AD_NOTADEV | Inteiro | Nro. Nota Devolucao |
+| AD_NROANTECIPACAO | Inteiro | Nro. Antecipação |
+| AD_UNICO | Inteiro | Sequencia |
+| AD_VLRBASECOMINT | Decimal | Valor Base Comissao Vend Int |
+| AD_VLRCOMINT | Decimal | Valor Comissao Vend Int |
 
 ## Valores de Dominio
 
-### RECDESP (Tipo do Titulo)
-
-| Valor | Significado | Uso |
-|-------|-------------|-----|
-| 1 | Receita/Receber | Vendas, receitas diversas |
-| -1 | Despesa/Pagar | Compras, despesas diversas |
-| 0 | Outros | Transferencias, ajustes |
-
-### PROVISAO
+### ANTECIPADO (Antecipado)
 
 | Valor | Significado |
 |-------|-------------|
-| S | Provisao - Titulo previsto mas nao realizado |
-| N | Real - Titulo efetivo |
+| N | Não |
+| S | Sim |
 
-### AUTORIZADO
-
-| Valor | Significado |
-|-------|-------------|
-| S | Sim - Autorizado para pagamento/recebimento |
-| N | Nao - Aguardando autorizacao |
-
-### ORIGEM
+### AUTORIZADO (Autorizado)
 
 | Valor | Significado |
 |-------|-------------|
-| E | Manual - Criado manualmente |
-| N | Nota - Gerado automaticamente por nota |
+| N | Não |
+| S | Sim |
 
----
+### BLOQVAR (Bloq. Calculo Variação)
 
-## Como Titulos Sao Criados
+| Valor | Significado |
+|-------|-------------|
+| N | Não |
+| S | Sim |
 
-### Na Venda (ATUALFIN = 1)
+### CLASSIFCESSAOOBRA (Classificação Cessão M.d.Obra)
 
-Quando uma nota de venda eh confirmada com TOP que tem `ATUALFIN = 1`:
+| Valor | Significado |
+|-------|-------------|
+| 100000001 | Limpeza, conservação ou zeladoria |
+| 100000002 | Vigilância ou segurança |
+| 100000003 | Construção civil |
+| 100000004 | Serviços de natureza rural |
+| 100000005 | Digitação |
+| 100000006 | Preparação de dados para processamento |
+| 100000007 | Acabamento |
+| 100000008 | Embalagem |
+| 100000009 | Acondicionamento |
+| 100000010 | Cobrança |
+| 100000011 | Coleta ou reciclagem de lixo ou de resíduos |
+| 100000012 | Copa |
+| 100000013 | Hotelaria |
+| 100000014 | Corte ou ligação de serviços públicos |
+| 100000015 | Distribuição |
+| 100000016 | Treinamento e ensino |
+| 100000017 | Entrega de contas e de documentos |
+| 100000018 | Ligação de medidores |
+| 100000019 | Leitura de medidores |
+| 100000020 | Manutenção de instalações, de máquinas ou de equipamentos |
+| 100000021 | Montagem |
+| 100000022 | Operação de máquinas, de equipamentos e de veículos |
+| 100000023 | Operação de pedágio ou de terminal de transporte |
+| 100000024 | Operação de transporte de passageiros |
+| 100000025 | Portaria, recepção ou ascensorista |
+| 100000026 | Recepção, triagem ou movimentação de materiais |
+| 100000027 | Promoção de vendas ou de eventos |
+| 100000028 | Secretaria e expediente |
+| 100000029 | Saúde |
+| 100000030 | Telefonia ou telemarketing |
+| 100000031 | Trabalho temporário na forma da Lei nº 6.019, de janeiro de 1974 |
 
-```sql
--- Sistema cria titulo a receber
-INSERT INTO TGFFIN (
-    NUFIN, CODEMP, NUNOTA, CODPARC,
-    RECDESP, VLRDESDOB, DTVENC, PROVISAO
-) VALUES (
-    [sequencial],
-    [empresa da nota],
-    [NUNOTA da venda],
-    [cliente],
-    1,  -- RECEBER
-    [valor da parcela],
-    [data vencimento],
-    'S'  -- Provisao ate baixar
-)
-```
+### CODTRIB (Tributação CT-e)
 
-### Na Compra (ATUALFIN = -1)
+| Valor | Significado |
+|-------|-------------|
+| 0 | 00-Tributada integralmente |
+| 02 | 02-Tributação monofásica própria sobre combustíveis |
+| 10 | 10-Tributada e c/cobrança por substituição |
+| 15 | 15-Tributação monofásica própria e com responsabilidade pela retenção sobre combustíveis |
+| 20 | 20-Com redução de base de cálculo |
+| 30 | 30-Isenta e não tribut.e c/cobrança por subst. |
+| 40 | 40-Isenta |
+| 41 | 41-Não tributada |
+| 50 | 50-Suspensão |
+| 51 | 51-Diferimento |
+| 53 | 53-Tributação monofásica sobre combustíveis com recolhimento diferido |
+| 60 | 60-ICMS cobrado anteriormente por substituição |
+| 61 | 61-Tributação monofásica sobre combustíveis cobrada anteriormente |
+| 70 | 70-Com redução de base e c/cobrança por subst. |
+| 90 | 90-Outras |
 
-Quando uma nota de compra eh confirmada com TOP que tem `ATUALFIN = -1`:
+### CONCILIADO (Conciliado)
 
-```sql
--- Sistema cria titulo a pagar
-INSERT INTO TGFFIN (
-    NUFIN, CODEMP, NUNOTA, CODPARC,
-    RECDESP, VLRDESDOB, DTVENC, PROVISAO
-) VALUES (
-    [sequencial],
-    [empresa da nota],
-    [NUNOTA da compra],
-    [fornecedor],
-    -1,  -- PAGAR
-    [valor da parcela],
-    [data vencimento],
-    'S'
-)
-```
+| Valor | Significado |
+|-------|-------------|
+| N | Não |
+| S | Sim |
 
----
+### CONTABILIZADO (Contabilizado?)
 
-## Vinculo Nota -> Financeiro
+| Valor | Significado |
+|-------|-------------|
+| N | Não |
+| S | Sim |
 
-Titulos sao vinculados a notas pelo campo `NUNOTA`:
+### CUSTASPROCESSUAIS (Custas Processuais?)
 
-```sql
--- Encontrar titulos de uma nota
-SELECT * FROM TGFFIN WHERE NUNOTA = [numero_nota]
-```
+| Valor | Significado |
+|-------|-------------|
+| N | Não |
+| S | Sim |
 
-**Importante:** Nem toda nota gera financeiro:
-- ATUALFIN = 0 nao gera titulos (transferencias, bonificacoes)
-- Algumas notas podem ter NUNOTA = NULL em TGFFIN (titulos manuais)
+### DEPOSITOJUDICIAL (Depósito Judicial?)
 
----
+| Valor | Significado |
+|-------|-------------|
+| N | Não |
+| S | Sim |
 
-## Queries Uteis
+### DESPADVOGADO (Desp. com Advogado(s)?)
 
-### Titulos a receber vencidos
+| Valor | Significado |
+|-------|-------------|
+| N | Não |
+| S | Sim |
 
-```sql
-SELECT
-    F.NUFIN, F.CODPARC, P.NOMEPARC,
-    F.DTVENC, F.VLRDESDOB,
-    TRUNC(SYSDATE) - TRUNC(F.DTVENC) AS DIAS_ATRASO
-FROM TGFFIN F
-JOIN TGFPAR P ON F.CODPARC = P.CODPARC
-WHERE F.RECDESP = 1
-  AND F.DHBAIXA IS NULL
-  AND F.DTVENC < TRUNC(SYSDATE)
-ORDER BY DIAS_ATRASO DESC
-```
+### INDRECEFDCONT (Indicador de Receita (registro F525 - EFD Cont.))
 
-### Titulos a pagar proximos 30 dias
+| Valor | Significado |
+|-------|-------------|
+| 01 | 01- Clientes |
+| 02 | 02- Administradora de cartão de débito/crédito |
+| 03 | 03- Título de crédito - Duplicata, nota promissória, cheque, etc. |
+| 04 | 04- Documento fiscal |
+| 05 | 05- Item vendido (produtos e serviços) |
+| 99 | 99-Outros |
 
-```sql
-SELECT
-    F.NUFIN, F.CODPARC, P.NOMEPARC,
-    F.DTVENC, F.VLRDESDOB, F.NUNOTA
-FROM TGFFIN F
-JOIN TGFPAR P ON F.CODPARC = P.CODPARC
-WHERE F.RECDESP = -1
-  AND F.DHBAIXA IS NULL
-  AND F.DTVENC BETWEEN SYSDATE AND SYSDATE + 30
-ORDER BY F.DTVENC
-```
+### INSSRETIDO (INSS Retido)
 
-### Resumo financeiro por empresa
+| Valor | Significado |
+|-------|-------------|
+| N | Não |
+| S | Sim |
 
-```sql
-SELECT
-    F.CODEMP,
-    E.NOMEFANTASIA,
-    SUM(CASE WHEN F.RECDESP = 1 AND F.DHBAIXA IS NULL THEN F.VLRDESDOB ELSE 0 END) AS A_RECEBER,
-    SUM(CASE WHEN F.RECDESP = -1 AND F.DHBAIXA IS NULL THEN F.VLRDESDOB ELSE 0 END) AS A_PAGAR
-FROM TGFFIN F
-JOIN TSIEMP E ON F.CODEMP = E.CODEMP
-GROUP BY F.CODEMP, E.NOMEFANTASIA
-ORDER BY A_RECEBER DESC
-```
-
-### Titulos de uma nota especifica
-
-```sql
-SELECT
-    F.NUFIN, F.DESDOBRAMENTO, F.DTVENC,
-    F.VLRDESDOB, F.RECDESP,
-    CASE F.RECDESP WHEN 1 THEN 'RECEBER' WHEN -1 THEN 'PAGAR' END AS TIPO,
-    F.DHBAIXA
-FROM TGFFIN F
-WHERE F.NUNOTA = [numero_nota]
-ORDER BY F.DTVENC
-```
-
-### Inadimplencia por cliente
-
-```sql
-SELECT
-    P.CODPARC, P.NOMEPARC,
-    COUNT(*) AS QTD_TITULOS,
-    SUM(F.VLRDESDOB) AS VLR_VENCIDO,
-    MIN(F.DTVENC) AS MAIS_ANTIGO,
-    MAX(TRUNC(SYSDATE) - TRUNC(F.DTVENC)) AS MAIOR_ATRASO
-FROM TGFFIN F
-JOIN TGFPAR P ON F.CODPARC = P.CODPARC
-WHERE F.RECDESP = 1
-  AND F.DHBAIXA IS NULL
-  AND F.DTVENC < TRUNC(SYSDATE)
-GROUP BY P.CODPARC, P.NOMEPARC
-ORDER BY VLR_VENCIDO DESC
-```
-
----
-
-## Campos Especificos de Impostos/Retencoes
-
-| Campo | Descricao |
-|-------|-----------|
-| VLRIRF | Valor IRF retido |
-| VLRISS | Valor ISS retido |
-| VLRINSS | Valor INSS retido |
-| IRFRETIDO | Flag se reteve IRF (S/N) |
-| ISSRETIDO | Flag se reteve ISS (S/N) |
-| INSSRETIDO | Flag se reteve INSS (S/N) |
-| BASEIRF | Base de calculo IRF |
-| BASEINSS | Base de calculo INSS |
-| BASEICMS | Base de calculo ICMS |
-| ALIQICMS | Aliquota ICMS |
-
----
-
-## Campos de Boleto/Cobranca
-
-| Campo | Descricao |
-|-------|-----------|
-| NOSSONUM | Nosso numero (boleto) |
-| CODIGOBARRA | Codigo de barras |
-| LINHADIGITAVEL | Linha digitavel |
-| NUMREMESSA | Numero da remessa bancaria |
-| CONVENIO | Convenio bancario |
-
----
-
-## Campos Customizados MMarra (AD_)
-
-| Campo | Descricao |
-|-------|-----------|
-| AD_UNICO | ID unico customizado |
-| AD_CHAVENFEIMP | Chave NFe importacao |
-| AD_DDACNPJ | CNPJ para DDA |
-| AD_DDARAZAOSOCIAL | Razao social DDA |
-| AD_IDEXTERNO | ID externo integracao |
-| AD_VLRBASECOMINT | Valor base comissao |
-| AD_VLRCOMINT | Valor comissao |
-| AD_NOMEVEND_MMA | Nome vendedor MMarra |
-| AD_CODVEND_MMA | Codigo vendedor MMarra |
-
----
-
-## Estatisticas MMarra
-
-| Metrica | Valor |
-|---------|-------|
-| Total titulos | 54.441 |
-| A Receber | 36.408 (R$ 46,5M) |
-| A Pagar | 17.906 (R$ 113,4M) |
-| Outros | 127 |
-| Ticket medio receber | R$ 1.277 |
-| Ticket medio pagar | R$ 6.335 |
-
----
-
-## Tabelas Relacionadas
-
-| Tabela | Relacao |
-|--------|---------|
-| TGFCAB | Nota origem (NUNOTA) |
-| TGFPAR | Parceiro (cliente/fornecedor) |
-| TSIEMP/TGFEMP | Empresa |
-| TSIBCO | Banco |
-| TSICTA | Conta bancaria |
-| TGFNAT | Natureza financeira |
-| TSICUS | Centro de custo |
-| TGFVEN | Vendedor |
-| TGFTIT | Tipo de titulo |
-| TGFTOP | Tipo de operacao |
-
----
-
-## Observacoes
-
-1. **NUFIN sequencial** - Cada titulo tem um numero unico
-2. **NUNOTA pode ser NULL** - Para titulos criados manualmente
-3. **PROVISAO = S** - Titulo esperado, vira N quando baixado
-4. **DHBAIXA indica titulo pago/recebido** - NULL = em aberto
-5. **Desdobramento** - Permite multiplas parcelas por nota
-6. **RECDESP define direcao** - 1=entrada de dinheiro, -1=saida
-7. **Campos AD_** - Customizacoes MMarra para integracao
-
----
-
-## Processos que Criam Titulos
-
-- [Fluxo de Venda](../../processos/vendas/fluxo_venda.md) - ATUALFIN = 1 cria a receber
-- [Fluxo de Compra](../../processos/compras/fluxo_compra.md) - ATUALFIN = -1 cria a pagar
-- [Devolucao Venda](../../processos/estoque/devolucao.md) - ATUALFIN = -1 cria credito cliente
-- [Devolucao Compra](../../processos/estoque/devolucao.md) - ATUALFIN = 1 cria credito fornecedor

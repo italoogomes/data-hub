@@ -18,6 +18,7 @@ from typing import Optional
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -38,6 +39,13 @@ app = FastAPI(
     title="MMarra Data Hub",
     description="Assistente inteligente da MMarra Distribuidora Automotiva",
     version="2.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Estado global

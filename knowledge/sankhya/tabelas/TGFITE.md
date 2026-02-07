@@ -1,230 +1,251 @@
 # TGFITE
 
-**Descricao:** Itens das notas/movimentacoes. Cada registro e um produto/servico de uma nota. Relaciona com TGFCAB (cabecalho) via NUNOTA.
-
-**Total de registros:** 1.109.248
-
----
-
-## Relacionamento com TGFCAB
-
-```
-TGFCAB (1) -----> (N) TGFITE
-         NUNOTA
-```
-
-Uma nota (TGFCAB) pode ter varios itens (TGFITE). O campo `NUNOTA` e a FK que conecta as tabelas.
-
-**Exemplo de JOIN:**
-```sql
-SELECT
-    c.NUNOTA, c.NUMNOTA, c.TIPMOV, c.DTNEG, c.VLRNOTA,
-    i.SEQUENCIA, i.CODPROD, i.QTDNEG, i.VLRTOT
-FROM TGFCAB c
-JOIN TGFITE i ON c.NUNOTA = i.NUNOTA
-WHERE c.TIPMOV = 'V'
-  AND ROWNUM <= 100
-```
-
----
+**Descricao:** Itens das Notas/Pedidos
+**Total de campos no dicionario:** 237
 
 ## Campos Principais
 
-| Campo | Tipo | Tamanho | Nulo | Descricao |
-|-------|------|---------|------|-----------|
-| NUNOTA | NUMBER | 22 | N | **PK** - Numero unico da nota (FK para TGFCAB) |
-| SEQUENCIA | NUMBER | 22 | N | **PK** - Sequencia do item na nota |
-| CODPROD | NUMBER | 22 | N | Codigo do produto (FK para TGFPRO) |
-| CODEMP | NUMBER | 22 | N | Codigo da empresa |
-| CODLOCALORIG | NUMBER | 22 | N | Local de estoque origem |
-| QTDNEG | FLOAT | 22 | N | Quantidade negociada |
-| QTDENTREGUE | FLOAT | 22 | N | Quantidade entregue |
-| QTDCONFERIDA | FLOAT | 22 | N | Quantidade conferida |
-| VLRUNIT | FLOAT | 22 | N | Valor unitario |
-| VLRTOT | FLOAT | 22 | N | Valor total do item |
-| VLRDESC | FLOAT | 22 | N | Valor desconto |
-| VLRCUS | FLOAT | 22 | N | Valor custo |
-| CODVOL | VARCHAR2 | 6 | N | Codigo da unidade de medida |
-| CODVEND | NUMBER | 22 | N | Codigo do vendedor do item |
-| USOPROD | VARCHAR2 | 1 | N | Uso do produto (R/C/S/V/M) |
-| ATUALESTOQUE | NUMBER | 22 | N | Atualiza estoque (-1/0/1) |
-| STATUSNOTA | VARCHAR2 | 1 | N | Status do item (P/L/A) |
-| PENDENTE | VARCHAR2 | 1 | N | Item pendente (S/N) |
-| CONTROLE | VARCHAR2 | 17 | N | Controle/lote do produto |
-| OBSERVACAO | VARCHAR2 | 4000 | Y | Observacoes do item |
+| Campo | Tipo | Descricao |
+|-------|------|-----------|
+| ALIQFETHAB | Decimal | Alíquota FETHAB |
+| ALIQFUNTTEL | Decimal | Alíquota FUNTTEL |
+| ALIQFUST | Decimal | Alíquota FUST |
+| ALIQICMS | Decimal | Alíq. ICMS |
+| ALIQICMSAT | Decimal | Alíquota ICMS AT |
+| ALIQICMSRED | Decimal | Alíq. ICMS Reduzida |
+| ALIQINTERICMSAT | Decimal | Alíquota ICMS Interna AT |
+| ALIQIPI | Decimal | Alíq. IPI |
+| ALIQISS | Decimal | Alíq. ISS |
+| ALIQSTEXTRANOTA | Decimal | Alíquota ST Extra Nota |
+| ALIQSTFCPSTANT | Decimal | Alíquota da ST de oper. ant. |
+| ALTPRECO | Texto | Alt. Preço Igual |
+| ALTURA | Decimal | Altura |
+| ATUALESTOQUE | Inteiro | Atualiza estoque |
+| ATUALESTTERC | Texto | Estoque terc. |
+| BASECALCSTEXTRANOTA | Decimal | Base de Cálculo ST Extra Nota |
+| BASEFUNTTEL | Decimal | Base FUNTTEL |
+| BASEFUST | Decimal | Base FUST |
+| BASEICMS | Decimal | Base ICMS |
+| BASEICMSAT | Decimal | Base de ICMS AT |
+| BASEICMSSTFRETE | Decimal | Base do ICMS/ST do Frete |
+| BASEIPI | Decimal | Base do IPI |
+| BASEISS | Decimal | Base do ISS |
+| BASESTANT | Decimal | Base ST ant. |
+| BASESTEXTRANOTA | Decimal | Base ST Extra Nota |
+| BASESTFCPINTANT | Decimal | Base ST FCP Interno Anterior |
+| BASESTUFDEST | Decimal | Base ST UF Destino |
+| BASESUBSTIT | Decimal | Base substituição |
+| BASESUBSTITANT | Decimal | Base de Cálc. da ST de oper. ant. |
+| BASESUBSTITUNITORIG | Decimal | Base ST unitária do pedido de origem |
+| BASESUBSTSEMRED | Decimal | Base ST S/Redução |
+| BASICMMOD | Inteiro | Mod. Base ICMS |
+| BASICMSTMOD | Inteiro | Mod. Base ICMS ST |
+| CNPJFABRICANTE | Texto | CNPJ do Fabricante da Mercadoria |
+| CODAGREGACAO | Texto | Cód. de Agregação |
+| CODANTECIPST | Texto | Cód.Antecipação ST |
+| CODBARRAPDV | Texto | Cód. de Barras |
+| CODBENEFNAUF | Texto | Cód. de Benefício Fiscal na UF |
+| CODCAV | Inteiro | Cód. cavalete |
+| CODCFO | Inteiro | CFOP |
+| CODCFPS | Inteiro | Cód. CFPS |
+| CODDOCARRECAD | Inteiro | Cód. Mod. Documento de arrecadação |
+| CODEMP | Inteiro | Cód.Empresa |
+| CODEND | Inteiro | Endereço WMS |
+| CODENQIPI | Inteiro | Cód. Enq. Legal IPI |
+| CODESPECST | Inteiro | Código Especificador ST |
+| CODEXEC | Inteiro | Executante |
+| CODFCI | Texto | Código da FCI |
+| CODIGONFCOM | Texto | Cod. Item NFCom |
+| CODIPI | Inteiro | Código do IPI |
+| CODLOCALDEST | Inteiro | Local destino |
+| CODLOCALORIG | Inteiro | Local origem |
+| CODLOCALTERC | Inteiro | Local terceiros |
+| CODMOTDESONERAICMS | Inteiro | Cód.Mot.Desoneração ICMS |
+| CODMOTDESONERAST | Inteiro | Cód. Mot. Desoneração do ICMS ST |
+| CODNATREND | Inteiro | Código Natureza de Rendimento |
+| CODOBSPADRAO | Inteiro | Obs Padrão |
+| CODPARCEXEC | Inteiro | Cód. Parceiro Exec |
+| CODPROC | Inteiro | Cód. processo |
+| CODPROD | Inteiro | Produto |
+| CODPROMO | Inteiro | Cód. promoção |
+| CODSIT08EFD | Texto | Considerar a situação do documento '08' nos EFDs |
+| CODTPA | Inteiro | Tipo Atendimento |
+| CODTRIB | Inteiro | Tributação |
+| CODTRIBISS | Inteiro | Cód. trib. ISS |
+| CODUSU | Inteiro | Cód. Usuário |
+| CODVEND | Inteiro | Vendedor |
+| CODVOL | Texto | Unidade |
+| CODVOLPAD | Texto | Unidade padrão |
+| CODVOLPARC | Texto | Cód. Volume Parceiro |
+| COMPLDESC | Texto | Complemento |
+| CONTROLE | Texto | Controle |
+| CONTROLEDEST | Texto | Controle destino |
+| CSOSN | Inteiro | Cód. situação op. Simples nacional (CSON) |
+| CSTIPI | Inteiro | C.S.T IPI |
+| CUSTO | Decimal | Custo |
+| DTALTER | Data/Hora | Dt. Alteração |
+| DTINICIO | Data | Dt.Prev.Entrega |
+| DTVIGOR | Data | Última Dt. Vigor |
+| ENDIMAGEM | Texto | End. imagem |
+| ESPESSURA | Decimal | Espessura |
+| ESTOQUE | Decimal | Estoque |
+| FATURAR | Texto | Faturar |
+| GERAPRODUCAO | Texto | Necessidade de Produção |
+| GRUPOTRANSG | Inteiro | Grupo transg. |
+| GTINNFE | Texto | GTINNFE |
+| GTINTRIBNFE | Texto | GTINTRIBNFE |
+| ICMSSTFRETE | Decimal | Vlr. ICMS/ST sobre o frete |
+| IDALIQICMS | Inteiro | Cód. Alíq. ICMS |
+| IDALIQICMSAT | Inteiro | Cod. Aliq. ICMS AT |
+| IDALIQICMSDIFICMS | Inteiro | Cód. Alíq. Dif. ICMS |
+| IDALIQISS | Inteiro | Código Alíquota ISS |
+| IDDESCPARCERIA | Decimal | Id de desconto da parceria |
+| INDDEVOLUCAONFCOM | Texto | Indicador de devolução |
+| INDESCALA | Texto | Indicador de Escala Relevante |
+| INDREPDES | Texto | Indicador Repasse Desoneração |
+| INDTOT | Texto | Não compõe total NF-e |
+| LARGURA | Decimal | Largura |
+| MARCA | Texto | Marca |
+| MARGLUCRO | Decimal | Margem de Lucro |
+| M3 | Decimal | Metro Cúbico |
+| NCM | Texto | NCM |
+| NROPROCESSO | Texto | Nro do Processo Judicial/Adm (ISS) |
+| NRSERIERESERVA | Texto | Nro série |
+| NUFOP | Inteiro | Finalidade da Operação |
+| NUMCONTRATO | Inteiro | Contrato |
+| NUMDOCARRECAD | Texto | Número Documento de arrecadação |
+| NUMEROOS | Inteiro | Número OS Gub. |
+| NUMPEDIDO2 | Texto | Número Pedido |
+| NUNOTA | Inteiro | Nro único |
+| NUPROMOCAO | Inteiro | Nro. Promoção |
+| NUTAB | Inteiro | Tabela |
+| OBSERVACAO | Texto | Observação |
+| OPERATUAL | Texto | Operação Atual da Produção |
+| ORIGEMBUSCA | Texto | Origem da busca |
+| ORIGPROD | Texto | Origem do Produto |
+| PENDENTE | Texto | Pendente |
+| PERCCOM | Decimal | % comissão |
+| PERCCOMGER | Decimal | % comiss. Gerente |
+| PERCDESC | Decimal | % desconto |
+| PERCDESCBASE | Decimal | Desc. p/ Preço Base |
+| PERCDESCBONIF | Decimal | % desc. bonif. |
+| PERCDESCDIGITADO | Decimal | % desc. digitado |
+| PERCDESCFORNECEDOR | Decimal | % Desconto Fornecedor |
+| PERCDESCPROM | Decimal | % desc. promoção |
+| PERCDESCTGFDES | Decimal | % desc. promoção |
+| PERCGERMIN | Decimal | % Germinação |
+| PERCPUREZA | Decimal | % Pureza |
+| PERCREDVLRIPI | Decimal | % Redução de Vlr. IPI |
+| PERCSTFCPINTANT | Decimal | % ST FCP Interno Anterior |
+| PERCUSAQUDECPE | Decimal | Percentual/Coeficiente sobre Custo Aquisição - PE |
+| PERCUSAQUDECPEEST | Decimal | Percentual/Coeficiente sobre Custo Aquisição - PE - Origem Estrangeira |
+| PESOBRUTO | Decimal | Peso bruto |
+| PESOLIQ | Decimal | Peso líq. |
+| PRECOBASE | Decimal | Preço base |
+| PRECOBASEQTD | Decimal | Preço base qtd. |
+| PRODUTONFE | Texto | Produto para NF-e |
+| PRODUTOPESQUISADO | Inteiro | Produto pesquisado |
+| QTDCONFERIDA | Decimal | Qtd. corte |
+| QTDENTREGUE | Decimal | Qtd. entregue |
+| QTDFAT | Decimal | Qtd. faturada |
+| QTDFIXADA | Decimal | Qtd. fixada |
+| QTDFORMULA | Decimal | Qtd. fórmula |
+| QTDNEG | Decimal | Quantidade |
+| QTDPECA | Decimal | Qtd. peça |
+| QTDPENDENTE | Decimal | Qtd. pendente |
+| QTDTRIBEXPORT | Decimal | Qtd. tributação para exportação |
+| QTDUNIDPAD | Decimal | Qtd. unid. padrão |
+| QTDVOL | Inteiro | Base Cálc. Amostragem |
+| QTDWMS | Decimal | Qtd. WMS |
+| REDBASEST | Decimal | Redução da Base ST |
+| REFERENCIA | Texto | Referência do produto |
+| REFFORN | Texto | Referência do Fornecedor |
+| RESERVA | Texto | Reserva |
+| RESERVADO | Decimal | Qtd. Reservada |
+| SEQPEDIDO2 | Texto | Seq. no Pedido |
+| SEQUENCIA | Inteiro | Sequência |
+| SEQUENCIAFISCAL | Inteiro | Sequência Fiscal |
+| SOLCOMPRA | Texto | Solic. compra |
+| STATUSLOTE | Texto | Status do Lote |
+| STATUSNOTA | Texto | Status da Nota |
+| STATUSPROC | Texto | Situação Atual da Produção |
+| TERCEIROS | Texto | Terceiros |
+| TIPENTREGA | Texto | Tipo entrega |
+| TIPOSEPARACAO | Texto | Tipo de separação |
+| TIPUTILCOM | Inteiro | Tipo de Utilização |
+| UNIDADE | Texto | Unidade do Parceiro |
+| USOPROD | Texto | Uso do Produto |
+| VARIACAOFCP | Inteiro | Variação da Fórmula |
+| VITEM_IBSCBS | Decimal | Valor Total do Item da NF-e |
+| VLRACRESCDESC | Decimal | Vlr. acresc./desc. |
+| VLRCOM | Decimal | Vlr. comissão |
+| VLRCOMGER | Decimal | Comiss. gerente |
+| VLRCREDPRES | Decimal | Valor do Crédito Presumido de ICMS no CT-e (vCred) |
+| VLRCUS | Decimal | Vlr. custos |
+| VLRCUSAQUDECPE | Decimal | Valor Custo Aquisição - PE |
+| VLRDESC | Decimal | Vlr. desconto |
+| VLRDESCBONIF | Decimal | Bonificação |
+| VLRDESCDIGITADO | Decimal | Vlr. desc. digitado |
+| VLRDESCMOE | Decimal | Vlr. Desc. Moeda |
+| VLRDESCPARCERIA | Decimal | Valor cupom desconto parceria |
+| VLRFETHAB | Decimal | Vlr. FETHAB |
+| VLRFUNTTEL | Decimal | Valor FUNTTEL |
+| VLRFUST | Decimal | Valor FUST |
+| VLRICMS | Decimal | Vlr. ICMS |
+| VLRICMSANT | Decimal | Vlr ICMS destacado da oper. própria de oper. ant. |
+| VLRICMSAT | Decimal | Valor de ICMS AT |
+| VLRICMSDIFERIDO | Decimal | Vlr. ICMS Diferido |
+| VLRICMSUFDEST | Decimal | Vlr. ICMS UF Destino |
+| VLRIPI | Decimal | Vlr. IPI |
+| VLRISS | Decimal | Vlr. ISS |
+| VLRLIQPROM | Decimal | Vlr. liq. promoção |
+| VLROUTROITEM | Decimal | Vlr. Outros |
+| VLRPROMO | Decimal | Vlr. Promoção |
+| VLRPTOPUREZA | Decimal | Vlr.Ponto Pureza |
+| VLRREPRED | Decimal | Vlr. redução |
+| VLRREPREDSEMDESC | Decimal | Vlr. redução sem desconto |
+| VLRREPREDST | Decimal | Vlr. redução ST |
+| VLRRETENCAO | Decimal | Vlr. retenção |
+| VLRSTEXTRANOTA | Decimal | Valor ST Extra Nota |
+| VLRSTFCPINTANT | Decimal | Vlr. ST FCP Interno Anterior |
+| VLRSUBST | Decimal | Vlr. substituição |
+| VLRSUBSTANT | Decimal | Vlr. do ICMS da  ST da oper. ant. |
+| VLRSUBSTUNITORIG | Decimal | Vlr. ST unitário do pedido de origem |
+| VLRSUGERIDO | Decimal | Vlr. Sugerido |
+| VLRTOT | Decimal | Vlr. total |
+| VLRTOTLIQ | Decimal | Total líq. |
+| VLRTOTLIQMOE | Decimal | Total líq. Moeda |
+| VLRTOTLIQREF | Decimal | Vlr. Tot.Líq. Desejado |
+| VLRTOTMOE | Decimal | Vlr. Tot. Moeda |
+| VLRTROCA | Decimal | Vlr. Troca |
+| VLRUNIDPAD | Decimal | Vlr. unid. padrão |
+| VLRUNIT | Decimal | Vlr. unitário |
+| VLRUNITDOLAR | Decimal | Vlr.Unitário em Dólar |
+| VLRUNITLIQ | Decimal | Preço líq. |
+| VLRUNITLIQMOE | Decimal | Preço Líq. Moeda |
+| VLRUNITLOC | Decimal | Vlr. Unit. Locação |
+| VLRUNITMOE | Decimal | Vlr. Unit. Moeda |
+| VLRVENDAPROMO | Decimal | Vlr. Venda Promoção |
 
----
-
-## Campos de Impostos
+## Campos Customizados (AD_) - 18 campos
 
 | Campo | Tipo | Descricao |
 |-------|------|-----------|
-| BASEICMS | FLOAT | Base ICMS |
-| VLRICMS | FLOAT | Valor ICMS |
-| ALIQICMS | FLOAT | Aliquota ICMS |
-| BASEIPI | FLOAT | Base IPI |
-| VLRIPI | FLOAT | Valor IPI |
-| ALIQIPI | FLOAT | Aliquota IPI |
-| BASESUBSTIT | FLOAT | Base ICMS-ST |
-| VLRSUBST | FLOAT | Valor ICMS-ST |
-| BASEISS | FLOAT | Base ISS |
-| VLRISS | FLOAT | Valor ISS |
-| ALIQISS | FLOAT | Aliquota ISS |
-
----
-
-## Campos de Comissao
-
-| Campo | Tipo | Descricao |
-|-------|------|-----------|
-| PERCCOM | FLOAT | Percentual comissao |
-| VLRCOM | FLOAT | Valor comissao |
-| PERCCOMGER | FLOAT | Percentual comissao gerente |
-| VLRCOMGER | FLOAT | Valor comissao gerente |
-
----
-
-## Chave Primaria (Composta)
-
-| Campo | Constraint |
-|-------|------------|
-| NUNOTA | PK_TGFITE |
-| SEQUENCIA | PK_TGFITE |
-
-**Importante:** A PK e composta por NUNOTA + SEQUENCIA. Cada item tem uma sequencia unica dentro da nota.
-
----
-
-## Relacionamentos (FK)
-
-| Campo | Tabela Ref | Campo Ref | Descricao |
-|-------|------------|-----------|-----------|
-| NUNOTA | TGFCAB | NUNOTA | Cabecalho da nota |
-| CODPROD | TGFPRO | CODPROD | Produto |
-| CODEMP | TGFEMP | CODEMP | Empresa |
-| CODLOCALORIG | TGFLOC | CODLOCAL | Local de estoque |
-| CODVEND | TGFVEN | CODVEND | Vendedor |
-| CODEXEC | TGFVEN | CODVEND | Executante |
-| CODVOL | TGFVOL | CODVOL | Unidade de medida |
-| CODCFO | TGFCFO | CODCFO | CFOP |
-| CODUSU | TSIUSU | CODUSU | Usuario |
-| NUTAB | TGFTAB | NUTAB | Tabela de preco |
-| CODPARCEXEC | TGFPAR | CODPARC | Parceiro executante |
-| CODPROMO | TGFPROM | CODPROMO | Promocao |
-
----
-
-## Valores de Dominio
-
-### USOPROD - Uso do Produto
-
-| Valor | Significado | Quantidade |
-|-------|-------------|------------|
-| R | Revenda | 1.105.264 |
-| C | Consumo | 2.367 |
-| S | Servico | 1.142 |
-| V | Veiculo | 470 |
-| M | Materia-prima | 1 |
-
-### ATUALESTOQUE - Atualizacao de Estoque
-
-| Valor | Significado | Quantidade |
-|-------|-------------|------------|
-| -1 | Baixa estoque (saida) | 659.132 |
-| 1 | Entrada estoque | 419.599 |
-| 0 | Nao atualiza estoque | 30.517 |
-
-### STATUSNOTA - Status do Item
-
-| Valor | Significado | Quantidade |
-|-------|-------------|------------|
-| P | Pendente | 1.025.482 |
-| L | Liberado | 63.536 |
-| A | Aguardando | 20.230 |
-
----
-
-## Campos Customizados (AD_)
-
-| Campo | Tipo | Descricao |
-|-------|------|-----------|
-| AD_PRODUTOOS | VARCHAR2 | Produto OS |
-| AD_EMPENHADO | VARCHAR2 | Indica se empenhado |
-| AD_PRODUTOPARCEIRO | VARCHAR2 | Codigo produto no parceiro |
-| AD_NUNOTAVENDAEMP | NUMBER | Nota de venda do empenho |
-| AD_SEQITEVENDA | NUMBER | Sequencia item venda |
-| AD_VLRCUSTOIARA | FLOAT | Custo IARA |
-
----
-
-## Queries Uteis
-
-### Itens de uma nota especifica
-```sql
-SELECT
-    i.SEQUENCIA, i.CODPROD, p.DESCRPROD,
-    i.QTDNEG, i.VLRUNIT, i.VLRTOT, i.VLRDESC
-FROM TGFITE i
-JOIN TGFPRO p ON i.CODPROD = p.CODPROD
-WHERE i.NUNOTA = 123456
-ORDER BY i.SEQUENCIA
-```
-
-### Produtos mais vendidos (quantidade)
-```sql
-SELECT * FROM (
-    SELECT
-        i.CODPROD,
-        SUM(i.QTDNEG) as QTD_TOTAL,
-        SUM(i.VLRTOT) as VLR_TOTAL,
-        COUNT(*) as NUM_VENDAS
-    FROM TGFITE i
-    JOIN TGFCAB c ON i.NUNOTA = c.NUNOTA
-    WHERE c.TIPMOV = 'V'
-      AND c.STATUSNOTA = 'L'
-      AND c.DTNEG >= ADD_MONTHS(SYSDATE, -12)
-    GROUP BY i.CODPROD
-    ORDER BY QTD_TOTAL DESC
-) WHERE ROWNUM <= 50
-```
-
-### Verificar itens pendentes de separacao
-```sql
-SELECT
-    c.NUNOTA, c.NUMNOTA, c.DTNEG, c.CODPARC,
-    i.SEQUENCIA, i.CODPROD, i.QTDNEG, i.QTDENTREGUE
-FROM TGFCAB c
-JOIN TGFITE i ON c.NUNOTA = i.NUNOTA
-WHERE c.TIPMOV = 'V'
-  AND c.STATUSNOTA = 'L'
-  AND i.PENDENTE = 'S'
-  AND i.QTDENTREGUE < i.QTDNEG
-ORDER BY c.DTNEG
-```
-
----
-
-## Observacoes
-
-- A PK e composta: NUNOTA + SEQUENCIA
-- SEQUENCIA comeca em 1 e e sequencial dentro de cada nota
-- ATUALESTOQUE define se movimenta estoque: -1 (baixa), 1 (entrada), 0 (nao)
-- USOPROD = 'R' (Revenda) e o mais comum (99%+ dos registros)
-- Para calcular valor liquido: VLRTOT - VLRDESC
-- QTDENTREGUE vs QTDNEG permite rastrear entregas parciais
-- Media de ~3.2 itens por nota (1.1M itens / 343k notas)
-
----
-
-## Tabelas Relacionadas
-
-- **TGFCAB** - Cabecalho da nota (pai)
-- **TGFPRO** - Cadastro de produtos
-- **TGFLOC** - Locais de estoque
-- **TGFVOL** - Unidades de medida
-- **TGFVEN** - Vendedores
-- **TGFCFO** - CFOPs
-
----
-
-*Documentado em: 2026-02-05*
+| AD_CHAVELEGADO | Texto | CHAVE (Legado) |
+| AD_CONTROLELEGADO | Texto | Controle (Legado) |
+| AD_EMPENHADO | Texto | Empenhado |
+| AD_ESTLOC | Decimal | Estoque no local |
+| AD_FABRICANTE | Texto | Fabricante |
+| AD_IDEXTERNO | Texto | ID EXTERNO |
+| AD_MARGEMBRUTA | Decimal | Margem Bruta |
+| AD_NFLEGADO | Texto | NF (Legado) |
+| AD_NUMORCIARA | Texto | Num. Orçamento IARA |
+| AD_NUMPEDIARA | Texto | Num. Pedido IARA |
+| AD_NUNOTAVENDAEMP | Inteiro | Nro. Único Pedido de Venda Empenho |
+| AD_ORIGINAL | Texto | Original |
+| AD_PRODUTOOS | Texto | Produto da Ordem de Serviço |
+| AD_PRODUTOPARCEIRO | Texto | Complemento Descrição Cliente |
+| AD_SEQITEVENDA | Inteiro | Sequencia Item de Venda |
+| AD_SEQNOTALEGADO | Texto | SEQNOTA (Legado) |
+| AD_TIPOLEGADO | Texto | Tipo (Legado) |
+| AD_VLRCUSTOIARA | Decimal | Vlr. Custo IARA |

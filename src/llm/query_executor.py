@@ -73,7 +73,7 @@ class SafeQueryExecutor:
     # Palavras-chave PROIBIDAS (case insensitive)
     FORBIDDEN_KEYWORDS = [
         "INSERT", "UPDATE", "DELETE", "DROP", "TRUNCATE", "ALTER", "CREATE",
-        "GRANT", "REVOKE", "EXEC", "EXECUTE", "MERGE", "CALL", "BEGIN", "END",
+        "GRANT", "REVOKE", "EXEC", "EXECUTE", "MERGE", "CALL", "BEGIN",
         "DECLARE", "COMMIT", "ROLLBACK", "SAVEPOINT", "INTO OUTFILE",
         "INTO DUMPFILE", "LOAD_FILE", "UTL_FILE", "DBMS_", "XP_", "SP_"
     ]

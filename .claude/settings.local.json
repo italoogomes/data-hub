@@ -25,7 +25,26 @@
       "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" --version)",
       "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" pull llama3.1:8b)",
       "Bash(\"C:\\\\Users\\\\italo.gomes\\\\AppData\\\\Local\\\\Programs\\\\Ollama\\\\ollama.exe\" list)",
-      "Bash(ipconfig:*)"
+      "Bash(ipconfig:*)",
+      "Bash(cmd /c \"taskkill /PID 21192 /F\")",
+      "Bash(cmd /c \"taskkill /PID 21192 /F 2>nul & echo done\")",
+      "Bash(ngrok:*)",
+      "Bash(python3:*)",
+      "Bash(powershell \"Get-NetTCPConnection -LocalPort 8000 | ForEach-Object { Stop-Process -Id $_OwningProcess -Force }\")",
+      "Bash(powershell -File -:*)",
+      "Bash(powershell \"Start-Sleep -Seconds 8; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\b551ce3.output'' -Tail 5\")",
+      "Bash(powershell \"Start-Sleep -Seconds 10; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\b551ce3.output'' -Tail 8\")",
+      "Bash(powershell \"Start-Sleep -Seconds 10; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\b551ce3.output'' -Tail 5\")",
+      "Bash(powershell \"Start-Sleep -Seconds 15; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\b551ce3.output'' -Tail 5\")",
+      "Bash(powershell \"Start-Sleep -Seconds 20; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\b551ce3.output'' -Tail 8\")",
+      "Bash(powershell \"Start-Sleep -Seconds 10; \\(Invoke-WebRequest -Uri ''http://localhost:8000/api/status'' -TimeoutSec 10 -ErrorAction SilentlyContinue\\).Content\")",
+      "Bash(powershell \"Start-Sleep -Seconds 12; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\bee16f5.output'' -Tail 5\")",
+      "Bash(powershell \"Start-Sleep -Seconds 15; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\bee16f5.output'' -Tail 5\")",
+      "Bash(powershell \"Start-Sleep -Seconds 20; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\bee16f5.output'' -Tail 3\")",
+      "Bash(powershell \"Start-Sleep -Seconds 30; Get-Content ''C:\\\\Users\\\\TALOGO~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users--talo-Gomes-Documents-data-hub\\\\tasks\\\\bee16f5.output'' -Tail 5\")",
+      "Bash(powershell:*)",
+      "Bash(tasklist:*)",
+      "Bash(echo:*)"
     ]
   }
 }

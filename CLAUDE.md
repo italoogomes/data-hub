@@ -252,12 +252,64 @@ mmarra-data-hub/
 ## CHECKLIST ANTES DE FINALIZAR
 
 - [ ] Descobri tabela? → `knowledge/sankhya/tabelas/`
+- [ ] Descobri tabela? → ATUALIZAR `knowledge/sankhya/relacionamentos.md` (OBRIGATORIO!)
 - [ ] Descobri processo? → `knowledge/processos/{modulo}/`
 - [ ] Descobri termo novo? → `knowledge/glossario/`
 - [ ] Descobri regra? → `knowledge/regras/`
 - [ ] Encontrei erro comum? → `knowledge/erros/`
-- [ ] Criei query útil? → `queries/{modulo}/`
+- [ ] Criei query util? → `queries/{modulo}/`
+- [ ] Query funcionou? → ADICIONAR em `knowledge/sankhya/exemplos_sql.md` (OBRIGATORIO!)
+- [ ] Query deu erro? → ADICIONAR em `knowledge/sankhya/erros_sql.md` (OBRIGATORIO!)
+- [ ] Termo novo do usuario? → ADICIONAR em `knowledge/glossario/sinonimos.md`
 - [ ] Atualizei `PROGRESSO.md`?
+
+---
+
+## REGRAS DE MANUTENCAO DA BASE DE CONHECIMENTO (OBRIGATORIO EM TODAS AS SESSOES)
+
+### 1. Queries que funcionaram
+**Sempre adicionar em `knowledge/sankhya/exemplos_sql.md`**
+- Formato: Pergunta do usuario -> Query SQL correta -> Explicacao curta
+- Isso ensina a LLM a gerar queries corretas por padrao
+- O agente carrega este arquivo como contexto OBRIGATORIO em toda geracao de SQL
+
+### 2. Erros de SQL encontrados
+**Sempre adicionar em `knowledge/sankhya/erros_sql.md`**
+- Formato: Query errada -> Motivo do erro -> Query correta
+- Isso evita que a LLM repita os mesmos erros
+- O agente carrega este arquivo como contexto OBRIGATORIO em toda geracao de SQL
+
+### 3. Termos novos do usuario
+**Sempre adicionar em `knowledge/glossario/sinonimos.md`**
+- Formato: Termo do usuario -> Significado no banco (tabela, campo, filtro)
+- Isso ajuda a LLM a entender a linguagem do usuario
+- O agente carrega este arquivo como contexto OBRIGATORIO em toda geracao de SQL
+
+### 4. Tabelas novas documentadas
+**Sempre atualizar `knowledge/sankhya/relacionamentos.md`**
+- Adicionar JOINs e caminhos de acesso
+- Isso e ESSENCIAL para queries corretas
+- O agente carrega este arquivo como contexto OBRIGATORIO em toda geracao de SQL
+
+### 5. Testar queries da LLM
+Apos qualquer alteracao nos arquivos acima:
+1. Reiniciar o servidor (`python start.py`)
+2. Testar no chat com perguntas que envolvam a alteracao
+3. Se a LLM errar a query, ajustar a documentacao
+
+### 6. Cuidado com multiplicacao de JOINs
+Quando documentar queries que envolvem mais de 2 tabelas com relacao 1:N, verificar se o JOIN nao multiplica registros.
+Tabelas com relacao 1:N a partir de TGFCAB:
+- TGFITE (1 nota = N itens)
+- TGFFIN (1 nota = N parcelas)
+- NUNCA juntar TGFITE com TGFFIN na mesma query sem subquery
+
+### NUNCA ignorar essas regras
+A inteligencia da LLM depende DIRETAMENTE da qualidade e completude desses 4 arquivos:
+- `knowledge/sankhya/relacionamentos.md` - Mapa de JOINs
+- `knowledge/sankhya/exemplos_sql.md` - Queries validadas
+- `knowledge/sankhya/erros_sql.md` - Erros conhecidos
+- `knowledge/glossario/sinonimos.md` - Traducao de termos
 
 ---
 
