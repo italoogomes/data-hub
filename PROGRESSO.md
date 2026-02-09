@@ -1,6 +1,6 @@
 # PROGRESSO.md
 
-> Ultima atualizacao: 2026-02-09 (sessao 24)
+> Ultima atualizacao: 2026-02-09 (sessao 25) - Servidor ajustado, logo corrigida, ITE.PENDENTE descoberto
 
 ---
 
@@ -100,6 +100,112 @@ _Nenhum ainda_
 ---
 
 ## SESSOES ANTERIORES
+
+### 2026-02-09 (sessao 25) - Servidor 8080, Logo Transparente e ITE.PENDENTE
+
+**Contexto:** Continuacao da sessao 24. Usuario retomou trabalho e tentou acessar servidor data-hub para testar conhecimento transferido.
+
+**Problemas Resolvidos:**
+
+1. **Porta do Servidor Errada**
+   - Usuario tentou `localhost:8080` mas servidor configurado para porta 8000
+   - **Solucao:** `start.py` alterado de `PORT = 8000` para `PORT = 8080`
+
+2. **Logo com Fundo Preto**
+   - Logo PNG base64 com fundo preto incorporado no HTML
+   - **Solucao:**
+     - Criada pasta `src/api/static/images/`
+     - Usuario salvou `logo.png` (fundo transparente)
+     - HTML atualizado: `src="imagens/logo.png"` (3 locais: header, welcome, messages)
+     - CSS ajustado: `background: white`, `border-radius: 8px/12px`, `padding: 4px/8px`
+
+3. **NUNOTA vs NUMNOTA na Query**
+   - Query exemplo 22 mostrava ID interno (`NUNOTA` = 1185467) ao inves do numero visivel (`NUMNOTA` = 168)
+   - **Solucao:** Nao precisou corrigir - exemplo ja estava correto com `NUMNOTA`
+   - Usuario identificou erro na propria query copiada
+
+**Descoberta CRITICA: ITE.PENDENTE = 'S'**
+
+**Problema Identificado pelo Usuario:**
+> "Quando eu corto um item do pedido e marco ele como nao pendente, ele continua aparecendo nessa consulta. Seria como se eu ligasse pro fornecedor e falasse: 'Eu nao vou mais precisar desse item, vc pode cancelar ele desse pedido'. Com essa consulta ele nunca vai sumir pq ele nunca vai chegar entende?"
+
+**Causa Raiz:**
+- Query calculava `QTD_PENDENTE = QTDNEG - TOTAL_ATENDIDO`
+- Se item cancelado/cortado pelo usuario:
+  - Nunca sera entregue (`TOTAL_ATENDIDO` sempre 0)
+  - `QTD_PENDENTE` sempre > 0
+  - Item aparece eternamente na consulta ❌
+
+**Solucao Implementada:**
+```sql
+WHERE ITE.PENDENTE = 'S'  -- CRITICO!
+```
+
+**Comportamento do Sankhya:**
+- Quando usuario cancela/corta um item → `ITE.PENDENTE` muda de 'S' para 'N'
+- Query filtra por `ITE.PENDENTE = 'S'` → Itens cancelados nao aparecem ✅
+
+**Diferenca entre campos PENDENTE:**
+- `CAB.PENDENTE` = Pedido tem algum item pendente (nivel cabecalho, calculado pelo sistema)
+- `ITE.PENDENTE` = Item especifico esta pendente (nivel item, controlado pelo usuario)
+
+**Arquivos Atualizados:**
+
+1. **start.py:** `PORT = 8080`
+
+2. **src/api/static/index.html:**
+   - Logos: `src="imagens/logo.png"` (3 locais)
+   - CSS: background branco, bordas arredondadas, padding
+
+3. **knowledge/sankhya/exemplos_sql.md:**
+   - **Exemplo 19** (Previsao entrega por marca):
+     - Adicionado: `AND ITE.PENDENTE = 'S'`
+     - Explicacao atualizada com ponto 6 sobre ITE.PENDENTE
+   - **Exemplo 20** (Itens pendentes por pedido):
+     - Adicionado: `AND I.PENDENTE = 'S'`
+     - Explicacao atualizada
+   - **Exemplo 22** (Pendentes por marca MMarra):
+     - Adicionado: `AND ITE.PENDENTE = 'S'`
+     - Explicacao atualizada com ponto 8 sobre ITE.PENDENTE
+
+4. **Nova Regra Critica Adicionada** (final do arquivo):
+   ```markdown
+   ## REGRA CRITICA: ITE.PENDENTE para itens cancelados/cortados
+
+   Quando trabalhar com **pendencia de itens** (TGFITE), SEMPRE adicionar:
+
+   WHERE ITE.PENDENTE = 'S'
+
+   **Por que?**
+   - Quando usuario cancela/corta um item do pedido, ITE.PENDENTE = 'N'
+   - Se nao filtrar, itens cancelados aparecem eternamente
+   - CAB.PENDENTE (cabecalho) vs ITE.PENDENTE (item)
+
+   **Usar em:**
+   - Consultas de pendencia por marca/produto (exemplos 19, 20, 22)
+   - Qualquer query de itens aguardando entrega
+
+   **NAO usar quando:**
+   - Quer historico completo incluindo cancelados
+   - Query eh nivel CABECALHO (sem filtro marca/produto)
+   ```
+
+**Aprendizados:**
+
+| Campo | Significado | Quando Muda |
+|-------|-------------|-------------|
+| NUNOTA | ID unico interno (PK) | Nunca (chave primaria) |
+| NUMNOTA | Numero pedido visivel | Numero sequencial por tipo |
+| CAB.PENDENTE | Pedido tem pendencias | Sistema atualiza (soma ITE.PENDENTE) |
+| ITE.PENDENTE | Item esta pendente | Usuario cancela/corta → 'N' |
+| TGFVAR.QTDATENDIDA | Qtd entregue | A cada entrega parcial |
+
+**Proximos Passos:**
+1. Testar LLM com conhecimento atualizado (instalar `qwen3:8b` se necessario)
+2. Validar query final com dados reais
+3. Sincronizar documentacao entre projetos
+
+---
 
 ### 2026-02-09 (sessao 24) - Integracao com mmarra-data-hub-v2 + CODTIPOPER especificos
 
