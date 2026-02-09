@@ -36,7 +36,7 @@ class LLMClient:
         self.provider = LLM_PROVIDER
         self.model = model or LLM_MODEL
         self.base_url = OLLAMA_URL
-        self.timeout = 120  # segundos (modelos locais podem demorar)
+        self.timeout = 300  # segundos (modelos locais podem demorar - aumentado para 5min)
 
     def chat(self, messages: list, temperature: float = 0.3, timeout: int = None) -> str:
         """

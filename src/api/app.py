@@ -95,6 +95,10 @@ class ChatResponse(BaseModel):
 # ROUTES
 # ============================================================
 
+# Montar pasta static para servir imagens, CSS, JS
+app.mount("/imagens", StaticFiles(directory=str(Path(__file__).parent / "static" / "imagens")), name="imagens")
+app.mount("/static", StaticFiles(directory=str(Path(__file__).parent / "static")), name="static")
+
 @app.get("/", response_class=HTMLResponse)
 async def index():
     """Serve a interface web."""

@@ -28,6 +28,23 @@
 
 ---
 
+## TOPs de Compra MMarra (CODTIPOPER) - ESPECIFICO
+
+> Filtros mais precisos para pedidos de compra. Usar CODTIPOPER em vez de TIPMOV quando possivel.
+
+| Termo do usuario | CODTIPOPER | Descrição | Uso |
+|---|---|---|---|
+| pedidos de compra, compras em aberto, pendencia de compra | 1301, 1313 | Compra Casada (empenho) + Entrega Futura | CODTIPOPER IN (1301, 1313) AND PENDENTE='S' |
+| compra casada, empenho, compra vinculada | 1301 | Vinculado a venda específica | CODTIPOPER = 1301 |
+| entrega futura, compra programada | 1313 | Compra com entrega programada | CODTIPOPER = 1313 |
+
+**Quando usar:**
+- "pedidos de compra" / "pendencia por marca" → `CODTIPOPER IN (1301, 1313)` (mais preciso)
+- Se nao souber CODTIPOPER → `TIPMOV = 'O'` (generico, funciona)
+- NUNCA usar `TIPMOV = 'C'` para pedidos pendentes (C = nota de entrada, ja recebida)
+
+---
+
 ## Status (STATUSNOTA) - CORRIGIDO (dicionario oficial)
 
 | Termo do usuario | Significado no banco | Filtro SQL |

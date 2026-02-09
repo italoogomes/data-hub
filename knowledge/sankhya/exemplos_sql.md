@@ -408,13 +408,14 @@ LEFT JOIN (
 WHERE CAB.TIPMOV = 'O'
   AND CAB.PENDENTE = 'S'
   AND CAB.STATUSNOTA <> 'C'
+  AND ITE.PENDENTE = 'S'
   AND UPPER(MAR.DESCRICAO) = UPPER('DONALDSON')
   AND (ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) > 0
   AND ROWNUM <= 500
 ORDER BY CAB.DTPREVENT NULLS LAST, PRO.DESCRPROD
 ```
 
-**Explicacao:** Nivel ITEM porque filtra por marca. (1) FROM TGFITE (nivel item, nao cabecalho). (2) TGFVAR para pendencia real (QTD_PEDIDA - QTD_ATENDIDA). (3) ITE.VLRTOT e VLR_PENDENTE em vez de VLRNOTA (valor correto por item/marca). (4) UPPER() no filtro. (5) PENDENTE='S' para pedidos pendentes. (6) TIPMOV='O' (pedido de compra). (7) SEM IS NOT NULL no DTPREVENT, trata NULL com NVL.
+**Explicacao:** Nivel ITEM porque filtra por marca. (1) FROM TGFITE (nivel item, nao cabecalho). (2) TGFVAR para pendencia real (QTD_PEDIDA - QTD_ATENDIDA). (3) ITE.VLRTOT e VLR_PENDENTE em vez de VLRNOTA (valor correto por item/marca). (4) UPPER() no filtro. (5) CAB.PENDENTE='S' para pedidos pendentes. (6) **ITE.PENDENTE='S' CRITICO** para excluir itens cancelados/cortados. (7) TIPMOV='O' (pedido de compra). (8) SEM IS NOT NULL no DTPREVENT, trata NULL com NVL.
 
 ---
 
@@ -441,11 +442,12 @@ LEFT JOIN (
 WHERE C.TIPMOV = 'O'
   AND C.PENDENTE = 'S'
   AND C.STATUSNOTA <> 'C'
+  AND I.PENDENTE = 'S'
   AND I.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0) > 0
 ORDER BY QTD_PENDENTE DESC
 ```
 
-**Explicacao:** TGFVAR registra entregas parciais. QTD_PENDENTE = QTDNEG - SUM(QTDATENDIDA). LEFT JOIN obrigatorio (nem todo item tem entrega). Filtrar TGFVAR apenas de notas nao canceladas (STATUSNOTA <> 'C'). NVL para tratar NULL quando nao ha atendimento.
+**Explicacao:** TGFVAR registra entregas parciais. QTD_PENDENTE = QTDNEG - SUM(QTDATENDIDA). LEFT JOIN obrigatorio (nem todo item tem entrega). Filtrar TGFVAR apenas de notas nao canceladas (STATUSNOTA <> 'C'). **I.PENDENTE='S' CRITICO** para excluir itens cancelados/cortados. NVL para tratar NULL quando nao ha atendimento.
 
 ---
 
@@ -480,6 +482,58 @@ ORDER BY C.DTPREVENT NULLS LAST
 
 ---
 
+## 22. Pedidos pendentes por marca - MMarra especifico (CODTIPOPER)
+
+**Pergunta:** Quantos pedidos da marca X eu tenho em aberto? Quantos itens pendentes por marca?
+
+**IMPORTANTE:** Este eh o exemplo MAIS COMPLETO para compras MMarra. Usa CODTIPOPER (mais preciso que TIPMOV).
+
+```sql
+SELECT
+    CAB.NUNOTA,
+    CAB.NUMNOTA AS PEDIDO,
+    TO_CHAR(CAB.DTNEG, 'DD/MM/YYYY') AS DT_PEDIDO,
+    MAR.DESCRICAO AS MARCA,
+    VEN.APELIDO AS COMPRADOR,
+    COUNT(DISTINCT ITE.SEQUENCIA) AS QTD_ITENS,
+    SUM(ITE.QTDNEG) AS QTD_TOTAL_PEDIDA,
+    SUM(NVL(V_AGG.TOTAL_ATENDIDO, 0)) AS QTD_TOTAL_ENTREGUE,
+    SUM(ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) AS QTD_TOTAL_PENDENTE,
+    SUM(ITE.VLRTOT) AS VLR_TOTAL_PEDIDO,
+    SUM((ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) * ITE.VLRUNIT) AS VLR_TOTAL_PENDENTE,
+    NVL(TO_CHAR(CAB.DTPREVENT, 'DD/MM/YYYY'), 'Sem previsao') AS PREVISAO_ENTREGA,
+    TRUNC(SYSDATE) - TRUNC(CAB.DTNEG) AS DIAS_ABERTO
+FROM TGFCAB CAB
+JOIN TGFITE ITE ON CAB.NUNOTA = ITE.NUNOTA
+JOIN TGFPRO PRO ON ITE.CODPROD = PRO.CODPROD
+LEFT JOIN TGFMAR MAR ON MAR.CODIGO = PRO.CODMARCA
+LEFT JOIN TGFVEN VEN ON VEN.CODVEND = MAR.AD_CODVEND
+LEFT JOIN (
+    SELECT V.NUNOTAORIG, V.SEQUENCIAORIG,
+           SUM(V.QTDATENDIDA) AS TOTAL_ATENDIDO
+    FROM TGFVAR V
+    JOIN TGFCAB C ON C.NUNOTA = V.NUNOTA
+    WHERE C.STATUSNOTA <> 'C'
+    GROUP BY V.NUNOTAORIG, V.SEQUENCIAORIG
+) V_AGG ON V_AGG.NUNOTAORIG = ITE.NUNOTA
+       AND V_AGG.SEQUENCIAORIG = ITE.SEQUENCIA
+WHERE CAB.CODTIPOPER IN (1301, 1313)
+  AND CAB.PENDENTE = 'S'
+  AND CAB.STATUSNOTA <> 'C'
+  AND ITE.PENDENTE = 'S'
+  AND UPPER(MAR.DESCRICAO) = UPPER('DONALDSON')
+  AND (ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) > 0
+GROUP BY CAB.NUNOTA, CAB.NUMNOTA, CAB.DTNEG,
+         MAR.DESCRICAO, VEN.APELIDO, CAB.DTPREVENT
+ORDER BY QTD_TOTAL_PENDENTE DESC, DIAS_ABERTO DESC
+```
+
+**Explicacao:** (1) CODTIPOPER IN (1301, 1313) filtra tipos especificos MMarra (mais preciso que TIPMOV='O'). (2) Nivel ITEM porque filtra por marca. (3) TGFVAR com agregacao para pendencia real. (4) Comprador vem de TGFMAR.AD_CODVEND. (5) UPPER() no filtro de marca. (6) GROUP BY no final para consolidar por pedido. (7) ITE.VLRTOT e calculo de VLR_PENDENTE (nao VLRNOTA). (8) **ITE.PENDENTE='S' CRITICO** para excluir itens cancelados/cortados pelo usuario. (9) Retorna apenas itens com pendencia > 0.
+
+**Uso:** Esta query responde "quantos pedidos da marca X em aberto", "quantos itens pendentes", "valor pendente", "comprador responsavel", "dias em aberto".
+
+---
+
 ## REGRA CRITICA: Nivel CABECALHO vs ITEM
 
 - Pergunta menciona MARCA ou PRODUTO → nivel ITEM (FROM TGFITE, exemplo 19)
@@ -510,3 +564,27 @@ SELECT * FROM (
 ```
 
 NUNCA usar LIMIT ou FETCH FIRST.
+
+---
+
+## REGRA CRITICA: ITE.PENDENTE para itens cancelados/cortados
+
+Quando trabalhar com **pendencia de itens** (TGFITE), SEMPRE adicionar:
+
+```sql
+WHERE ITE.PENDENTE = 'S'
+```
+
+**Por que?**
+- Quando usuario cancela/corta um item do pedido (ligou pro fornecedor e cancelou), o campo `ITE.PENDENTE` fica = 'N'
+- Se nao filtrar por `ITE.PENDENTE = 'S'`, itens cancelados aparecem eternamente na consulta (nunca serao entregues, entao QTDNEG - TOTAL_ATENDIDO sempre > 0)
+- CAB.PENDENTE indica pedido pendente (cabecalho)
+- ITE.PENDENTE indica item pendente (granular, item a item)
+
+**Usar em:**
+- Consultas de pendencia de compra por marca/produto (exemplos 19, 20, 22)
+- Qualquer query que mostre itens aguardando entrega
+
+**NAO usar quando:**
+- Quer ver historico completo incluindo itens cancelados
+- Query eh nivel CABECALHO (sem filtro de marca/produto)

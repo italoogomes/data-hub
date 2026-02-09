@@ -1,6 +1,6 @@
 # PROGRESSO.md
 
-> Ultima atualizacao: 2026-02-07 (sessao 23)
+> Ultima atualizacao: 2026-02-09 (sessao 24)
 
 ---
 
@@ -100,6 +100,76 @@ _Nenhum ainda_
 ---
 
 ## SESSOES ANTERIORES
+
+### 2026-02-09 (sessao 24) - Integracao com mmarra-data-hub-v2 + CODTIPOPER especificos
+
+**Contexto:** Usuario esta usando o projeto `data-hub` (LLM chat com Ollama) separado do projeto principal `mmarra-data-hub-v2` (ETL + Azure + Agentes). Solicitou ajuda para melhorar acuracia das queries de compras.
+
+**Problema identificado:** A LLM gerava queries genericas que nao usavam os filtros especificos da MMarra. Perguntas como "quantos pedidos da marca X em aberto" e "quantos itens pendentes" nao eram respondidas com precisao ideal.
+
+**Analise realizada:** Comparacao entre conhecimento do `data-hub` (sessoes 1-23) vs descobertas no `mmarra-data-hub-v2` (projeto principal com mapeamento mais completo).
+
+**Descobertas transferidas do mmarra-data-hub-v2:**
+
+1. **CODTIPOPER especificos da MMarra:**
+   - 1301 = Compra Casada (vinculada a venda, empenho)
+   - 1313 = Entrega Futura (compra programada)
+   - Mais preciso que `TIPMOV='O'` generico
+
+2. **CODUSUCOMPRADOR:**
+   - Campo correto para comprador em TGFCAB
+   - Ja estava documentado (linha 99 TGFCAB.md)
+   - ✅ Nenhuma correcao necessaria
+
+3. **Query completa para pendencia de compra:**
+   - Nivel ITEM (porque filtra marca)
+   - TGFVAR agregado (pendencia real)
+   - Comprador via TGFMAR.AD_CODVEND
+   - Valores corretos (ITE.VLRTOT, nao VLRNOTA)
+
+**3 arquivos atualizados:**
+
+**1. `knowledge/glossario/sinonimos.md`:**
+- Nova secao "TOPs de Compra MMarra (CODTIPOPER) - ESPECIFICO"
+- Mapeamento de termos do usuario para CODTIPOPER especificos
+- Regra: quando usar CODTIPOPER vs TIPMOV
+- Linha 31-46 (15 linhas adicionadas)
+
+**2. `knowledge/sankhya/exemplos_sql.md`:**
+- Novo exemplo 22: "Pedidos pendentes por marca - MMarra especifico"
+- Query COMPLETA que responde 5 perguntas de uma vez:
+  - Quantos pedidos da marca X em aberto?
+  - Quantos itens pendentes?
+  - Qual o valor pendente?
+  - Quem e o comprador?
+  - Quantos dias em aberto?
+- Usa CODTIPOPER IN (1301, 1313), TGFVAR, TGFMAR.AD_CODVEND
+- 32 linhas adicionadas (completo e documentado)
+
+**3. `knowledge/sankhya/tabelas/TGFCAB.md`:**
+- ✅ Verificado: CODUSUCOMPRADOR ja estava correto (linha 99)
+- Nenhuma alteracao necessaria
+
+**Resultado esperado:**
+- Queries de compras agora usam filtros especificos MMarra (CODTIPOPER)
+- Pendencia calculada corretamente com TGFVAR
+- Comprador identificado via TGFMAR.AD_CODVEND
+- Acuracia aumentada para perguntas de compras
+
+**Testes pendentes:**
+1. "Quantos pedidos da marca Donaldson eu tenho em aberto?"
+2. "Quantos itens pendentes da marca Cummins?"
+3. "Qual marca tem mais pedidos pendentes?"
+4. "Mostre os pedidos de compra com mais dias em aberto"
+
+**Arquivos modificados:**
+- `knowledge/glossario/sinonimos.md` - CODTIPOPER especificos
+- `knowledge/sankhya/exemplos_sql.md` - Exemplo 22 completo
+- `PROGRESSO.md` - Documentacao desta sessao
+
+**Nota tecnica:** Esta sessao demonstra a importancia de manter dois projetos sincronizados. O `mmarra-data-hub-v2` tem o mapeamento mais completo (descoberto trabalhando diretamente com Sankhya), enquanto o `data-hub` usa esse conhecimento para treinar a LLM. Transferencias periodicas de conhecimento entre projetos sao essenciais.
+
+---
 
 ### 2026-02-07 (sessao 23) - Correcao PENDENTE='S' + TIPMOV='O' + fix_pendencia_sql
 
