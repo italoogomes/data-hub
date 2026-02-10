@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMarra Data Hub - Analytics</title>
+
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f0f10;
+            color: #e5e5e5;
+            overflow-x: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #18181b;
+            border-right: 1px solid #27272a;
+            padding: 24px 0;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px 24px;
+            border-bottom: 1px solid #27272a;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0e75b9 0%, #0a5a8f 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sidebar-brand-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .sidebar-menu {
+            padding: 0 12px;
+        }
+
+        .menu-section {
+            margin-bottom: 24px;
+        }
+
+        .menu-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #71717a;
+            padding: 0 12px 8px;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #a1a1aa;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+
+        .menu-item:hover {
+            background: rgba(14, 117, 185, 0.1);
+            color: #0e75b9;
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, #0e75b9 0%, #0a5a8f 100%);
+            color: white;
+        }
+
+        .menu-item i {
+            width: 20px;
+            font-size: 18px;
+        }
+
+        .menu-item-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-item-badge {
+            background: #ef4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 240px;
+            min-height: 100vh;
+            padding: 24px 32px;
+        }
+
+        /* ===== HEADER ===== */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .content-title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .content-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .content-subtitle {
+            font-size: 14px;
+            color: #71717a;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0e75b9 0%, #0a5a8f 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 117, 185, 0.4);
+        }
+
+        .btn-secondary {
+            background: #27272a;
+            color: #e5e5e5;
+        }
+
+        .btn-secondary:hover {
+            background: #3f3f46;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #27272a;
+            padding-bottom: 2px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: #71717a;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: #a1a1aa;
+        }
+
+        .tab.active {
+            color: #0e75b9;
+            border-bottom-color: #0e75b9;
+        }
+
+        /* ===== KPI CARDS ===== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s;
+        }
+
+        .kpi-card:hover {
+            border-color: #3f3f46;
+            transform: translateY(-2px);
+        }
+
+        .kpi-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .kpi-card-label {
+            font-size: 14px;
+            color: #71717a;
+            font-weight: 500;
+        }
+
+        .kpi-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .kpi-card-icon.blue {
+            background: linear-gradient(135deg, rgba(14, 117, 185, 0.1) 0%, rgba(10, 90, 143, 0.1) 100%);
+            color: #0e75b9;
+        }
+
+        .kpi-card-icon.red {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            color: #ef4444;
+        }
+
+        .kpi-card-icon.orange {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.1) 100%);
+            color: #f97316;
+        }
+
+        .kpi-card-icon.green {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #22c55e;
+        }
+
+        .kpi-card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .kpi-card-change {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .kpi-card-change.positive {
+            color: #22c55e;
+        }
+
+        .kpi-card-change.negative {
+            color: #ef4444;
+        }
+
+        .kpi-card-change.neutral {
+            color: #71717a;
+        }
+
+        /* ===== CHART CARDS ===== */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-card {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .chart-card.filtered {
+            border-color: #0e75b9;
+            box-shadow: 0 4px 16px rgba(14, 117, 185, 0.2);
+        }
+
+        .chart-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .chart-card-menu {
+            color: #71717a;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .chart-filter-chip {
+            position: absolute;
+            top: 60px;
+            right: 24px;
+            background: linear-gradient(135deg, #0e75b9 0%, #0a5a8f 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(14, 117, 185, 0.4);
+            animation: slideInRight 0.3s ease;
+        }
+
+        .chart-filter-chip.active {
+            display: flex;
+        }
+
+        .chart-filter-chip-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .chart-filter-chip-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Cursor pointer para gráficos clicáveis */
+        .js-plotly-plot .plotly .cursor-pointer {
+            cursor: pointer !important;
+        }
+
+        .chart-full {
+            grid-column: 1 / -1;
+        }
+
+        /* ===== TABLE ===== */
+        .table-card {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #27272a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 500px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            background: #18181b;
+            z-index: 10;
+        }
+
+        th {
+            padding: 12px 24px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #27272a;
+        }
+
+        td {
+            padding: 16px 24px;
+            font-size: 14px;
+            color: #e5e5e5;
+            border-bottom: 1px solid #27272a;
+        }
+
+        tbody tr {
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover {
+            background: #27272a;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-atrasado {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .status-proximo {
+            background: rgba(249, 115, 22, 0.1);
+            color: #f97316;
+        }
+
+        .status-no-prazo {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .chart-grid, .chart-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== FILTER INFO ===== */
+        .filter-info {
+            background: rgba(14, 117, 185, 0.1);
+            border: 1px solid rgba(14, 117, 185, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-info .clear-filter {
+            margin-left: auto;
+            padding: 4px 12px;
+            background: #0e75b9;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-info .clear-filter:hover {
+            background: #0a5a8f;
+        }
+
+        /* View Sections */
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .coming-soon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .coming-soon i {
+            font-size: 64px;
+            color: #3f3f46;
+            margin-bottom: 20px;
+        }
+
+        .coming-soon h2 {
+            font-size: 24px;
+            color: #a1a1aa;
+            margin-bottom: 8px;
+        }
+
+        .coming-soon p {
+            color: #71717a;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="sidebar-brand-text">MMarra Hub</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Analytics</div>
+                <a class="menu-item active" data-view="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span class="menu-item-text">Dashboard</span>
+                </a>
+                <a class="menu-item" data-view="sales">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="menu-item-text">Vendas</span>
+                </a>
+                <a class="menu-item" data-view="purchases">
+                    <i class="fas fa-box"></i>
+                    <span class="menu-item-text">Compras</span>
+                    <span class="menu-item-badge">89</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Análises</div>
+                <a class="menu-item" data-view="brands">
+                    <i class="fas fa-tag"></i>
+                    <span class="menu-item-text">Marcas</span>
+                </a>
+                <a class="menu-item" data-view="suppliers">
+                    <i class="fas fa-truck"></i>
+                    <span class="menu-item-text">Fornecedores</span>
+                </a>
+                <a class="menu-item" data-view="products">
+                    <i class="fas fa-cubes"></i>
+                    <span class="menu-item-text">Produtos</span>
+                </a>
+                <a class="menu-item" data-view="stock">
+                    <i class="fas fa-warehouse"></i>
+                    <span class="menu-item-text">Estoque</span>
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-section-title">Configurações</div>
+                <a class="menu-item" data-view="integration">
+                    <i class="fas fa-plug"></i>
+                    <span class="menu-item-text">Integrações</span>
+                </a>
+                <a class="menu-item" data-view="settings">
+                    <i class="fas fa-cog"></i>
+                    <span class="menu-item-text">Configurações</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- VIEW: DASHBOARD -->
+        <div class="view-section active" id="view-dashboard">
+            <!-- Header -->
+            <div class="content-header">
+                <div class="content-title">
+                    <h1>Dashboard</h1>
+                    <div class="content-subtitle">Análise de Pendência de Compras em tempo real</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-download"></i>
+                        Exportar
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-filter"></i>
+                        Filtros
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active">Overview</button>
+                <button class="tab">Atrasados</button>
+                <button class="tab">Por Marca</button>
+            </div>
+
+            <!-- Filter Info -->
+            <div class="filter-info" id="filterInfo">
+                <i class="fas fa-info-circle"></i>
+                <span id="filterText">Mostrando todos os itens pendentes</span>
+                <button class="clear-filter" id="clearFilterBtn" style="display:none;" onclick="clearFilters()">
+                    <i class="fas fa-times"></i> Limpar Filtros
+                </button>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-label">Total de Itens Pendentes</div>
+                        <div class="kpi-card-icon blue">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value" id="kpi-total">247</div>
+                    <div class="kpi-card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+12% vs. mês anterior</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-label">Itens Atrasados</div>
+                        <div class="kpi-card-icon red">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value" id="kpi-atrasados">89</div>
+                    <div class="kpi-card-change negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Requer atenção urgente</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-label">Valor Total Pendente</div>
+                        <div class="kpi-card-icon orange">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value" id="kpi-valor">R$ 1,2M</div>
+                    <div class="kpi-card-change negative">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>-5% vs. semana anterior</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-card-label">Fornecedores Ativos</div>
+                        <div class="kpi-card-icon green">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-card-value" id="kpi-fornecedores">34</div>
+                    <div class="kpi-card-change neutral">
+                        <i class="fas fa-minus"></i>
+                        <span>Estável</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-card-title">Evolução de Pendências</div>
+                        <div class="chart-card-menu">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                    </div>
+                    <div id="chart-timeline"></div>
+                </div>
+                <div class="chart-card" id="card-status">
+                    <div class="chart-card-header">
+                        <div class="chart-card-title">Status de Entrega</div>
+                        <div class="chart-card-menu">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                    </div>
+                    <div class="chart-filter-chip" id="chip-status">
+                        <span id="chip-status-text">Filtrando: Atrasado</span>
+                        <button class="chart-filter-chip-close" onclick="clearFilters()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="chart-status-pie"></div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div class="chart-row">
+                <div class="chart-card" id="card-marcas">
+                    <div class="chart-card-header">
+                        <div class="chart-card-title">Top 10 Marcas - Valor Pendente</div>
+                        <div class="chart-card-menu">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                    </div>
+                    <div class="chart-filter-chip" id="chip-marcas">
+                        <span id="chip-marcas-text">Filtrando: BOSCH</span>
+                        <button class="chart-filter-chip-close" onclick="clearFilters()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="chart-marcas"></div>
+                </div>
+                <div class="chart-card" id="card-fornecedores">
+                    <div class="chart-card-header">
+                        <div class="chart-card-title">Top 10 Fornecedores</div>
+                        <div class="chart-card-menu">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                    </div>
+                    <div class="chart-filter-chip" id="chip-fornecedores">
+                        <span id="chip-fornecedores-text">Filtrando: MANN</span>
+                        <button class="chart-filter-chip-close" onclick="clearFilters()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="chart-fornecedores"></div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-card">
+                <div class="table-header">
+                    <div class="table-title">Transaction History</div>
+                    <div class="table-actions">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Status</th>
+                                <th>Fornecedor</th>
+                                <th>Produto</th>
+                                <th>Marca</th>
+                                <th>Qtd Pend.</th>
+                                <th>Valor</th>
+                                <th>Dias</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: OUTRAS ABAS (Coming Soon) -->
+        <div class="view-section" id="view-sales">
+            <div class="coming-soon">
+                <i class="fas fa-shopping-cart"></i>
+                <h2>Análise de Vendas</h2>
+                <p>Em desenvolvimento...</p>
+            </div>
+        </div>
+
+        <div class="view-section" id="view-purchases">
+            <div class="coming-soon">
+                <i class="fas fa-box"></i>
+                <h2>Análise de Compras</h2>
+                <p>Em desenvolvimento...</p>
+            </div>
+        </div>
+
+        <div class="view-section" id="view-brands">
+            <div class="coming-soon">
+                <i class="fas fa-tag"></i>
+                <h2>Análise de Marcas</h2>
+                <p>Em desenvolvimento...</p>
+            </div>
+        </div>
+
+        <div class="view-section" id="view-suppliers">
+            <div class="coming-soon">
+                <i class="fas fa-truck"></i>
+                <h2>Performance de Fornecedores</h2>
+                <p>Em desenvolvimento...</p>
+            </div>
+        </div>
+
+        <div class="view-section" id="view-products">
+            <div class="coming-soon">
+                <i class="fas fa-cubes"></i>
+                <h2>Análise de Produtos</h2>
+                <p>Em desenvolvimento...</p>
+            </div>
+        </div>
+
+        <div class="view-section" id="view-stock">
+            <div class="coming-soon">
+                <i class="fas fa-warehouse"></i>
+                <h2>Análise de Estoque</h2>
+                <p>Em desenvolvimento...</p>
+            </div>
+        </div>
+
+        <div class="view-section" id="view-integration">
+            <div class="coming-soon">
+                <i class="fas fa-plug"></i>
+                <h2>Integrações</h2>
+                <p>Em desenvolvimento...</p>
+            </div>
+        </div>
+
+        <div class="view-section" id="view-settings">
+            <div class="coming-soon">
+                <i class="fas fa-cog"></i>
+                <h2>Configurações</h2>
+                <p>Em desenvolvimento...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== GERAR DADOS REALISTAS =====
+        function gerarDadosRealistas() {
+            const fornecedores = ['BOSCH', 'MANN', 'DONALDSON', 'TOMÉ', 'NGK', 'MAHLE', 'CONTINENTAL', 'GATES', 'SKF', 'FAG'];
+            const marcas = ['BOSCH', 'MANN', 'DONALDSON', 'TOMÉ', 'NGK', 'MAHLE', 'CONTINENTAL', 'GATES', 'SKF', 'FAG', 'DELPHI', 'VALEO'];
+            const produtos = [
+                'PASTILHA FREIO', 'FILTRO AR', 'FILTRO OLEO', 'VELA IGNICAO', 'ROLAMENTO',
+                'FILTRO COMBUSTIVEL', 'ELEMENTO FILTRO', 'BOBINA IGNICAO', 'JUNTA MOTOR',
+                'KIT FILTROS', 'CORREIA DENTADA', 'TENSOR CORREIA', 'DISCO FREIO',
+                'AMORTECEDOR', 'KIT EMBREAGEM', 'SENSOR ABS', 'BOMBA AGUA', 'TERMOSTATO'
+            ];
+
+            const dados = [];
+            let pedidoNum = 1001;
+
+            // Gerar 120 registros com distribuição realista
+            for (let i = 0; i < 120; i++) {
+                let status;
+                let dias;
+
+                // 40% atrasados, 30% próximos, 30% no prazo
+                const rand = Math.random();
+                if (rand < 0.4) {
+                    status = 'ATRASADO';
+                    dias = Math.floor(Math.random() * 45) + 10; // 10-55 dias
+                } else if (rand < 0.7) {
+                    status = 'PROXIMO';
+                    dias = Math.floor(Math.random() * 7) + 1; // 1-7 dias
+                } else {
+                    status = 'NO PRAZO';
+                    dias = Math.floor(Math.random() * 3) + 1; // 1-3 dias
+                }
+
+                const fornecedor = fornecedores[Math.floor(Math.random() * fornecedores.length)];
+                const marca = marcas[Math.floor(Math.random() * marcas.length)];
+                const produto = produtos[Math.floor(Math.random() * produtos.length)];
+                const qtd = Math.floor(Math.random() * 500) + 50;
+                const valorUnit = Math.floor(Math.random() * 500) + 50;
+                const valor = qtd * valorUnit;
+
+                dados.push({
+                    pedido: pedidoNum++,
+                    status: status,
+                    fornecedor: fornecedor,
+                    produto: produto,
+                    marca: marca,
+                    qtd: qtd,
+                    valor: valor,
+                    dias: dias
+                });
+            }
+
+            return dados;
+        }
+
+        const dadosOriginais = gerarDadosRealistas();
+        let dadosFiltrados = [...dadosOriginais];
+        let filtroAtivo = null; // { tipo: 'marca'|'fornecedor'|'status', valor: 'BOSCH' }
+
+        // ===== NAVEGAÇÃO SIDEBAR =====
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const viewId = this.getAttribute('data-view');
+
+                // Update active menu
+                document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update active view
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-' + viewId).classList.add('active');
+            });
+        });
+
+        // ===== FILTRAR DADOS (com toggle) =====
+        function filtrarPor(tipo, valor) {
+            // TOGGLE: Se clicar no mesmo filtro, remove
+            if (filtroAtivo && filtroAtivo.tipo === tipo && filtroAtivo.valor === valor) {
+                clearFilters();
+                return;
+            }
+
+            filtroAtivo = { tipo, valor };
+
+            // Aplicar filtro
+            if (tipo === 'marca') {
+                dadosFiltrados = dadosOriginais.filter(d => d.marca === valor);
+                document.getElementById('filterText').textContent = `Filtrando por marca: ${valor}`;
+
+                // Mostrar chip no gráfico
+                document.getElementById('chip-marcas-text').textContent = `Marca: ${valor}`;
+                document.getElementById('chip-marcas').classList.add('active');
+                document.getElementById('card-marcas').classList.add('filtered');
+
+                // Esconder outros chips
+                document.getElementById('chip-status').classList.remove('active');
+                document.getElementById('chip-fornecedores').classList.remove('active');
+                document.getElementById('card-status').classList.remove('filtered');
+                document.getElementById('card-fornecedores').classList.remove('filtered');
+
+            } else if (tipo === 'fornecedor') {
+                dadosFiltrados = dadosOriginais.filter(d => d.fornecedor === valor);
+                document.getElementById('filterText').textContent = `Filtrando por fornecedor: ${valor}`;
+
+                // Mostrar chip no gráfico
+                document.getElementById('chip-fornecedores-text').textContent = `Fornecedor: ${valor}`;
+                document.getElementById('chip-fornecedores').classList.add('active');
+                document.getElementById('card-fornecedores').classList.add('filtered');
+
+                // Esconder outros chips
+                document.getElementById('chip-status').classList.remove('active');
+                document.getElementById('chip-marcas').classList.remove('active');
+                document.getElementById('card-status').classList.remove('filtered');
+                document.getElementById('card-marcas').classList.remove('filtered');
+
+            } else if (tipo === 'status') {
+                dadosFiltrados = dadosOriginais.filter(d => d.status === valor);
+                const statusLabel = valor === 'ATRASADO' ? 'Atrasado' : valor === 'PROXIMO' ? 'Próximo' : 'No Prazo';
+                document.getElementById('filterText').textContent = `Filtrando por status: ${statusLabel}`;
+
+                // Mostrar chip no gráfico
+                document.getElementById('chip-status-text').textContent = `Status: ${statusLabel}`;
+                document.getElementById('chip-status').classList.add('active');
+                document.getElementById('card-status').classList.add('filtered');
+
+                // Esconder outros chips
+                document.getElementById('chip-marcas').classList.remove('active');
+                document.getElementById('chip-fornecedores').classList.remove('active');
+                document.getElementById('card-marcas').classList.remove('filtered');
+                document.getElementById('card-fornecedores').classList.remove('filtered');
+            }
+
+            // Mostrar botão limpar
+            document.getElementById('clearFilterBtn').style.display = 'block';
+
+            // Atualizar tudo com animação
+            updateKPIsAnimated();
+            renderChartsAnimated();
+            renderTable();
+        }
+
+        function clearFilters() {
+            filtroAtivo = null;
+            dadosFiltrados = [...dadosOriginais];
+            document.getElementById('filterText').textContent = 'Mostrando todos os itens pendentes';
+            document.getElementById('clearFilterBtn').style.display = 'none';
+
+            // Esconder todos os chips
+            document.getElementById('chip-status').classList.remove('active');
+            document.getElementById('chip-marcas').classList.remove('active');
+            document.getElementById('chip-fornecedores').classList.remove('active');
+
+            // Remover highlight dos cards
+            document.getElementById('card-status').classList.remove('filtered');
+            document.getElementById('card-marcas').classList.remove('filtered');
+            document.getElementById('card-fornecedores').classList.remove('filtered');
+
+            updateKPIsAnimated();
+            renderChartsAnimated();
+            renderTable();
+        }
+
+        // ===== ATUALIZAR KPIs COM ANIMAÇÃO =====
+        function updateKPIsAnimated() {
+            const kpis = document.querySelectorAll('.kpi-card-value');
+            kpis.forEach(kpi => {
+                kpi.style.animation = 'none';
+                setTimeout(() => {
+                    kpi.style.animation = 'fadeIn 0.5s ease';
+                }, 10);
+            });
+            updateKPIs();
+        }
+
+        // ===== RENDERIZAR GRÁFICOS COM ANIMAÇÃO =====
+        function renderChartsAnimated() {
+            renderCharts();
+        }
+
+        // ===== INICIALIZAR DASHBOARD =====
+        function initDashboard() {
+            updateKPIs();
+            renderCharts();
+            renderTable();
+        }
+
+        // ===== ATUALIZAR KPIs =====
+        function updateKPIs() {
+            const total = dadosFiltrados.length;
+            const atrasados = dadosFiltrados.filter(d => d.status === 'ATRASADO').length;
+            const valorTotal = dadosFiltrados.reduce((sum, d) => sum + d.valor, 0);
+            const fornecedores = [...new Set(dadosFiltrados.map(d => d.fornecedor))].length;
+
+            document.getElementById('kpi-total').textContent = total;
+            document.getElementById('kpi-atrasados').textContent = atrasados;
+            document.getElementById('kpi-valor').textContent = formatCurrency(valorTotal);
+            document.getElementById('kpi-fornecedores').textContent = fornecedores;
+        }
+
+        // ===== RENDERIZAR GRÁFICOS =====
+        function renderCharts() {
+            renderTimelineChart();
+            renderStatusPie();
+            renderMarcasChart();
+            renderFornecedoresChart();
+        }
+
+        // Chart 1: Timeline
+        function renderTimelineChart() {
+            const data = [{
+                x: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'],
+                y: [120, 145, 160, 155, 180, 200, dadosFiltrados.length],
+                type: 'scatter',
+                mode: 'lines+markers',
+                fill: 'tozeroy',
+                line: { color: '#0e75b9', width: 3 },
+                marker: { size: 8, color: '#0e75b9' },
+                fillcolor: 'rgba(14, 117, 185, 0.1)',
+            }];
+
+            const layout = {
+                height: 300,
+                margin: { t: 10, r: 20, b: 40, l: 50 },
+                xaxis: { color: '#71717a', gridcolor: '#27272a' },
+                yaxis: { color: '#71717a', gridcolor: '#27272a', title: 'Itens Pendentes' },
+                plot_bgcolor: '#18181b',
+                paper_bgcolor: '#18181b',
+                font: { color: '#e5e5e5' },
+            };
+
+            Plotly.newPlot('chart-timeline', data, layout, { responsive: true, displayModeBar: false });
+        }
+
+        // Chart 2: Donut (com click para filtrar e highlight)
+        function renderStatusPie() {
+            const statusCount = {
+                'Atrasado': dadosOriginais.filter(d => d.status === 'ATRASADO').length,
+                'Próximo': dadosOriginais.filter(d => d.status === 'PROXIMO').length,
+                'No Prazo': dadosOriginais.filter(d => d.status === 'NO PRAZO').length,
+            };
+
+            // Determinar opacidade baseado no filtro ativo
+            let pull = [0, 0, 0];
+            let opacity = [1, 1, 1];
+
+            if (filtroAtivo && filtroAtivo.tipo === 'status') {
+                const statusIndex = {
+                    'ATRASADO': 0,
+                    'PROXIMO': 1,
+                    'NO PRAZO': 2
+                };
+                const activeIndex = statusIndex[filtroAtivo.valor];
+                pull[activeIndex] = 0.1; // Destacar fatia selecionada
+                opacity = [0.3, 0.3, 0.3];
+                opacity[activeIndex] = 1;
+            }
+
+            const data = [{
+                values: Object.values(statusCount),
+                labels: Object.keys(statusCount),
+                type: 'pie',
+                hole: 0.5,
+                pull: pull,
+                marker: {
+                    colors: ['#ef4444', '#f97316', '#22c55e'],
+                    line: {
+                        color: '#18181b',
+                        width: 2
+                    }
+                },
+                opacity: opacity,
+                textfont: { color: '#e5e5e5', size: 13 },
+                hovertemplate: '%{label}<br>%{value} itens<br>%{percent}<br><i>Clique para filtrar</i><extra></extra>',
+            }];
+
+            const layout = {
+                height: 300,
+                margin: { t: 20, r: 20, b: 20, l: 20 },
+                paper_bgcolor: '#18181b',
+                showlegend: true,
+                legend: { font: { color: '#e5e5e5' } },
+                transition: {
+                    duration: 500,
+                    easing: 'cubic-in-out'
+                }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: false,
+            };
+
+            const chartDiv = document.getElementById('chart-status-pie');
+            Plotly.newPlot(chartDiv, data, layout, config);
+
+            // Cursor pointer
+            chartDiv.style.cursor = 'pointer';
+
+            // Adicionar evento de click
+            chartDiv.on('plotly_click', function(eventData) {
+                const label = eventData.points[0].label;
+                const statusMap = {
+                    'Atrasado': 'ATRASADO',
+                    'Próximo': 'PROXIMO',
+                    'No Prazo': 'NO PRAZO'
+                };
+                filtrarPor('status', statusMap[label]);
+            });
+        }
+
+        // Chart 3: Marcas (com click para filtrar e highlight)
+        function renderMarcasChart() {
+            const marcas = {};
+            dadosOriginais.forEach(d => {
+                marcas[d.marca] = (marcas[d.marca] || 0) + d.valor;
+            });
+
+            const sorted = Object.entries(marcas)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            // Determinar opacidade e cor baseado no filtro ativo
+            const colors = sorted.map(m => {
+                if (filtroAtivo && filtroAtivo.tipo === 'marca') {
+                    return filtroAtivo.valor === m[0] ? '#0e75b9' : 'rgba(14, 117, 185, 0.3)';
+                }
+                return '#0e75b9';
+            });
+
+            const data = [{
+                x: sorted.map(m => m[1]),
+                y: sorted.map(m => m[0]),
+                type: 'bar',
+                orientation: 'h',
+                marker: {
+                    color: colors,
+                    line: { color: '#0a5a8f', width: 1 }
+                },
+                text: sorted.map(m => formatCurrency(m[1])),
+                textposition: 'outside',
+                textfont: {
+                    color: sorted.map(m => {
+                        if (filtroAtivo && filtroAtivo.tipo === 'marca') {
+                            return filtroAtivo.valor === m[0] ? '#e5e5e5' : '#71717a';
+                        }
+                        return '#e5e5e5';
+                    })
+                },
+                hovertemplate: '%{y}<br>R$ %{x:,.0f}<br><i>Clique para filtrar</i><extra></extra>',
+            }];
+
+            const layout = {
+                height: 300,
+                margin: { t: 10, r: 80, b: 40, l: 100 },
+                xaxis: { color: '#71717a', gridcolor: '#27272a', title: 'Valor Pendente (R$)' },
+                yaxis: { color: '#71717a', automargin: true },
+                plot_bgcolor: '#18181b',
+                paper_bgcolor: '#18181b',
+                font: { color: '#e5e5e5' },
+                transition: {
+                    duration: 500,
+                    easing: 'cubic-in-out'
+                }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: false,
+            };
+
+            const chartDiv = document.getElementById('chart-marcas');
+            Plotly.newPlot(chartDiv, data, layout, config);
+
+            // Cursor pointer
+            chartDiv.style.cursor = 'pointer';
+
+            // Adicionar evento de click
+            chartDiv.on('plotly_click', function(eventData) {
+                const marca = eventData.points[0].y;
+                filtrarPor('marca', marca);
+            });
+        }
+
+        // Chart 4: Fornecedores (com click para filtrar e highlight)
+        function renderFornecedoresChart() {
+            const fornecedores = {};
+            dadosOriginais.forEach(d => {
+                fornecedores[d.fornecedor] = (fornecedores[d.fornecedor] || 0) + d.qtd;
+            });
+
+            const sorted = Object.entries(fornecedores)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            // Determinar opacidade baseado no filtro ativo
+            const colors = sorted.map(f => {
+                if (filtroAtivo && filtroAtivo.tipo === 'fornecedor') {
+                    return filtroAtivo.valor === f[0] ? '#10b981' : 'rgba(16, 185, 129, 0.3)';
+                }
+                return '#10b981';
+            });
+
+            const data = [{
+                x: sorted.map(f => f[1]),
+                y: sorted.map(f => f[0]),
+                type: 'bar',
+                orientation: 'h',
+                marker: {
+                    color: colors,
+                    line: { color: '#059669', width: 1 }
+                },
+                text: sorted.map(f => f[1] + ' un'),
+                textposition: 'outside',
+                textfont: {
+                    color: sorted.map(f => {
+                        if (filtroAtivo && filtroAtivo.tipo === 'fornecedor') {
+                            return filtroAtivo.valor === f[0] ? '#e5e5e5' : '#71717a';
+                        }
+                        return '#e5e5e5';
+                    })
+                },
+                hovertemplate: '%{y}<br>%{x} unidades<br><i>Clique para filtrar</i><extra></extra>',
+            }];
+
+            const layout = {
+                height: 300,
+                margin: { t: 10, r: 80, b: 40, l: 100 },
+                xaxis: { color: '#71717a', gridcolor: '#27272a', title: 'Quantidade de Itens' },
+                yaxis: { color: '#71717a', automargin: true },
+                plot_bgcolor: '#18181b',
+                paper_bgcolor: '#18181b',
+                font: { color: '#e5e5e5' },
+                transition: {
+                    duration: 500,
+                    easing: 'cubic-in-out'
+                }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: false,
+            };
+
+            const chartDiv = document.getElementById('chart-fornecedores');
+            Plotly.newPlot(chartDiv, data, layout, config);
+
+            // Cursor pointer
+            chartDiv.style.cursor = 'pointer';
+
+            // Adicionar evento de click
+            chartDiv.on('plotly_click', function(eventData) {
+                const fornecedor = eventData.points[0].y;
+                filtrarPor('fornecedor', fornecedor);
+            });
+        }
+
+        // ===== RENDERIZAR TABELA =====
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+
+            if (dadosFiltrados.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #71717a;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                            Nenhum item encontrado com os filtros aplicados
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Ordenar por dias (atrasados primeiro)
+            const sorted = [...dadosFiltrados].sort((a, b) => {
+                if (a.status === 'ATRASADO' && b.status !== 'ATRASADO') return -1;
+                if (a.status !== 'ATRASADO' && b.status === 'ATRASADO') return 1;
+                return b.dias - a.dias;
+            });
+
+            tbody.innerHTML = sorted.slice(0, 50).map(item => `
+                <tr>
+                    <td>#${item.pedido}</td>
+                    <td><span class="status-badge status-${item.status.toLowerCase().replace(' ', '-')}">${item.status}</span></td>
+                    <td>${item.fornecedor}</td>
+                    <td>${item.produto}</td>
+                    <td>${item.marca}</td>
+                    <td>${item.qtd} un</td>
+                    <td>${formatCurrencyFull(item.valor)}</td>
+                    <td>${item.dias} dias</td>
+                </tr>
+            `).join('');
+        }
+
+        // ===== FORMATAR MOEDA =====
+        function formatCurrency(value) {
+            if (value >= 1000000) {
+                return `R$ ${(value / 1000000).toFixed(1)}M`;
+            } else if (value >= 1000) {
+                return `R$ ${(value / 1000).toFixed(0)}k`;
+            }
+            return `R$ ${value.toFixed(0)}`;
+        }
+
+        function formatCurrencyFull(value) {
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // ===== INICIALIZAR =====
+        initDashboard();
+    </script>
+</body>
+</html>

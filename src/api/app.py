@@ -243,7 +243,7 @@ async def startup():
     print(f"[i] {len(agent.kb.documents)} documentos carregados")
     print(f"[i] Modelo: {LLM_PROVIDER}/{LLM_MODEL}")
     print(f"[i] Modo: Agente com consulta ao banco")
-    print(f"[i] Acesse: http://localhost:8080")
+    print(f"[i] Acesse: http://localhost:8000")
 
 # ============================================================
 # MODELS
@@ -496,6 +496,6 @@ if __name__ == "__main__":
     uvicorn.run(
         "src.api.app:app",
         host="0.0.0.0",
-        port=8080,
+        port=8000,
         reload=True,
     )
