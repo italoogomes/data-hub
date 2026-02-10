@@ -53,6 +53,11 @@
 | liberado, aprovado, confirmado | Nota liberada | STATUSNOTA = 'L' |
 | atendimento, em atendimento | Nota em atendimento | STATUSNOTA = 'A' |
 
+### Confirmado (Regra MMarra)
+- Na MMarra, "pedido confirmado" = STATUSNOTA = 'L' (Liberado), NAO o campo APROVADO.
+- CASE WHEN CAB.STATUSNOTA = 'L' THEN 'Sim' ELSE 'Nao' END AS CONFIRMADO
+- Um pedido pode estar APROVADO internamente mas so eh "confirmado" quando o status muda para Liberado.
+
 ### Liberacao (TGFCAB.TIPLIBERACAO)
 
 | Termo do usuario | Significado no banco | Filtro SQL |
@@ -150,6 +155,19 @@
 | valor da nota | TGFCAB.VLRNOTA | Campo direto |
 | valor do item | TGFITE.VLRTOT | Campo direto |
 
+### Colunas de Valor em Pendencia (CRITICO - LLM DEVE ESCOLHER A COLUNA CERTA)
+
+| Termo do usuario | Coluna correta | Quando usar |
+|------------------|---------------|-------------|
+| valor do pedido, valor total pedido, quanto custa o pedido | VLR_PEDIDO_ITEM (item) ou VLR_TOTAL_PEDIDO (agregado) | Valor TOTAL que foi pedido (inclui entregue + pendente) |
+| valor entregue, valor recebido, quanto ja chegou em R$, valor atendido | VLR_ATENDIDO (item) ou VLR_TOTAL_ATENDIDO (agregado) | Valor em R$ que JA FOI ENTREGUE/RECEBIDO |
+| valor pendente, valor faltando, quanto falta em R$, valor nao entregue | VLR_PENDENTE (item) ou VLR_TOTAL_PENDENTE (agregado) | Valor em R$ que FALTA ENTREGAR |
+| valor da nota, vlrnota | TGFCAB.VLRNOTA | SOMENTE nivel CABECALHO sem filtro de marca. NUNCA com filtro de marca |
+
+**Regra:** VLR_PEDIDO = VLR_ATENDIDO + VLR_PENDENTE (sempre)
+**Nivel ITEM** (exemplo 23): VLR_PEDIDO_ITEM, VLR_ATENDIDO, VLR_PENDENTE (cada item)
+**Nivel AGREGADO** (exemplo 22): VLR_TOTAL_PEDIDO, VLR_TOTAL_ATENDIDO, VLR_TOTAL_PENDENTE (SUM por pedido)
+
 ---
 
 ## Periodos de Tempo
@@ -197,6 +215,18 @@
 | previsao de entrega | TGFCAB.DTPREVENT - data prevista |
 | pedidos atrasados | DTPREVENT < TRUNC(SYSDATE) AND PENDENTE = 'S' |
 | itens pendentes de entrega | TGFITE.QTDNEG - SUM(TGFVAR.QTDATENDIDA) |
+| itens pendentes, produtos pendentes, detalhe pendencia, item por item | Query nivel ITEM detalhada (exemplo 23). Sem GROUP BY, mostra cada item. |
+| relatorio detalhado de pendencia, detalhar itens | Query nivel ITEM detalhada (exemplo 23). Inclui marca, fornecedor, comprador, tipo compra. |
+| tipo de compra, casada, estoque | CODTIPOPER: 1301=Estoque, 1313=Casada. CASE para traduzir. |
+| numero fabricante, referencia fabricante | PRO.AD_NUMFABRICANTE (campo customizado MMarra) |
+| numero original, referencia original | PRO.AD_NUMORIGINAL (campo customizado MMarra) |
+| historico de compras, compras por fornecedor, pedidos do fornecedor | Exemplo 24. TIPMOV IN ('C','O'), filtro por PAR.NOMEPARC. VLR_TOTAL_PEDIDO, VLR_TOTAL_ATENDIDO, VLR_TOTAL_PENDENTE por pedido. |
+| quanto compramos, total comprado, valor comprado | Exemplo 24. SUM(VLR_TOTAL_PEDIDO) por fornecedor ou periodo. |
+| valor entregue do fornecedor, quanto chegou do fornecedor, valor recebido do fornecedor | Exemplo 24 com VLR_TOTAL_ATENDIDO (por pedido). Ou Exemplo 23 com filtro fornecedor para detalhe por item. |
+| valor pendente do fornecedor, quanto falta do fornecedor | Exemplo 24 com VLR_TOTAL_PENDENTE (por pedido). Ou Exemplo 23 com filtro fornecedor para detalhe por item. |
+| performance fornecedor, pontualidade, confiabilidade | Exemplo 25. Ranking de atrasos com PERC_ATRASO e MEDIA_DIAS_PENDENTE. |
+| fornecedor que atrasa, ranking atrasos, piores fornecedores | Exemplo 25. ORDER BY ATRASADOS DESC, PERC_ATRASO DESC. |
+| fornecedores pontuais, melhores fornecedores | Exemplo 25. ORDER BY PERC_ATRASO ASC NULLS LAST. |
 
 ---
 

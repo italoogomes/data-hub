@@ -12,9 +12,14 @@
 
 ## ANTES DE QUALQUER TAREFA
 
-1. Leia `PROGRESSO.md`
-2. Pergunte o que o usuário quer fazer
-3. Confirme ANTES de executar
+1. Leia `PROGRESSO_ATUAL.md` para entender onde paramos (estado atual + sessao mais recente)
+2. Consulte `PROGRESSO_HISTORICO.md` se precisar de contexto de sessoes anteriores (1-25)
+3. Pergunte o que o usuário quer fazer
+4. Confirme ANTES de executar
+
+### Ao finalizar uma sessao:
+- Atualize `PROGRESSO_ATUAL.md` com o que foi feito
+- Mova a sessao anterior para `PROGRESSO_HISTORICO.md` (manter apenas a mais recente no ATUAL)
 
 ---
 

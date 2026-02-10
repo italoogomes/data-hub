@@ -8,9 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0b;
-            --bg-secondary: #111113;
-            --bg-tertiary: #1a1a1e;
+            --bg-primary: #1e1e22;
+            --bg-secondary: #28282e;
+            --bg-tertiary: #32323a;
             --bg-chat: #0e0e10;
             --border: #2a2a30;
             --border-hover: #3a3a42;
@@ -28,6 +28,7 @@
             --success: #2ecc71;
             --error: #e74c3c;
             --shadow: 0 2px 20px rgba(0,0,0,0.4);
+            --nav-width: 220px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,6 +37,305 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            animation: fade-in 0.5s ease;
+            background: url('/imagens/fundo01.jpg') center center / cover no-repeat fixed;
+        }
+
+        .login-box {
+            width: 380px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px 32px;
+            text-align: center;
+        }
+
+        .login-logo {
+            height: 70px;
+            width: auto;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 0 25px rgba(14, 117, 185, 0.35));
+        }
+
+        .login-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .login-field {
+            margin-bottom: 14px;
+            text-align: left;
+        }
+
+        .login-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .login-field input {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .login-field input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .login-field input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 44px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .toggle-password:hover {
+            color: var(--text-primary);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .login-btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-error {
+            margin-top: 14px;
+            padding: 10px;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 8px;
+            color: var(--error);
+            font-size: 13px;
+            display: none;
+        }
+
+        .login-loading {
+            display: none;
+            margin-top: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* ===== APP LAYOUT ===== */
+        .app-layout {
+            display: none;
+            height: 100vh;
+        }
+
+        /* ===== NAV SIDEBAR (esquerda) ===== */
+        .nav-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--nav-width);
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+        }
+
+        .nav-brand {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-brand img {
+            height: 32px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(14, 117, 185, 0.3));
+        }
+
+        .nav-brand-text {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 12px 10px;
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            padding: 8px 10px 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-bottom: 2px;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-glow);
+            color: var(--accent-light);
+            border-color: var(--accent-dim);
+        }
+
+        .nav-item-icon {
+            font-size: 16px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .nav-footer {
+            padding: 12px 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+
+        .nav-user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .nav-user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .nav-user-role {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .nav-logout {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .nav-logout:hover {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--error);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: var(--nav-width);
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -58,13 +358,6 @@
             display: flex;
             align-items: center;
             gap: 14px;
-        }
-
-        .logo-img {
-            height: 40px;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 0 12px rgba(14, 117, 185, 0.3));
         }
 
         .header-title {
@@ -135,7 +428,19 @@
             border-color: var(--border-hover);
         }
 
-        /* ===== CHAT AREA ===== */
+        /* ===== SECTIONS ===== */
+        .section {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .section.active {
+            display: flex;
+        }
+
+        /* ===== CHAT SECTION ===== */
         .chat-container {
             flex: 1;
             overflow-y: auto;
@@ -529,13 +834,9 @@
 
         /* ===== INPUT AREA ===== */
         .input-area {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
             padding: 16px 24px 20px;
             background: linear-gradient(to top, var(--bg-primary) 70%, transparent);
-            z-index: 10;
+            flex-shrink: 0;
         }
 
         .input-wrapper {
@@ -602,7 +903,89 @@
             transform: none;
         }
 
-        /* ===== SIDEBAR ===== */
+        /* ===== REPORTS SECTION ===== */
+        .reports-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .reports-header {
+            margin-bottom: 28px;
+        }
+
+        .reports-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .reports-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .report-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .report-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .report-card-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .report-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .report-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .report-card-badge {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-soon {
+            background: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .badge-ready {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        /* ===== INFO SIDEBAR (direita) ===== */
         .sidebar-overlay {
             position: fixed;
             inset: 0;
@@ -691,95 +1074,243 @@
             font-weight: 600;
         }
 
+        /* ===== MOBILE NAV ===== */
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 25;
+            width: 38px;
+            height: 38px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
+            .nav-sidebar {
+                left: -260px;
+                width: 260px;
+                transition: left 0.25s ease;
+            }
+            .nav-sidebar.mobile-open {
+                left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .mobile-nav-toggle {
+                display: flex;
+            }
             .suggestions { grid-template-columns: 1fr; }
-            .header { padding: 10px 16px; }
+            .header { padding: 10px 16px 10px 56px; }
             .messages { padding: 16px 16px 100px; }
             .input-area { padding: 12px 16px 16px; }
             .status-badge { display: none; }
+            .reports-container { padding: 20px 16px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="header-left">
-            <img src="imagens/logo.png" class="logo-img" alt="MMarra">
-            <div>
-                <div class="header-title">Data Hub</div>
-                <div class="header-subtitle" id="model-info">carregando...</div>
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-box">
+            <img src="imagens/logo.png" class="login-logo" alt="MMarra">
+            <div class="login-title">Data Hub</div>
+            <div class="login-subtitle">Entre com suas credenciais do Sankhya</div>
+
+            <div class="login-field">
+                <label>Usuario</label>
+                <input type="text" id="login-user" placeholder="Seu usuario Sankhya" autocomplete="username" autofocus>
             </div>
-        </div>
-        <div class="header-right">
-            <div class="status-badge">
-                <span class="status-dot"></span>
-                <span id="doc-count">--</span> docs
+            <div class="login-field">
+                <label>Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password">
+                    <button type="button" class="toggle-password" onclick="togglePassword()" title="Mostrar/ocultar senha"><svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </div>
             </div>
-            <button class="btn-icon" onclick="toggleSidebar()" title="Status">
-                ☰
-            </button>
-            <button class="btn-icon" onclick="clearChat()" title="Limpar conversa">
-                🗑
-            </button>
+
+            <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
+
+            <div class="login-loading" id="login-loading">Autenticando...</div>
+            <div class="login-error" id="login-error"></div>
         </div>
     </div>
 
-    <!-- CHAT -->
-    <div class="chat-container" id="chat-container">
-        <div class="welcome" id="welcome">
-            <img src="imagens/logo.png" class="welcome-logo" alt="MMarra">
-            <h2>Data Hub</h2>
-            <p>Assistente inteligente sobre os dados, processos e regras de negócio da MMarra Distribuidora Automotiva.</p>
-            <div class="suggestions">
-                <div class="suggestion" onclick="askSuggestion(this)">
-                    <div class="suggestion-label">Processo</div>
-                    Como funciona o fluxo de compras?
+    <!-- ===== APP LAYOUT ===== -->
+    <div class="app-layout" id="app-layout">
+
+        <!-- Mobile nav toggle -->
+        <button class="mobile-nav-toggle" id="mobile-nav-toggle" onclick="toggleMobileNav()">&#9776;</button>
+
+        <!-- NAV SIDEBAR (esquerda) -->
+        <div class="nav-sidebar" id="nav-sidebar">
+            <div class="nav-brand">
+                <img src="imagens/logo.png" alt="MMarra">
+                <span class="nav-brand-text">Data Hub</span>
+            </div>
+
+            <div class="nav-menu">
+                <div class="nav-section-label">Menu</div>
+                <div class="nav-item active" data-section="chat" onclick="switchSection('chat')">
+                    <span class="nav-item-icon">&#128172;</span>
+                    <span>Chat IA</span>
                 </div>
-                <div class="suggestion" onclick="askSuggestion(this)">
-                    <div class="suggestion-label">Regra</div>
-                    A MMarra usa workflow de aprovação?
-                </div>
-                <div class="suggestion" onclick="askSuggestion(this)">
-                    <div class="suggestion-label">Query</div>
-                    Query para ver compras do mês por fornecedor
-                </div>
-                <div class="suggestion" onclick="askSuggestion(this)">
-                    <div class="suggestion-label">Tabela</div>
-                    Quais campos da TGFCAB controlam o status?
-                </div>
-                <div class="suggestion" onclick="askSuggestion(this)">
-                    <div class="suggestion-label">Dados</div>
-                    Quais são os maiores fornecedores da MMarra?
-                </div>
-                <div class="suggestion" onclick="askSuggestion(this)">
-                    <div class="suggestion-label">Técnico</div>
-                    Como funciona a cotação de compra?
+                <div class="nav-item" data-section="reports" onclick="switchSection('reports')">
+                    <span class="nav-item-icon">&#128202;</span>
+                    <span>Relatorios</span>
                 </div>
             </div>
-        </div>
-        <div class="messages" id="messages" style="display:none;"></div>
-    </div>
 
-    <!-- INPUT -->
-    <div class="input-area">
-        <div class="input-wrapper">
-            <textarea id="chat-input"
-                placeholder="Pergunte sobre dados, processos ou regras da MMarra..."
-                rows="1"
-                onkeydown="handleKey(event)"
-                oninput="autoResize(this)"></textarea>
-            <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
-                ➤
-            </button>
+            <div class="nav-footer">
+                <div class="nav-user">
+                    <div class="nav-user-avatar" id="nav-avatar">U</div>
+                    <div>
+                        <div class="nav-user-name" id="nav-username">Usuario</div>
+                        <div class="nav-user-role" id="nav-user-role">Sankhya</div>
+                    </div>
+                </div>
+                <button class="nav-logout" onclick="doLogout()">
+                    <span>&#10140;</span> Sair
+                </button>
+            </div>
         </div>
-    </div>
 
-    <!-- SIDEBAR -->
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- HEADER -->
+            <div class="header">
+                <div class="header-left">
+                    <div>
+                        <div class="header-title" id="section-title">Chat IA</div>
+                        <div class="header-subtitle" id="model-info">carregando...</div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="status-badge">
+                        <span class="status-dot"></span>
+                        <span id="doc-count">--</span> docs
+                    </div>
+                    <button class="btn-icon" onclick="toggleSidebar()" title="Status">&#9776;</button>
+                    <button class="btn-icon" onclick="clearChat()" title="Limpar conversa">&#128465;</button>
+                </div>
+            </div>
+
+            <!-- CHAT SECTION -->
+            <div class="section active" id="section-chat">
+                <div class="chat-container" id="chat-container">
+                    <div class="welcome" id="welcome">
+                        <img src="imagens/logo.png" class="welcome-logo" alt="MMarra">
+                        <h2>Data Hub</h2>
+                        <p>Assistente inteligente sobre os dados, processos e regras de negocio da MMarra Distribuidora Automotiva.</p>
+                        <div class="suggestions">
+                            <div class="suggestion" onclick="askSuggestion(this)">
+                                <div class="suggestion-label">Processo</div>
+                                Como funciona o fluxo de compras?
+                            </div>
+                            <div class="suggestion" onclick="askSuggestion(this)">
+                                <div class="suggestion-label">Regra</div>
+                                A MMarra usa workflow de aprovacao?
+                            </div>
+                            <div class="suggestion" onclick="askSuggestion(this)">
+                                <div class="suggestion-label">Query</div>
+                                Query para ver compras do mes por fornecedor
+                            </div>
+                            <div class="suggestion" onclick="askSuggestion(this)">
+                                <div class="suggestion-label">Tabela</div>
+                                Quais campos da TGFCAB controlam o status?
+                            </div>
+                            <div class="suggestion" onclick="askSuggestion(this)">
+                                <div class="suggestion-label">Dados</div>
+                                Quais sao os maiores fornecedores da MMarra?
+                            </div>
+                            <div class="suggestion" onclick="askSuggestion(this)">
+                                <div class="suggestion-label">Tecnico</div>
+                                Como funciona a cotacao de compra?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="messages" id="messages" style="display:none;"></div>
+                </div>
+
+                <!-- INPUT -->
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <textarea id="chat-input"
+                            placeholder="Pergunte sobre dados, processos ou regras da MMarra..."
+                            rows="1"
+                            onkeydown="handleKey(event)"
+                            oninput="autoResize(this)"></textarea>
+                        <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>&#10148;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REPORTS SECTION -->
+            <div class="section" id="section-reports">
+                <div class="reports-container">
+                    <div class="reports-header">
+                        <h2>Relatorios</h2>
+                        <p>Acesse os relatorios de compras, vendas e estoque da MMarra.</p>
+                    </div>
+                    <div class="reports-grid">
+                        <div class="report-card" data-module="compras">
+                            <div class="report-card-icon">&#128230;</div>
+                            <h3>Pendencia de Compras</h3>
+                            <p>Itens pendentes de entrega por fornecedor, marca e comprador. Status de atraso e previsao.</p>
+                            <span class="report-card-badge badge-soon">Em breve</span>
+                        </div>
+                        <div class="report-card" data-module="compras">
+                            <div class="report-card-icon">&#128200;</div>
+                            <h3>Historico por Fornecedor</h3>
+                            <p>Pedidos e notas de entrada dos ultimos meses. Valores pedidos, atendidos e pendentes.</p>
+                            <span class="report-card-badge badge-soon">Em breve</span>
+                        </div>
+                        <div class="report-card" data-module="compras">
+                            <div class="report-card-icon">&#127942;</div>
+                            <h3>Performance Fornecedores</h3>
+                            <p>Ranking de atrasos, pontualidade e media de dias em aberto por fornecedor.</p>
+                            <span class="report-card-badge badge-soon">Em breve</span>
+                        </div>
+                        <div class="report-card" data-module="vendas">
+                            <div class="report-card-icon">&#128722;</div>
+                            <h3>Vendas por Periodo</h3>
+                            <p>Faturamento, ticket medio e top produtos vendidos por periodo.</p>
+                            <span class="report-card-badge badge-soon">Em breve</span>
+                        </div>
+                        <div class="report-card" data-module="vendas">
+                            <div class="report-card-icon">&#128451;</div>
+                            <h3>Estoque Critico</h3>
+                            <p>Produtos abaixo do estoque minimo e sugestao de reposicao.</p>
+                            <span class="report-card-badge badge-soon">Em breve</span>
+                        </div>
+                        <div class="report-card" data-module="vendas">
+                            <div class="report-card-icon">&#128203;</div>
+                            <h3>Curva ABC</h3>
+                            <p>Classificacao ABC de produtos por faturamento e volume de vendas.</p>
+                            <span class="report-card-badge badge-soon">Em breve</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /main-content -->
+    </div><!-- /app-layout -->
+
+    <!-- INFO SIDEBAR (direita) -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="sidebar" id="sidebar">
-        <h3>📊 Status da Base</h3>
+        <h3>Status da Base</h3>
         <div class="stat-grid">
             <div class="stat-card">
                 <div class="stat-value" id="stat-docs">--</div>
@@ -798,12 +1329,219 @@
                 <div class="stat-label">Modelo</div>
             </div>
         </div>
-        <h3>📂 Categorias</h3>
+        <h3>Categorias</h3>
         <ul class="cat-list" id="cat-list"></ul>
     </div>
 
     <script>
-        // ===== STATE =====
+        // ===== AUTH STATE =====
+        let authToken = localStorage.getItem('datahub_token');
+        let currentUser = localStorage.getItem('datahub_user');
+        let userRole = localStorage.getItem('datahub_role') || 'vendedor';
+        let userModules = JSON.parse(localStorage.getItem('datahub_modules') || '{}');
+
+        // ===== ELEMENTS =====
+        const loginScreen = document.getElementById('login-screen');
+        const appLayout = document.getElementById('app-layout');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        const loginLoading = document.getElementById('login-loading');
+
+        // ===== AUTH HELPERS =====
+        function authHeaders() {
+            return { 'Authorization': 'Bearer ' + authToken };
+        }
+
+        // ===== TOGGLE PASSWORD =====
+        function togglePassword() {
+            var input = document.getElementById('login-pass');
+            var btn = document.querySelector('.toggle-password');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+                btn.title = 'Ocultar senha';
+            } else {
+                input.type = 'password';
+                btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+                btn.title = 'Mostrar senha';
+            }
+        }
+
+        // ===== LOGIN =====
+        async function doLogin() {
+            const username = document.getElementById('login-user').value.trim();
+            const password = document.getElementById('login-pass').value;
+
+            if (!username || !password) {
+                showLoginError('Preencha usuario e senha.');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginError.style.display = 'none';
+            loginLoading.style.display = 'block';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Erro ao autenticar');
+                }
+
+                const data = await res.json();
+                authToken = data.token;
+                currentUser = data.user;
+                userRole = data.role || 'vendedor';
+                userModules = data.modules || {};
+                localStorage.setItem('datahub_token', authToken);
+                localStorage.setItem('datahub_user', currentUser);
+                localStorage.setItem('datahub_role', userRole);
+                localStorage.setItem('datahub_modules', JSON.stringify(userModules));
+
+                showApp();
+            } catch (e) {
+                showLoginError(e.message);
+            } finally {
+                loginBtn.disabled = false;
+                loginLoading.style.display = 'none';
+            }
+        }
+
+        function showLoginError(msg) {
+            loginError.textContent = msg;
+            loginError.style.display = 'block';
+        }
+
+        // ===== LOGOUT =====
+        async function doLogout() {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: authHeaders()
+                });
+            } catch {}
+
+            localStorage.removeItem('datahub_token');
+            localStorage.removeItem('datahub_user');
+            localStorage.removeItem('datahub_role');
+            localStorage.removeItem('datahub_modules');
+            authToken = null;
+            currentUser = null;
+            userRole = 'vendedor';
+            userModules = {};
+
+            appLayout.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            document.getElementById('login-user').value = '';
+            document.getElementById('login-pass').value = '';
+            document.getElementById('login-user').focus();
+        }
+
+        // ===== SHOW APP =====
+        var roleLabels = {vendedor: 'Vendedor', comprador: 'Comprador', gerente: 'Gerente', admin: 'Administrador'};
+
+        function showApp() {
+            loginScreen.style.display = 'none';
+            appLayout.style.display = 'block';
+
+            // Update user info in sidebar
+            document.getElementById('nav-username').textContent = currentUser;
+            document.getElementById('nav-avatar').textContent = currentUser.charAt(0).toUpperCase();
+            document.getElementById('nav-user-role').textContent = roleLabels[userRole] || 'Sankhya';
+
+            // Filtrar report cards por perfil
+            filterReportCards();
+
+            init();
+        }
+
+        function filterReportCards() {
+            var cards = document.querySelectorAll('.report-card');
+            cards.forEach(function(card) {
+                var mod = card.getAttribute('data-module');
+                if (!mod) return;
+                if (mod === 'compras' && userModules.reports_compras === false) {
+                    card.style.display = 'none';
+                } else if (mod === 'vendas' && userModules.reports_vendas === false) {
+                    card.style.display = 'none';
+                } else {
+                    card.style.display = '';
+                }
+            });
+        }
+
+        // ===== CHECK SESSION =====
+        async function checkSession() {
+            if (!authToken) {
+                loginScreen.style.display = 'flex';
+                appLayout.style.display = 'none';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/me', { headers: authHeaders() });
+                if (res.ok) {
+                    const data = await res.json();
+                    currentUser = data.user;
+                    userRole = data.role || 'vendedor';
+                    userModules = data.modules || {};
+                    localStorage.setItem('datahub_user', currentUser);
+                    localStorage.setItem('datahub_role', userRole);
+                    localStorage.setItem('datahub_modules', JSON.stringify(userModules));
+                    showApp();
+                } else {
+                    localStorage.removeItem('datahub_token');
+                    localStorage.removeItem('datahub_user');
+                    authToken = null;
+                    loginScreen.style.display = 'flex';
+                    appLayout.style.display = 'none';
+                }
+            } catch {
+                // Server offline - show login
+                loginScreen.style.display = 'flex';
+                appLayout.style.display = 'none';
+            }
+        }
+
+        // ===== NAVIGATION =====
+        function switchSection(section) {
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.section === section);
+            });
+
+            // Update sections
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            document.getElementById('section-' + section).classList.add('active');
+
+            // Update header title
+            const titles = { chat: 'Chat IA', reports: 'Relatorios' };
+            document.getElementById('section-title').textContent = titles[section] || section;
+
+            // Close mobile nav
+            document.getElementById('nav-sidebar').classList.remove('mobile-open');
+        }
+
+        function toggleMobileNav() {
+            document.getElementById('nav-sidebar').classList.toggle('mobile-open');
+        }
+
+        // ===== LOGIN ENTER KEY =====
+        document.getElementById('login-user').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') document.getElementById('login-pass').focus();
+        });
+        document.getElementById('login-pass').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') doLogin();
+        });
+
+        // ===== CHAT STATE =====
         let isLoading = false;
         const input = document.getElementById('chat-input');
         const sendBtn = document.getElementById('send-btn');
@@ -814,7 +1552,8 @@
         // ===== INIT =====
         async function init() {
             try {
-                const res = await fetch('/api/status');
+                const res = await fetch('/api/status', { headers: authHeaders() });
+                if (!res.ok) return;
                 const data = await res.json();
                 document.getElementById('doc-count').textContent = data.documents;
                 document.getElementById('model-info').textContent = data.model;
@@ -823,18 +1562,18 @@
                 document.getElementById('stat-model').textContent = data.model.split('/')[1] || data.model;
 
                 const catList = document.getElementById('cat-list');
-                const emojis = { tabela: '📋', processo: '🔄', regra: '⚖️', query: '🔍', api: '🔌', glossario: '📖', erro: '❌' };
+                catList.innerHTML = '';
+                const emojis = { tabela: '&#128203;', processo: '&#128260;', regra: '&#9878;', query: '&#128270;', api: '&#128268;', glossario: '&#128214;', erro: '&#10060;' };
                 for (const [cat, count] of Object.entries(data.categories)) {
                     const li = document.createElement('li');
                     li.className = 'cat-item';
-                    li.innerHTML = `<span>${emojis[cat] || '📄'} ${cat}</span><span class="cat-count">${count}</span>`;
+                    li.innerHTML = '<span>' + (emojis[cat] || '&#128196;') + ' ' + cat + '</span><span class="cat-count">' + count + '</span>';
                     catList.appendChild(li);
                 }
             } catch (e) {
                 document.getElementById('model-info').textContent = 'erro ao conectar';
             }
         }
-        init();
 
         // ===== INPUT =====
         input.addEventListener('input', () => {
@@ -880,9 +1619,19 @@
             try {
                 const res = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeaders()
+                    },
                     body: JSON.stringify({ message: text, mode: 'agent' }),
                 });
+
+                if (res.status === 401) {
+                    removeThinking(thinkingId);
+                    doLogout();
+                    return;
+                }
+
                 const data = await res.json();
                 removeThinking(thinkingId);
                 addMessage('assistant', data.response, data.sources, data.time_ms, data.tipo, data.query_executed, data.query_results);
@@ -900,57 +1649,56 @@
         }
 
         // ===== MESSAGES =====
-        function addMessage(role, content, sources = [], timeMs = 0, tipo = null, queryExecuted = null, queryResults = null) {
+        function addMessage(role, content, sources, timeMs, tipo, queryExecuted, queryResults) {
+            sources = sources || [];
+            timeMs = timeMs || 0;
             const div = document.createElement('div');
             div.className = 'message';
 
             const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            const name = role === 'user' ? 'Voce' : 'MMarra AI';
+            const name = role === 'user' ? (currentUser || 'Voce') : 'MMarra AI';
             const avatarClass = role;
-            const avatarContent = role === 'user' ? 'U' : `<img src="imagens/logo.png" alt="MM">`;
+            const avatarContent = role === 'user'
+                ? (currentUser ? currentUser.charAt(0).toUpperCase() : 'U')
+                : '<img src="imagens/logo.png" alt="MM">';
 
             // Badge de tipo
             let tipoBadge = '';
             if (role === 'assistant' && tipo) {
                 const tipoLabel = tipo === 'consulta_banco' ? 'SQL' : 'DOC';
-                tipoBadge = `<span class="tipo-badge ${tipo}">${tipoLabel}</span>`;
+                tipoBadge = '<span class="tipo-badge ' + tipo + '">' + tipoLabel + '</span>';
             }
 
-            let html = `
-                <div class="message-header">
-                    <div class="message-avatar ${avatarClass}">${avatarContent}</div>
-                    <span class="message-name">${name}</span>
-                    ${tipoBadge}
-                    <span class="message-time">${now}</span>
-                </div>
-                <div class="message-body">${role === 'user' ? escapeHtml(content) : renderMarkdown(content)}</div>
-            `;
+            let html = '<div class="message-header">' +
+                '<div class="message-avatar ' + avatarClass + '">' + avatarContent + '</div>' +
+                '<span class="message-name">' + name + '</span>' +
+                tipoBadge +
+                '<span class="message-time">' + now + '</span>' +
+                '</div>' +
+                '<div class="message-body">' + (role === 'user' ? escapeHtml(content) : renderMarkdown(content)) + '</div>';
 
             if (sources && sources.length > 0) {
-                html += `<div class="sources">${sources.map(s =>
-                    `<span class="source-tag">F ${s.path.split('/').pop()} (${s.score})</span>`
-                ).join('')}</div>`;
+                html += '<div class="sources">' + sources.map(function(s) {
+                    return '<span class="source-tag">F ' + s.path.split('/').pop() + ' (' + s.score + ')</span>';
+                }).join('') + '</div>';
             }
 
             // Query executada (colapsavel)
             if (role === 'assistant' && queryExecuted) {
                 const queryId = 'query-' + Date.now();
-                html += `
-                    <div class="query-info">
-                        <button class="query-toggle" onclick="toggleQuery('${queryId}', this)">
-                            <span class="query-toggle-icon">></span>
-                            Query executada (${queryResults || 0} registros)
-                        </button>
-                        <div class="query-content" id="${queryId}">
-                            <pre>${escapeHtml(queryExecuted)}</pre>
-                            <div class="query-stats">${queryResults || 0} registros retornados | ${timeMs}ms</div>
-                        </div>
-                    </div>
-                `;
+                html += '<div class="query-info">' +
+                    '<button class="query-toggle" onclick="toggleQuery(\'' + queryId + '\', this)">' +
+                    '<span class="query-toggle-icon">&gt;</span> ' +
+                    'Query executada (' + (queryResults || 0) + ' registros)' +
+                    '</button>' +
+                    '<div class="query-content" id="' + queryId + '">' +
+                    '<pre>' + escapeHtml(queryExecuted) + '</pre>' +
+                    '<div class="query-stats">' + (queryResults || 0) + ' registros retornados | ' + timeMs + 'ms</div>' +
+                    '</div></div>';
             }
 
             if (role === 'assistant' && timeMs > 0 && !queryExecuted) {
-                html += `<div class="response-meta">${timeMs}ms</div>`;
+                html += '<div class="response-meta">' + timeMs + 'ms</div>';
             }
 
             div.innerHTML = html;
@@ -969,18 +1717,14 @@
             const div = document.createElement('div');
             div.className = 'message';
             div.id = id;
-            div.innerHTML = `
-                <div class="message-header">
-                    <div class="message-avatar assistant"><img src="imagens/logo.png" alt="MM"></div>
-                    <span class="message-name">MMarra AI</span>
-                </div>
-                <div class="thinking">
-                    <div class="thinking-dots">
-                        <span></span><span></span><span></span>
-                    </div>
-                    Pensando...
-                </div>
-            `;
+            div.innerHTML = '<div class="message-header">' +
+                '<div class="message-avatar assistant"><img src="imagens/logo.png" alt="MM"></div>' +
+                '<span class="message-name">MMarra AI</span>' +
+                '</div>' +
+                '<div class="thinking">' +
+                '<div class="thinking-dots"><span></span><span></span><span></span></div>' +
+                ' Pensando...' +
+                '</div>';
             messagesEl.appendChild(div);
             scrollToBottom();
             return id;
@@ -993,9 +1737,9 @@
 
         // ===== MARKDOWN RENDERER =====
         function renderMarkdown(text) {
-            text = text.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
-                `<pre><code>${escapeHtml(code.trim())}</code></pre>`
-            );
+            text = text.replace(/```(\w*)\n([\s\S]*?)```/g, function(_, lang, code) {
+                return '<pre><code>' + escapeHtml(code.trim()) + '</code></pre>';
+            });
             text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
             text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
             text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
@@ -1003,13 +1747,13 @@
             text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
             text = text.replace(/^# (.+)$/gm, '<h1>$1</h1>');
 
-            text = text.replace(/(\|.+\|)\n(\|[-|: ]+\|)\n((?:\|.+\|\n?)*)/g, (_, header, sep, body) => {
-                const headers = header.split('|').filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join('');
-                const rows = body.trim().split('\n').map(row => {
-                    const cells = row.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
-                    return `<tr>${cells}</tr>`;
+            text = text.replace(/(\|.+\|)\n(\|[-|: ]+\|)\n((?:\|.+\|\n?)*)/g, function(_, header, sep, body) {
+                var headers = header.split('|').filter(function(c) { return c.trim(); }).map(function(c) { return '<th>' + c.trim() + '</th>'; }).join('');
+                var rows = body.trim().split('\n').map(function(row) {
+                    var cells = row.split('|').filter(function(c) { return c.trim(); }).map(function(c) { return '<td>' + c.trim() + '</td>'; }).join('');
+                    return '<tr>' + cells + '</tr>';
                 }).join('');
-                return `<table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+                return '<table><thead><tr>' + headers + '</tr></thead><tbody>' + rows + '</tbody></table>';
             });
 
             text = text.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
@@ -1027,14 +1771,14 @@
         }
 
         function escapeHtml(str) {
-            const div = document.createElement('div');
+            var div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
         }
 
         // ===== UTILS =====
         function scrollToBottom() {
-            requestAnimationFrame(() => {
+            requestAnimationFrame(function() {
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             });
         }
@@ -1046,14 +1790,20 @@
 
         async function clearChat() {
             if (!confirm('Limpar conversa?')) return;
-            try { await fetch('/api/clear', { method: 'POST' }); } catch {}
+            try {
+                await fetch('/api/clear', {
+                    method: 'POST',
+                    headers: authHeaders()
+                });
+            } catch {}
             messagesEl.innerHTML = '';
             messagesEl.style.display = 'none';
             welcomeEl.style.display = 'flex';
             document.getElementById('stat-history').textContent = '0';
         }
 
-        input.focus();
+        // ===== STARTUP =====
+        checkSession();
     </script>
 </body>
 </html>

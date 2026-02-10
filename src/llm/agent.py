@@ -259,6 +259,7 @@ class DataHubAgent:
         self.initialized = False
         self.relacionamentos = ""
         self.sql_context = ""
+        self.sql_errors_context = ""
 
     def initialize(self):
         """Inicializa base de conhecimento e LLM."""
@@ -272,16 +273,16 @@ class DataHubAgent:
         self.relacionamentos = self._build_sql_reference()
         print(f"[OK] Referencia SQL carregada ({len(self.relacionamentos)} chars)")
 
-        # Carregar contexto SQL obrigatorio dos 4 arquivos
+        # Carregar contexto SQL otimizado (sem erros_sql, exemplos compactados)
         self.sql_context = self._load_sql_context()
-        print(f"[OK] Contexto SQL obrigatorio carregado ({len(self.sql_context)} chars)")
+        print(f"[OK] Contexto SQL otimizado carregado ({len(self.sql_context)} chars)")
 
         self.initialized = True
         print(f"[OK] Agente inicializado")
         print(f"[i] {len(self.kb.documents)} documentos carregados")
         print(f"[i] Modelo: {LLM_PROVIDER}/{LLM_MODEL}")
 
-    async def ask(self, question: str) -> dict:
+    async def ask(self, question: str, user_context: dict = None) -> dict:
         """
         Processa uma pergunta e retorna resposta.
 
@@ -290,6 +291,7 @@ class DataHubAgent:
 
         Args:
             question: Pergunta do usuario
+            user_context: Contexto RBAC do usuario (role, codvend, etc.)
 
         Returns:
             dict com:
@@ -328,8 +330,8 @@ class DataHubAgent:
         else:
             context = "Nenhum documento relevante encontrado."
 
-        # ETAPA 1: Classificacao
-        classification = await self._classify(question, context)
+        # ETAPA 1: Classificacao (com contexto RBAC)
+        classification = await self._classify(question, context, user_context=user_context)
 
         if classification.get("error"):
             return {
@@ -437,7 +439,75 @@ class DataHubAgent:
             "elapsed": elapsed,
         }
 
-    async def _classify(self, question: str, context: str, retry_with_smaller: bool = True) -> dict:
+    def _build_rbac_filter(self, user_context: dict) -> str:
+        """Gera instrucao RBAC para o prompt SQL."""
+        if not user_context or user_context.get("role") == "admin":
+            return ""
+
+        role = user_context["role"]
+        codvend = user_context.get("codvend", 0)
+
+        if role == "vendedor":
+            return (
+                f"\n\nFILTRO OBRIGATORIO DE SEGURANCA (NUNCA OMITIR):\n"
+                f"- SEMPRE incluir WHERE CODVEND = {codvend} em toda query que envolva TGFCAB, TGFITE ou tabelas de vendas.\n"
+                f"- Este usuario e vendedor e so pode ver dados de vendas dele.\n"
+                f"- Use TIPMOV IN ('V','P') para filtrar apenas vendas.\n"
+                f"- NUNCA mostrar dados de compras (TIPMOV IN ('C','O','D')).\n"
+            )
+
+        if role == "comprador":
+            return (
+                f"\n\nFILTRO OBRIGATORIO DE SEGURANCA (NUNCA OMITIR):\n"
+                f"- SEMPRE incluir WHERE CODVEND = {codvend} em toda query que envolva TGFCAB, TGFITE ou tabelas de compras.\n"
+                f"- Este usuario e comprador e so pode ver dados de compras dele.\n"
+                f"- Use TIPMOV IN ('C','O','D') para filtrar apenas compras.\n"
+                f"- NUNCA mostrar dados de vendas (TIPMOV IN ('V','P')).\n"
+            )
+
+        if role == "gerente":
+            team = user_context.get("team_codvends", [])
+            if team:
+                team_str = ",".join(str(c) for c in team)
+                return (
+                    f"\n\nFILTRO OBRIGATORIO DE SEGURANCA (NUNCA OMITIR):\n"
+                    f"- SEMPRE incluir WHERE CODVEND IN ({team_str}) em toda query que envolva TGFCAB, TGFITE.\n"
+                    f"- Este usuario e gerente e so pode ver dados da equipe dele.\n"
+                )
+
+        return ""
+
+    def _enforce_rbac_filter(self, sql: str, user_context: dict) -> str:
+        """Safety net: verifica e injeta filtro RBAC no SQL gerado."""
+        if not user_context or user_context.get("role") == "admin":
+            return sql
+
+        role = user_context["role"]
+        codvend = user_context.get("codvend", 0)
+        upper_sql = sql.upper()
+        codvend_str = str(codvend)
+
+        # Verificar se filtro CODVEND ja esta presente
+        has_filter = (
+            f"CODVEND = {codvend_str}" in upper_sql or
+            f"CODVEND={codvend_str}" in upper_sql or
+            f"CODVEND IN (" in upper_sql
+        )
+
+        if role in ("vendedor", "comprador") and not has_filter:
+            print(f"[RBAC] Safety net: injetando filtro CODVEND={codvend}")
+            sql = f"SELECT * FROM ({sql}) RBAC_FILTER WHERE RBAC_FILTER.CODVEND = {codvend}"
+
+        elif role == "gerente" and not has_filter:
+            team = user_context.get("team_codvends", [])
+            if team:
+                team_str = ",".join(str(c) for c in team)
+                print(f"[RBAC] Safety net: injetando filtro CODVEND IN ({team_str})")
+                sql = f"SELECT * FROM ({sql}) RBAC_FILTER WHERE RBAC_FILTER.CODVEND IN ({team_str})"
+
+        return sql
+
+    async def _classify(self, question: str, context: str, retry_with_smaller: bool = True, user_context: dict = None) -> dict:
         """
         Classifica a pergunta em 3 etapas simples:
         1. BANCO ou DOC? (uma palavra)
@@ -448,6 +518,7 @@ class DataHubAgent:
             question: Pergunta do usuario
             context: Contexto da base de conhecimento
             retry_with_smaller: Se True, tenta com contexto menor em caso de erro
+            user_context: Contexto RBAC do usuario
 
         Returns:
             dict com tipo, resposta e sql
@@ -460,9 +531,11 @@ class DataHubAgent:
             classifier_prompt = CLASSIFIER_PROMPT.format(pergunta=question)
 
             classification = strip_thinking(self.llm.chat(
-                [{"role": "user", "content": classifier_prompt}],
+                [
+                    {"role": "system", "content": "/no_think"},
+                    {"role": "user", "content": classifier_prompt},
+                ],
                 temperature=0,
-                timeout=120
             )).upper()
 
             print(f"[i] Classificacao: {classification}")
@@ -478,18 +551,20 @@ class DataHubAgent:
             # ========================================
             if tipo == "consulta_banco":
                 print(f"[2/3] Gerando SQL...")
+
+                # Injetar filtro RBAC no prompt
+                rbac_filter = self._build_rbac_filter(user_context)
                 sql_prompt = SQL_GENERATOR_PROMPT.format(
                     pergunta=question,
-                    relacionamentos=self.relacionamentos
+                    relacionamentos=self.relacionamentos + rbac_filter
                 )
 
                 sql = strip_thinking(self.llm.chat(
                     [
-                        {"role": "system", "content": self.sql_context},
+                        {"role": "system", "content": "/no_think\n" + self.sql_context},
                         {"role": "user", "content": sql_prompt},
                     ],
                     temperature=0,
-                    timeout=120
                 ))
 
                 # Limpar SQL (remover markdown, espacos extras, ponto-e-virgula)
@@ -508,6 +583,9 @@ class DataHubAgent:
                 # Garantir que comeca com SELECT (prompt termina com "SELECT")
                 if not sql.upper().startswith("SELECT"):
                     sql = "SELECT " + sql
+
+                # Safety net RBAC: garantir filtro de seguranca
+                sql = self._enforce_rbac_filter(sql, user_context)
 
                 print(f"[i] SQL gerado: {sql[:100]}...")
 
@@ -530,9 +608,11 @@ class DataHubAgent:
             )
 
             resposta = strip_thinking(self.llm.chat(
-                [{"role": "user", "content": doc_prompt}],
+                [
+                    {"role": "system", "content": "/no_think"},
+                    {"role": "user", "content": doc_prompt},
+                ],
                 temperature=0.3,
-                timeout=120
             ))
 
             # Salvar no historico
@@ -611,20 +691,85 @@ REGRA DE PENDENCIA:
 - NUNCA usar STATUSNOTA='P' para pendencia. PENDENTE eh o campo correto."""
 
     def _load_sql_context(self) -> str:
-        """Carrega os 4 arquivos obrigatorios de contexto SQL."""
+        """
+        Carrega contexto SQL otimizado para caber no num_ctx do modelo.
+
+        Estrategia (ordem importa - o que vem primeiro tem prioridade no truncamento):
+        1. exemplos_sql.md: compactado (MAIS importante - padroes de query)
+        2. sinonimos.md: completo (mapeia termos do usuario para SQL)
+        - relacionamentos.md: NAO incluido (ja vai no prompt via self.relacionamentos)
+        - erros_sql.md: carregado separado (so para _fix_sql)
+        - Limite de seguranca: 25000 chars (~6000 tokens)
+        """
         knowledge_dir = PROJECT_ROOT / "knowledge"
         parts = []
-        for rel_path in self.SQL_CONTEXT_FILES:
-            filepath = knowledge_dir / rel_path
-            if filepath.exists():
-                try:
-                    content = filepath.read_text(encoding="utf-8")
-                    parts.append(content)
-                except Exception as e:
-                    print(f"[!] Erro ao ler {rel_path}: {e}")
-            else:
-                print(f"[!] Arquivo nao encontrado: {rel_path}")
-        return "\n\n---\n\n".join(parts)
+
+        # NOTA: relacionamentos.md NAO eh incluido aqui porque ja eh
+        # enviado separado via self.relacionamentos no prompt do usuario
+        # (SQL_GENERATOR_PROMPT). Incluir aqui seria duplicar ~11K chars.
+
+        # 1. Exemplos SQL PRIMEIRO (compactado - mais importante para gerar SQL)
+        ex_path = knowledge_dir / "sankhya/exemplos_sql.md"
+        if ex_path.exists():
+            full_content = ex_path.read_text(encoding="utf-8")
+            compact = self._compact_sql_examples(full_content)
+            parts.append(compact)
+            print(f"[i] Exemplos SQL compactados: {len(full_content)} -> {len(compact)} chars")
+        else:
+            print(f"[!] Arquivo nao encontrado: sankhya/exemplos_sql.md")
+
+        # 2. Sinonimos (mapeia termos do usuario para campos SQL)
+        sin_path = knowledge_dir / "glossario/sinonimos.md"
+        if sin_path.exists():
+            parts.append(sin_path.read_text(encoding="utf-8"))
+        else:
+            print(f"[!] Arquivo nao encontrado: glossario/sinonimos.md")
+
+        # 3. Erros SQL - carregado SEPARADO (so usado em _fix_sql)
+        err_path = knowledge_dir / "sankhya/erros_sql.md"
+        if err_path.exists():
+            self.sql_errors_context = err_path.read_text(encoding="utf-8")
+            print(f"[i] Erros SQL carregados separado ({len(self.sql_errors_context)} chars)")
+        else:
+            self.sql_errors_context = ""
+
+        context = "\n\n---\n\n".join(parts)
+
+        # Limite de seguranca para nao estourar num_ctx
+        MAX_CONTEXT = 25000
+        if len(context) > MAX_CONTEXT:
+            print(f"[!] Contexto SQL truncado: {len(context)} -> {MAX_CONTEXT} chars")
+            context = context[:MAX_CONTEXT]
+
+        return context
+
+    def _compact_sql_examples(self, content: str) -> str:
+        """
+        Remove explicacoes verbose dos exemplos SQL para reduzir contexto.
+
+        Mantem: titulo, pergunta, IMPORTANTE, SQL, filtros opcionais, regras criticas.
+        Remove: Explicacao detalhada, Quando usar este/outro exemplo.
+        """
+        lines = content.split('\n')
+        result = []
+        skip = False
+
+        for line in lines:
+            # Parar de pular ao encontrar novo exemplo ou separador
+            if skip and (line.startswith('## ') or line.startswith('---')):
+                skip = False
+
+            # Comecar a pular secoes verbose
+            if line.startswith('**Explicacao detalhada:') or line.startswith('**Quando usar'):
+                skip = True
+                continue
+
+            if not skip:
+                result.append(line)
+
+        text = '\n'.join(result)
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        return text.strip()
 
     async def _fix_sql(self, sql: str, error: str) -> Optional[str]:
         """
@@ -643,13 +788,14 @@ REGRA DE PENDENCIA:
                 erro=error,
                 relacionamentos=self.relacionamentos
             )
+            # Usar contexto de erros (mais relevante para correcao, menor que contexto completo)
+            fix_context = self.sql_errors_context if self.sql_errors_context else self.sql_context
             fixed = strip_thinking(self.llm.chat(
                 [
-                    {"role": "system", "content": self.sql_context},
+                    {"role": "system", "content": "/no_think\n" + fix_context},
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0,
-                timeout=120
             ))
 
             # Limpar SQL
@@ -726,7 +872,7 @@ REGRA DE PENDENCIA:
         messages = [
             {
                 "role": "system",
-                "content": "Voce e um assistente de negocios. Sua UNICA tarefa e formatar os dados fornecidos como um relatorio claro. NUNCA invente dados. Use SOMENTE os dados da tabela fornecida."
+                "content": "/no_think\nVoce e um assistente de negocios. Sua UNICA tarefa e formatar os dados fornecidos como um relatorio claro. NUNCA invente dados. Use SOMENTE os dados da tabela fornecida."
             },
             {"role": "user", "content": prompt},
         ]
@@ -734,7 +880,7 @@ REGRA DE PENDENCIA:
         try:
             print(f"[3/3] Formatando resultado...")
             # Temperature=0 para respostas mais deterministicas (menos criatividade)
-            response = strip_thinking(self.llm.chat(messages, temperature=0, timeout=120))
+            response = strip_thinking(self.llm.chat(messages, temperature=0))
             # Salvar no historico
             self.history.append({"role": "assistant", "content": response})
             return response

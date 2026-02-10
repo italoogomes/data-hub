@@ -323,7 +323,7 @@ class ChatEngine:
 
         # Montar mensagens
         messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": "/no_think\n" + SYSTEM_PROMPT},
             {
                 "role": "system",
                 "content": f"## Documentação disponível\n\n{context}",
