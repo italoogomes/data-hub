@@ -6,6 +6,7 @@
     <title>MMarra Data Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
         :root {
             --bg-primary: #1e1e22;
@@ -801,6 +802,42 @@
             border: 1px solid var(--accent-dim);
         }
 
+        .tipo-badge.arquivo {
+            background: rgba(46, 204, 113, 0.12);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .tipo-badge.info {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        /* Download link */
+        .download-link {
+            display: inline-block;
+            background: var(--accent);
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 8px 0;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .download-link:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        .message-body a:not(.download-link) {
+            color: var(--accent-light);
+            text-decoration: underline;
+        }
+
         /* Thinking indicator */
         .thinking {
             display: flex;
@@ -983,6 +1020,490 @@
             background: rgba(46, 204, 113, 0.1);
             color: var(--success);
             border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        /* ===== REPORT VIEW ===== */
+        .report-view { display: none; }
+        .report-view.active { display: block; }
+
+        .report-view-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .report-back-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        .report-back-btn:hover { border-color: var(--accent); color: var(--accent-light); }
+
+        .report-view-title {
+            font-size: 20px;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .report-export-btn {
+            background: var(--accent-dim);
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        .report-export-btn:hover { background: var(--accent); }
+
+        .report-filters {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .report-filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .report-filter-group label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .report-filter-group input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            width: 150px;
+        }
+        .report-filter-group input:focus { outline: none; border-color: var(--accent); }
+
+        .report-filter-apply {
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+        .report-filter-apply:hover { background: var(--accent-light); }
+
+        .report-kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .report-kpi-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+        .report-kpi-card.alert { border-color: rgba(231, 76, 60, 0.4); }
+
+        .report-kpi-icon { font-size: 22px; margin-bottom: 6px; }
+
+        .report-kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .report-kpi-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .report-chart-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+            min-height: 300px;
+        }
+
+        .report-table-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .report-table-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .report-table-scroll {
+            overflow-x: auto;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .report-table th {
+            background: var(--bg-tertiary);
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .report-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .report-table tr:hover td {
+            background: rgba(14, 117, 185, 0.05);
+        }
+
+        .report-table .currency {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .report-table .number {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .report-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            gap: 12px;
+        }
+
+        .report-loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .report-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ===== CROSS-FILTER ===== */
+        .cross-filter-bar {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding: 10px 16px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(14, 117, 185, 0.3);
+            border-radius: 8px;
+            font-size: 13px;
+            animation: fade-in 0.2s ease;
+        }
+        .cross-filter-bar.active { display: flex; }
+        .cross-filter-bar .cf-icon { font-size: 15px; }
+        .cross-filter-bar .cf-label { color: var(--text-secondary); }
+        .cross-filter-bar .cf-value { color: var(--accent-light); font-weight: 600; }
+        .cross-filter-bar .cf-clear {
+            margin-left: auto;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+        .cross-filter-bar .cf-clear:hover {
+            border-color: var(--error);
+            color: var(--error);
+        }
+        .report-cache-badge {
+            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--success);
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.25);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 6px;
+        }
+
+        .report-active-filter {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 10px 16px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(14, 117, 185, 0.3);
+            border-radius: 8px;
+            font-size: 13px;
+            animation: fade-in 0.2s ease;
+        }
+
+        .report-active-filter.active {
+            display: flex;
+        }
+
+        .report-active-filter .filter-label {
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        .report-active-filter .filter-value {
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: var(--bg-tertiary);
+            padding: 2px 10px;
+            border-radius: 4px;
+        }
+
+        .report-active-filter .filter-clear {
+            margin-left: auto;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .report-active-filter .filter-clear:hover {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .report-cache-badge {
+            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--warning);
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid rgba(243, 156, 18, 0.25);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+
+        /* Categoria tabs (6 abas como Power BI) */
+        .report-categorias {
+            display: flex;
+            gap: 0;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .report-cat-tab {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 12px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            background: transparent;
+        }
+
+        .report-cat-tab:hover {
+            background: var(--bg-secondary);
+        }
+
+        .report-cat-tab.active {
+            border-bottom-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .report-cat-tab .cat-nome {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .report-cat-tab.active .cat-nome {
+            color: var(--accent-light);
+        }
+
+        .report-cat-tab .cat-valor {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+        }
+
+        .report-cat-tab .cat-detalhe {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Dropdown filters */
+        .report-filter-group select {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            width: 160px;
+            cursor: pointer;
+        }
+
+        .report-filter-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Multi-chart grid (2x2 como Power BI) */
+        .report-charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+            animation: slide-up 0.4s ease 0.15s both;
+        }
+
+        .report-chart-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            min-height: 220px;
+        }
+
+        .report-chart-card .chart-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Horizontal bar chart */
+        .hbar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .hbar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 2px 0;
+            transition: opacity 0.15s;
+        }
+
+        .hbar-row:hover { opacity: 0.85; }
+
+        .hbar-row.dimmed { opacity: 0.3; }
+
+        .hbar-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            width: 110px;
+            min-width: 110px;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .hbar-bar-container {
+            flex: 1;
+            height: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hbar-bar {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .hbar-value {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            min-width: 80px;
+            text-align: right;
         }
 
         /* ===== INFO SIDEBAR (direita) ===== */
@@ -1259,46 +1780,123 @@
             <!-- REPORTS SECTION -->
             <div class="section" id="section-reports">
                 <div class="reports-container">
-                    <div class="reports-header">
-                        <h2>Relatorios</h2>
-                        <p>Acesse os relatorios de compras, vendas e estoque da MMarra.</p>
+                    <!-- GRID DE CARDS (lista de relatorios) -->
+                    <div id="reports-list">
+                        <div class="reports-header">
+                            <h2>Relatorios</h2>
+                            <p>Acesse os relatorios de compras, vendas e estoque da MMarra.</p>
+                        </div>
+                        <div class="reports-grid">
+                            <div class="report-card" data-module="compras" data-report-id="pendencia_compras" onclick="openReport('pendencia_compras')" style="cursor:pointer;">
+                                <div class="report-card-icon">&#128230;</div>
+                                <h3>Pendencia de Compras</h3>
+                                <p>Itens pendentes de entrega por fornecedor, marca e comprador. Status de atraso e previsao.</p>
+                                <span class="report-card-badge badge-ready">Disponivel</span>
+                            </div>
+                            <div class="report-card" data-module="compras">
+                                <div class="report-card-icon">&#128200;</div>
+                                <h3>Historico por Fornecedor</h3>
+                                <p>Pedidos e notas de entrada dos ultimos meses. Valores pedidos, atendidos e pendentes.</p>
+                                <span class="report-card-badge badge-soon">Em breve</span>
+                            </div>
+                            <div class="report-card" data-module="compras">
+                                <div class="report-card-icon">&#127942;</div>
+                                <h3>Performance Fornecedores</h3>
+                                <p>Ranking de atrasos, pontualidade e media de dias em aberto por fornecedor.</p>
+                                <span class="report-card-badge badge-soon">Em breve</span>
+                            </div>
+                            <div class="report-card" data-module="vendas" data-report-id="vendas_periodo" onclick="openReport('vendas_periodo')" style="cursor:pointer;">
+                                <div class="report-card-icon">&#128722;</div>
+                                <h3>Vendas por Periodo</h3>
+                                <p>Faturamento, ticket medio e top produtos vendidos por periodo.</p>
+                                <span class="report-card-badge badge-ready">Disponivel</span>
+                            </div>
+                            <div class="report-card" data-module="vendas" data-report-id="estoque_critico" onclick="openReport('estoque_critico')" style="cursor:pointer;">
+                                <div class="report-card-icon">&#128451;</div>
+                                <h3>Estoque Critico</h3>
+                                <p>Produtos abaixo do estoque minimo e sugestao de reposicao.</p>
+                                <span class="report-card-badge badge-ready">Disponivel</span>
+                            </div>
+                            <div class="report-card" data-module="vendas">
+                                <div class="report-card-icon">&#128203;</div>
+                                <h3>Curva ABC</h3>
+                                <p>Classificacao ABC de produtos por faturamento e volume de vendas.</p>
+                                <span class="report-card-badge badge-soon">Em breve</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="reports-grid">
-                        <div class="report-card" data-module="compras">
-                            <div class="report-card-icon">&#128230;</div>
-                            <h3>Pendencia de Compras</h3>
-                            <p>Itens pendentes de entrega por fornecedor, marca e comprador. Status de atraso e previsao.</p>
-                            <span class="report-card-badge badge-soon">Em breve</span>
+
+                    <!-- VIEW DO RELATORIO (aparece quando clica num card) -->
+                    <div id="report-view" class="report-view">
+                        <div class="report-view-header">
+                            <button class="report-back-btn" onclick="closeReport()">&#8592; Voltar</button>
+                            <span class="report-view-title" id="report-view-title">Relatorio</span>
+                            <span class="report-time" id="report-time"></span>
+                            <button class="report-export-btn" onclick="exportReportCSV()">&#128229; Exportar CSV</button>
                         </div>
-                        <div class="report-card" data-module="compras">
-                            <div class="report-card-icon">&#128200;</div>
-                            <h3>Historico por Fornecedor</h3>
-                            <p>Pedidos e notas de entrada dos ultimos meses. Valores pedidos, atendidos e pendentes.</p>
-                            <span class="report-card-badge badge-soon">Em breve</span>
+
+                        <!-- Filtros expandidos (dropdowns dinamicos) -->
+                        <div class="report-filters" id="report-filters">
+                            <div class="report-filter-group">
+                                <label>Empresa</label>
+                                <select id="filter-empresa"><option value="">Todos</option></select>
+                            </div>
+                            <div class="report-filter-group">
+                                <label>Comprador</label>
+                                <select id="filter-comprador"><option value="">Todos</option></select>
+                            </div>
+                            <div class="report-filter-group">
+                                <label>Marca</label>
+                                <select id="filter-marca"><option value="">Todos</option></select>
+                            </div>
+                            <div class="report-filter-group">
+                                <label>Data Inicio</label>
+                                <input type="date" id="filter-data-ini">
+                            </div>
+                            <div class="report-filter-group">
+                                <label>Data Fim</label>
+                                <input type="date" id="filter-data-fim">
+                            </div>
+                            <button class="report-filter-apply" onclick="applyReportFilters()">Aplicar</button>
                         </div>
-                        <div class="report-card" data-module="compras">
-                            <div class="report-card-icon">&#127942;</div>
-                            <h3>Performance Fornecedores</h3>
-                            <p>Ranking de atrasos, pontualidade e media de dias em aberto por fornecedor.</p>
-                            <span class="report-card-badge badge-soon">Em breve</span>
+
+                        <div id="report-loading" class="report-loading" style="display:none;">
+                            <div class="report-loading-spinner"></div>
+                            <span>Carregando relatorio...</span>
                         </div>
-                        <div class="report-card" data-module="vendas">
-                            <div class="report-card-icon">&#128722;</div>
-                            <h3>Vendas por Periodo</h3>
-                            <p>Faturamento, ticket medio e top produtos vendidos por periodo.</p>
-                            <span class="report-card-badge badge-soon">Em breve</span>
-                        </div>
-                        <div class="report-card" data-module="vendas">
-                            <div class="report-card-icon">&#128451;</div>
-                            <h3>Estoque Critico</h3>
-                            <p>Produtos abaixo do estoque minimo e sugestao de reposicao.</p>
-                            <span class="report-card-badge badge-soon">Em breve</span>
-                        </div>
-                        <div class="report-card" data-module="vendas">
-                            <div class="report-card-icon">&#128203;</div>
-                            <h3>Curva ABC</h3>
-                            <p>Classificacao ABC de produtos por faturamento e volume de vendas.</p>
-                            <span class="report-card-badge badge-soon">Em breve</span>
+
+                        <div id="report-content" style="display:none;">
+                            <!-- 6 Abas de categoria (Aberto, Atrasados, 15dias...) -->
+                            <div class="report-categorias" id="report-categorias"></div>
+
+                            <!-- KPIs -->
+                            <div class="report-kpis" id="report-kpis"></div>
+
+                            <!-- Cross-filter indicator -->
+                            <div class="report-active-filter" id="report-cross-filter">
+                                <span class="filter-label">Filtro:</span>
+                                <span class="filter-value" id="cross-filter-value"></span>
+                                <button class="filter-clear" onclick="clearCrossFilter()">&#10005; Limpar filtro</button>
+                            </div>
+
+                            <!-- Tabela detalhada -->
+                            <div class="report-table-container">
+                                <div class="report-table-info">
+                                    <span id="report-row-count">0 registros</span>
+                                </div>
+                                <div class="report-table-scroll">
+                                    <table class="report-table" id="report-table">
+                                        <thead id="report-table-head"></thead>
+                                        <tbody id="report-table-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 4 Graficos horizontais (grid 2x2) -->
+                            <div class="report-charts-grid" id="report-charts-grid"></div>
+
+                            <!-- Grafico single (compatibilidade com vendas/estoque) -->
+                            <div class="report-chart-container" id="report-chart" style="display:none;"></div>
                         </div>
                     </div>
                 </div>
@@ -1665,7 +2263,14 @@
             // Badge de tipo
             let tipoBadge = '';
             if (role === 'assistant' && tipo) {
-                const tipoLabel = tipo === 'consulta_banco' ? 'SQL' : 'DOC';
+                const tipoLabels = {
+                    'consulta_banco': '⚡ SQL',
+                    'documentacao': '📄 DOC',
+                    'arquivo': '📥 ARQUIVO',
+                    'info': '💡 INFO',
+                    'erro': '❌ ERRO',
+                };
+                const tipoLabel = tipoLabels[tipo] || tipo.toUpperCase();
                 tipoBadge = '<span class="tipo-badge ' + tipo + '">' + tipoLabel + '</span>';
             }
 
@@ -1747,6 +2352,15 @@
             text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
             text = text.replace(/^# (.+)$/gm, '<h1>$1</h1>');
 
+            // Links: [texto](url)
+            text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(_, linkText, url) {
+                // Se for link de download (exports), adicionar classe especial
+                if (url.includes('/exports/')) {
+                    return '<a href="' + url + '" class="download-link" download target="_blank">📥 ' + linkText + '</a>';
+                }
+                return '<a href="' + url + '" target="_blank">' + linkText + '</a>';
+            });
+
             text = text.replace(/(\|.+\|)\n(\|[-|: ]+\|)\n((?:\|.+\|\n?)*)/g, function(_, header, sep, body) {
                 var headers = header.split('|').filter(function(c) { return c.trim(); }).map(function(c) { return '<th>' + c.trim() + '</th>'; }).join('');
                 var rows = body.trim().split('\n').map(function(row) {
@@ -1800,6 +2414,617 @@
             messagesEl.style.display = 'none';
             welcomeEl.style.display = 'flex';
             document.getElementById('stat-history').textContent = '0';
+        }
+
+        // ============================================================
+        // REPORTS MODULE (Cross-filter + Cache)
+        // ============================================================
+
+        let currentReportId = null;
+        let currentReportData = null;  // dados originais do backend
+        let crossFilterKey = null;     // campo sendo filtrado (ex: "FORNECEDOR")
+        let crossFilterValue = null;   // valor selecionado (ex: "Filtros Mann S.A.")
+
+        function openReport(reportId) {
+            currentReportId = reportId;
+            crossFilterKey = null;
+            crossFilterValue = null;
+            document.getElementById('reports-list').style.display = 'none';
+            document.getElementById('report-view').classList.add('active');
+            document.getElementById('report-content').style.display = 'none';
+            document.getElementById('report-loading').style.display = 'flex';
+            document.getElementById('report-time').textContent = '';
+            document.getElementById('report-cross-filter').classList.remove('active');
+
+            // Reset filters
+            document.getElementById('filter-data-ini').value = '';
+            document.getElementById('filter-data-fim').value = '';
+
+            // Hide date filters for estoque_critico
+            const filtersEl = document.getElementById('report-filters');
+            if (reportId === 'estoque_critico') {
+                filtersEl.style.display = 'none';
+            } else {
+                filtersEl.style.display = 'flex';
+            }
+
+            fetchReport(reportId, {});
+        }
+
+        function closeReport() {
+            currentReportId = null;
+            currentReportData = null;
+            crossFilterKey = null;
+            crossFilterValue = null;
+            document.getElementById('report-view').classList.remove('active');
+            document.getElementById('reports-list').style.display = 'block';
+        }
+
+        function applyReportFilters() {
+            if (!currentReportId) return;
+
+            const params = collectCurrentFilters();
+
+            // Preservar categoria ativa se existir
+            const activeCat = document.querySelector('.report-cat-tab.active');
+            if (activeCat) {
+                const catId = activeCat.querySelector('.cat-nome')?.textContent;
+                // Mapear nome de volta pra ID
+                const catMap = {
+                    'Pedidos em Aberto': 'todos',
+                    'Atrasados': 'atrasados',
+                    'Próximo (7 dias)': 'proximo',
+                    'Sem Previsão': 'sem_previsao',
+                    'No Prazo': 'no_prazo',
+                    'Trânsito': 'transito',
+                };
+                for (const [nome, id] of Object.entries(catMap)) {
+                    if (catId && catId.includes(nome.substring(0, 8))) {
+                        params.categoria = id;
+                        break;
+                    }
+                }
+            }
+
+            // Limpar cross-filter
+            crossFilterKey = null;
+            crossFilterValue = null;
+            document.getElementById('report-cross-filter').classList.remove('active');
+
+            document.getElementById('report-content').style.display = 'none';
+            document.getElementById('report-loading').style.display = 'flex';
+            fetchReport(currentReportId, params);
+        }
+
+        async function fetchReport(reportId, params) {
+            try {
+                const res = await fetch(`/api/reports/${reportId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeaders()
+                    },
+                    body: JSON.stringify(params),
+                });
+
+                if (res.status === 401) {
+                    doLogout();
+                    return;
+                }
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Erro ao carregar relatorio');
+                }
+
+                const data = await res.json();
+                currentReportData = data;
+                renderReport(data);
+
+            } catch (e) {
+                document.getElementById('report-loading').style.display = 'none';
+                document.getElementById('report-content').style.display = 'block';
+                document.getElementById('report-kpis').innerHTML =
+                    `<div style="grid-column:1/-1;text-align:center;color:var(--error);padding:40px;">[X] ${e.message}</div>`;
+                document.getElementById('report-chart').innerHTML = '';
+                document.getElementById('report-table-head').innerHTML = '';
+                document.getElementById('report-table-body').innerHTML = '';
+            }
+        }
+
+        function renderReport(data, filteredTableData, filteredKpis) {
+            document.getElementById('report-loading').style.display = 'none';
+            document.getElementById('report-content').style.display = 'block';
+
+            // Title + time + cache badge
+            document.getElementById('report-view-title').textContent = data.nome || 'Relatorio';
+            let timeText = `${data.time_ms}ms`;
+            if (data.from_cache) timeText += ' (cache)';
+            document.getElementById('report-time').textContent = timeText;
+
+            // Dados a exibir (originais ou filtrados)
+            const tableData = filteredTableData || data.table_data || [];
+            const kpis = filteredKpis || data.kpis || [];
+
+            // ========== CATEGORIAS (6 abas como Power BI) ==========
+            const catsEl = document.getElementById('report-categorias');
+            catsEl.innerHTML = '';
+            if (data.categorias && data.categorias.length > 0) {
+                catsEl.style.display = 'flex';
+                const activeCat = (data.filtros_aplicados || {}).categoria || 'todos';
+                data.categorias.forEach(cat => {
+                    const isActive = cat.id === activeCat;
+                    catsEl.innerHTML += `
+                        <div class="report-cat-tab${isActive ? ' active' : ''}" onclick="filterByCategory('${cat.id}')">
+                            <div class="cat-nome">${cat.nome}</div>
+                            <div class="cat-valor">${cat.valor_fmt || formatBRL(cat.valor_total)}</div>
+                            <div class="cat-detalhe">Pedidos: ${cat.qtd_pedidos} &middot; Produtos: ${cat.qtd_produtos}</div>
+                        </div>`;
+                });
+            } else {
+                catsEl.style.display = 'none';
+            }
+
+            // ========== DROPDOWN FILTERS ==========
+            if (data.filtros_disponiveis && !filteredTableData) {
+                populateDropdownFilters(data.filtros_disponiveis);
+            }
+
+            // ========== KPIs ==========
+            const kpisEl = document.getElementById('report-kpis');
+            kpisEl.innerHTML = '';
+            kpis.forEach(kpi => {
+                const alertClass = kpi.alert ? ' alert' : '';
+                kpisEl.innerHTML += `
+                    <div class="report-kpi-card${alertClass}">
+                        <div class="report-kpi-icon">${kpi.icon || ''}</div>
+                        <div class="report-kpi-value">${kpi.value}</div>
+                        <div class="report-kpi-label">${kpi.label}</div>
+                    </div>`;
+            });
+
+            // ========== TABLE ==========
+            renderTable(data.table_columns, tableData);
+            document.getElementById('report-row-count').textContent =
+                `${tableData.length} registro${tableData.length !== 1 ? 's' : ''}`;
+
+            // ========== CHARTS ==========
+            // Multi-chart grid (4 graficos como Power BI)
+            if (data.charts && data.charts.length > 0) {
+                renderHBarCharts(data.charts);
+                document.getElementById('report-chart').style.display = 'none';
+            }
+            // Single chart fallback (vendas, estoque)
+            else if (data.chart_data && data.chart_data.labels) {
+                document.getElementById('report-charts-grid').innerHTML = '';
+                renderChart(data.chart_data);
+            }
+        }
+
+        // ==========================================================
+        // CATEGORY TABS (Power BI navigation)
+        // ==========================================================
+
+        function filterByCategory(catId) {
+            if (!currentReportId) return;
+
+            // Coletar filtros atuais dos dropdowns
+            const params = collectCurrentFilters();
+            params.categoria = catId;
+
+            // Limpar cross-filter
+            crossFilterKey = null;
+            crossFilterValue = null;
+            document.getElementById('report-cross-filter').classList.remove('active');
+
+            document.getElementById('report-content').style.display = 'none';
+            document.getElementById('report-loading').style.display = 'flex';
+            fetchReport(currentReportId, params);
+        }
+
+        function collectCurrentFilters() {
+            const params = {};
+            const dataIni = document.getElementById('filter-data-ini').value;
+            const dataFim = document.getElementById('filter-data-fim').value;
+            if (dataIni) params.data_ini = new Date(dataIni).toLocaleDateString('pt-BR');
+            if (dataFim) params.data_fim = new Date(dataFim).toLocaleDateString('pt-BR');
+
+            const emp = document.getElementById('filter-empresa').value;
+            if (emp) params.codemp = parseInt(emp);
+            const comp = document.getElementById('filter-comprador').value;
+            if (comp) params.codvend = parseInt(comp);
+            const marca = document.getElementById('filter-marca').value;
+            if (marca) params.codmarca = parseInt(marca);
+
+            return params;
+        }
+
+        function populateDropdownFilters(filtros) {
+            // Empresa
+            const empSel = document.getElementById('filter-empresa');
+            const empVal = empSel.value;
+            empSel.innerHTML = '<option value="">Todos</option>';
+            (filtros.empresas || []).forEach(opt => {
+                empSel.innerHTML += `<option value="${opt.value}">${opt.label}</option>`;
+            });
+            empSel.value = empVal;
+
+            // Comprador
+            const compSel = document.getElementById('filter-comprador');
+            const compVal = compSel.value;
+            compSel.innerHTML = '<option value="">Todos</option>';
+            (filtros.compradores || []).forEach(opt => {
+                compSel.innerHTML += `<option value="${opt.value}">${opt.label}</option>`;
+            });
+            compSel.value = compVal;
+
+            // Marca
+            const marcaSel = document.getElementById('filter-marca');
+            const marcaVal = marcaSel.value;
+            marcaSel.innerHTML = '<option value="">Todos</option>';
+            (filtros.marcas || []).forEach(opt => {
+                marcaSel.innerHTML += `<option value="${opt.value}">${opt.label}</option>`;
+            });
+            marcaSel.value = marcaVal;
+        }
+
+        // ==========================================================
+        // HORIZONTAL BAR CHARTS (4 graficos como Power BI)
+        // ==========================================================
+
+        function renderHBarCharts(charts) {
+            const grid = document.getElementById('report-charts-grid');
+            grid.innerHTML = '';
+            if (!charts || charts.length === 0) return;
+
+            charts.forEach((chart, chartIdx) => {
+                if (!chart.labels || chart.labels.length === 0) return;
+
+                const maxVal = Math.max(...chart.values, 1);
+                let rowsHtml = '';
+
+                chart.labels.forEach((label, i) => {
+                    const val = chart.values[i] || 0;
+                    const pct = Math.round((val / maxVal) * 100);
+                    const valFmt = val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    const dimmed = crossFilterValue && crossFilterKey === chart.filter_key && label !== crossFilterValue ? ' dimmed' : '';
+                    const highlight = crossFilterValue && crossFilterKey === chart.filter_key && label === crossFilterValue ? ' style="font-weight:700"' : '';
+
+                    rowsHtml += `
+                        <div class="hbar-row${dimmed}" onclick="applyChartCrossFilter('${chart.filter_key}', '${label.replace(/'/g, "\\'")}', ${chartIdx})"${highlight}>
+                            <span class="hbar-label" title="${label}">${label}</span>
+                            <div class="hbar-bar-container">
+                                <div class="hbar-bar" style="width:${pct}%"></div>
+                            </div>
+                            <span class="hbar-value">${valFmt}</span>
+                        </div>`;
+                });
+
+                grid.innerHTML += `
+                    <div class="report-chart-card">
+                        <div class="chart-title">${chart.title || ''}</div>
+                        <div class="hbar-chart">${rowsHtml}</div>
+                    </div>`;
+            });
+        }
+
+        function applyChartCrossFilter(filterKey, label, chartIdx) {
+            if (!currentReportData) return;
+
+            // Toggle: se clicar no mesmo, limpa
+            if (crossFilterKey === filterKey && crossFilterValue === label) {
+                clearCrossFilter();
+                return;
+            }
+
+            crossFilterKey = filterKey;
+            crossFilterValue = label;
+
+            // Mostrar indicador
+            document.getElementById('cross-filter-value').textContent = `${filterKey}: ${label}`;
+            document.getElementById('report-cross-filter').classList.add('active');
+
+            // Filtrar tabela
+            const allRows = currentReportData.table_data || [];
+            const filtered = allRows.filter(row => {
+                for (const [key, val] of Object.entries(row)) {
+                    if (key.toUpperCase() === filterKey.toUpperCase()) {
+                        const rowVal = String(val).toUpperCase();
+                        const filterVal = String(label).toUpperCase();
+                        if (rowVal === filterVal || rowVal.startsWith(filterVal) || rowVal.includes(filterVal)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
+
+            const newKpis = recalcKpis(currentReportData.report_id, filtered);
+            renderReport(currentReportData, filtered, newKpis);
+        }
+
+        // ==========================================================
+        // CROSS-FILTER LOGIC
+        // ==========================================================
+
+        function applyCrossFilter(label) {
+            if (!currentReportData) return;
+
+            const chartData = currentReportData.chart_data || {};
+            const filterKey = chartData.filter_key; // ex: "FORNECEDOR", "MARCA", "DATA"
+            if (!filterKey) return;
+
+            // Se clicar no mesmo filtro, limpa
+            if (crossFilterValue === label) {
+                clearCrossFilter();
+                return;
+            }
+
+            crossFilterKey = filterKey;
+            crossFilterValue = label;
+
+            // Mostrar indicador de filtro
+            document.getElementById('cross-filter-value').textContent = `${filterKey}: ${label}`;
+            document.getElementById('report-cross-filter').classList.add('active');
+
+            // Filtrar tabela
+            const allRows = currentReportData.table_data || [];
+            const filtered = allRows.filter(row => {
+                // Procurar o campo correspondente no row (case-insensitive match)
+                for (const [key, val] of Object.entries(row)) {
+                    if (key.toUpperCase() === filterKey.toUpperCase()) {
+                        // Match parcial: "Filtros Mann" match "Filtros Mann S.A."
+                        const rowVal = String(val).toUpperCase();
+                        const filterVal = String(label).toUpperCase();
+                        if (rowVal === filterVal || rowVal.startsWith(filterVal) || rowVal.includes(filterVal)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
+
+            // Recalcular KPIs com dados filtrados
+            const newKpis = recalcKpis(currentReportData.report_id, filtered);
+
+            // Re-render com filtro
+            renderReport(currentReportData, filtered, newKpis);
+        }
+
+        function clearCrossFilter() {
+            crossFilterKey = null;
+            crossFilterValue = null;
+            document.getElementById('report-cross-filter').classList.remove('active');
+
+            // Re-render com dados originais
+            if (currentReportData) {
+                renderReport(currentReportData);
+            }
+        }
+
+        function recalcKpis(reportId, filteredRows) {
+            /**
+             * Recalcula KPIs baseado nos dados filtrados.
+             * Cada relatorio tem sua logica propria.
+             */
+            if (reportId === 'pendencia_compras') {
+                // Contar pedidos distintos
+                const pedidos = new Set(filteredRows.map(r => r.PEDIDO)).size;
+                const qtdProd = filteredRows.length;
+                const vlrTotal = filteredRows.reduce((s, r) => s + (parseFloat(r.VLR_TOTAL_PENDENTE) || 0), 0);
+
+                return [
+                    { label: "Valor Total Pendente", value: formatBRL(vlrTotal), icon: "💰" },
+                    { label: "Pedidos", value: String(pedidos), icon: "📦" },
+                    { label: "Itens", value: String(qtdProd), icon: "📋" },
+                ];
+            }
+
+            if (reportId === 'vendas_periodo') {
+                const qtd = filteredRows.reduce((s, r) => s + (parseInt(r.QTD_VENDAS) || 0), 0);
+                const fat = filteredRows.reduce((s, r) => s + (parseFloat(r.FATURAMENTO) || 0), 0);
+                const ticket = qtd > 0 ? fat / qtd : 0;
+
+                return [
+                    { label: "Notas de Venda", value: String(qtd), icon: "🧾" },
+                    { label: "Faturamento", value: formatBRL(fat), icon: "💰" },
+                    { label: "Ticket Médio", value: formatBRL(ticket), icon: "📊" },
+                    { label: "Registros", value: `${filteredRows.length} dias`, icon: "📈" },
+                ];
+            }
+
+            if (reportId === 'estoque_critico') {
+                const qtd = filteredRows.length;
+                const zerados = filteredRows.filter(r => parseInt(r.ESTOQUE_ATUAL) === 0).length;
+                // Sem campo de valor na tabela, mantemos placeholder
+                return [
+                    { label: "Produtos Críticos", value: String(qtd), icon: "⚠️", alert: true },
+                    { label: "Estoque Zerado", value: String(zerados), icon: "🚫", alert: zerados > 0 },
+                    { label: "Itens Filtrados", value: String(qtd), icon: "🔍" },
+                ];
+            }
+
+            // Fallback: retorna KPIs originais
+            return currentReportData.kpis || [];
+        }
+
+        function formatBRL(value) {
+            return `R$ ${Number(value).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        // ==========================================================
+        // CHART RENDERING (Plotly.js com cross-filter click)
+        // ==========================================================
+
+        function renderChart(chartData) {
+            const chartEl = document.getElementById('report-chart');
+            if (!chartData || !chartData.labels || chartData.labels.length === 0) {
+                chartEl.style.display = 'none';
+                return;
+            }
+            chartEl.style.display = 'block';
+
+            const trace = {
+                x: chartData.labels,
+                y: chartData.values,
+                type: chartData.type || 'bar',
+                hovertemplate: '%{x}<br>%{y:,.0f}<extra></extra>',
+            };
+
+            if (chartData.type === 'bar') {
+                // Cores: barra selecionada fica highlight, outras ficam opacas
+                trace.marker = {
+                    color: chartData.labels.map((label, i) => {
+                        if (crossFilterValue && label !== crossFilterValue) {
+                            return 'rgba(14, 117, 185, 0.2)'; // opaca
+                        }
+                        if (crossFilterValue && label === crossFilterValue) {
+                            return 'rgba(26, 143, 216, 1)'; // highlight
+                        }
+                        // Sem filtro: gradiente
+                        const opacity = Math.max(1 - (i * 0.06), 0.4);
+                        return `rgba(14, 117, 185, ${opacity})`;
+                    }),
+                    borderRadius: 4,
+                };
+            } else {
+                trace.line = { color: '#0e75b9', width: 2.5 };
+                trace.fill = 'tozeroy';
+                trace.fillcolor = 'rgba(14, 117, 185, 0.06)';
+                trace.marker = {
+                    color: chartData.labels.map(label => {
+                        if (crossFilterValue && label !== crossFilterValue) return 'rgba(14, 117, 185, 0.3)';
+                        if (crossFilterValue && label === crossFilterValue) return '#1a8fd8';
+                        return '#0e75b9';
+                    }),
+                    size: chartData.labels.map(label => {
+                        return (crossFilterValue && label === crossFilterValue) ? 10 : 5;
+                    }),
+                };
+            }
+
+            const layout = {
+                title: { text: chartData.title || '', font: { color: '#e8e6e3', size: 14, family: 'DM Sans' } },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                font: { color: '#9a9898', family: 'DM Sans', size: 11 },
+                margin: { t: 40, r: 20, b: 60, l: 70 },
+                xaxis: {
+                    gridcolor: '#2a2a30',
+                    tickangle: chartData.labels.length > 6 ? -30 : 0,
+                },
+                yaxis: {
+                    gridcolor: '#2a2a30',
+                    tickformat: ',.0f',
+                },
+                bargap: 0.3,
+            };
+
+            const config = { responsive: true, displayModeBar: false };
+
+            Plotly.newPlot(chartEl, [trace], layout, config);
+
+            // Registrar click handler para cross-filter
+            chartEl.removeAllListeners && chartEl.removeAllListeners('plotly_click');
+            chartEl.on('plotly_click', function(eventData) {
+                if (eventData.points && eventData.points.length > 0) {
+                    const label = eventData.points[0].x;
+                    applyCrossFilter(label);
+                }
+            });
+        }
+
+        // ==========================================================
+        // TABLE RENDERING
+        // ==========================================================
+
+        function renderTable(columns, data) {
+            const thead = document.getElementById('report-table-head');
+            const tbody = document.getElementById('report-table-body');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+
+            if (!columns || columns.length === 0) return;
+
+            // Header
+            let headerRow = '<tr>';
+            columns.forEach(col => {
+                const align = (col.type === 'currency' || col.type === 'number') ? ' style="text-align:right"' : '';
+                headerRow += `<th${align}>${col.label}</th>`;
+            });
+            headerRow += '</tr>';
+            thead.innerHTML = headerRow;
+
+            // Body
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center;padding:30px;color:var(--text-muted);">Nenhum registro encontrado</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach(row => {
+                html += '<tr>';
+                columns.forEach(col => {
+                    let val = row[col.key];
+                    if (val === null || val === undefined) val = '-';
+
+                    if (col.type === 'currency') {
+                        const num = parseFloat(val) || 0;
+                        val = formatBRL(num);
+                        html += `<td class="currency">${val}</td>`;
+                    } else if (col.type === 'number') {
+                        html += `<td class="number">${val}</td>`;
+                    } else {
+                        html += `<td>${val}</td>`;
+                    }
+                });
+                html += '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
+        // ==========================================================
+        // CSV EXPORT
+        // ==========================================================
+
+        function exportReportCSV() {
+            if (!currentReportData || !currentReportData.table_data) return;
+
+            const columns = currentReportData.table_columns || [];
+            // Exportar dados filtrados se cross-filter ativo
+            let data = currentReportData.table_data || [];
+            if (crossFilterKey && crossFilterValue) {
+                data = data.filter(row => {
+                    for (const [key, val] of Object.entries(row)) {
+                        if (key.toUpperCase() === crossFilterKey.toUpperCase()) {
+                            const rowVal = String(val).toUpperCase();
+                            const filterVal = String(crossFilterValue).toUpperCase();
+                            if (rowVal.includes(filterVal)) return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+
+            let csv = columns.map(c => c.label).join(';') + '\n';
+            data.forEach(row => {
+                const line = columns.map(col => {
+                    let val = row[col.key];
+                    if (val === null || val === undefined) return '';
+                    val = String(val).replace(/;/g, ',');
+                    return val;
+                }).join(';');
+                csv += line + '\n';
+            });
+
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const suffix = crossFilterValue ? `_${crossFilterValue.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
+            a.download = `${currentReportData.report_id || 'relatorio'}${suffix}_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         // ===== STARTUP =====

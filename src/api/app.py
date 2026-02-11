@@ -31,7 +31,11 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 # Import agent
 from src.llm.agent import DataHubAgent
+from src.llm.smart_agent import SmartAgent
 from src.llm.llm_client import LLMClient, LLM_MODEL, LLM_PROVIDER
+
+# Import reports
+from src.api.reports import router as reports_router
 
 # ============================================================
 # APP
@@ -50,8 +54,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Reports router
+app.include_router(reports_router)
+
 # Estado global
 agent = DataHubAgent()
+smart_agent = SmartAgent()
 
 # ============================================================
 # AUTH - Sessoes em memoria
@@ -228,22 +236,33 @@ def get_current_user(authorization: Optional[str] = Header(None)) -> dict:
 
 @app.on_event("startup")
 async def startup():
-    # Verificar se LLM esta disponivel
+    # Criar pasta de exports se nao existir
+    exports_dir = Path(__file__).parent / "static" / "exports"
+    exports_dir.mkdir(parents=True, exist_ok=True)
+    print(f"[OK] Pasta exports: {exports_dir}")
+
+    # Smart Agent - sempre disponivel (sem LLM)
+    print(f"[OK] Smart Agent pronto (templates SQL, zero LLM)")
+
+    # Verificar se LLM esta disponivel (para fallback)
     llm_client = LLMClient()
     health = llm_client.check_health()
 
     if health["status"] != "ok":
-        print(f"[ERRO] LLM nao disponivel: {health.get('error', 'Erro desconhecido')}")
-        print(f"[ERRO] Verifique se o Ollama esta rodando")
+        print(f"[!] LLM nao disponivel: {health.get('error', 'Erro desconhecido')}")
+        print(f"[!] Smart Agent funciona normalmente. LLM so e necessario para perguntas complexas.")
     else:
         print(f"[OK] LLM conectado ({LLM_PROVIDER}/{LLM_MODEL})")
 
-    agent.initialize()
+    try:
+        agent.initialize()
+        print(f"[OK] LLM Agent inicializado ({len(agent.kb.documents)} docs)")
+    except Exception as e:
+        print(f"[!] LLM Agent nao inicializou: {e}")
+        print(f"[!] Smart Agent continua funcionando normalmente.")
+
     print(f"[OK] MMarra Data Hub API pronta!")
-    print(f"[i] {len(agent.kb.documents)} documentos carregados")
-    print(f"[i] Modelo: {LLM_PROVIDER}/{LLM_MODEL}")
-    print(f"[i] Modo: Agente com consulta ao banco")
-    print(f"[i] Acesse: http://localhost:8080")
+    print(f"[i] Acesse: http://localhost:8000")
 
 # ============================================================
 # MODELS
@@ -261,9 +280,10 @@ class ChatResponse(BaseModel):
     response: str
     sources: list = []
     mode: str = "agent"
-    tipo: str = "documentacao"  # "documentacao" ou "consulta_banco"
+    tipo: str = "documentacao"  # "documentacao", "consulta_banco", "arquivo", "erro"
     query_executed: Optional[str] = None
     query_results: Optional[int] = None
+    download_url: Optional[str] = None
     time_ms: int = 0
 
 # ============================================================
@@ -272,6 +292,7 @@ class ChatResponse(BaseModel):
 
 # Montar pasta static para servir imagens, CSS, JS
 app.mount("/imagens", StaticFiles(directory=str(Path(__file__).parent / "static" / "imagens")), name="imagens")
+app.mount("/static/exports", StaticFiles(directory=str(Path(__file__).parent / "static" / "exports")), name="exports")
 app.mount("/static", StaticFiles(directory=str(Path(__file__).parent / "static")), name="static")
 
 
@@ -405,7 +426,12 @@ async def index():
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
-    """Endpoint principal de chat com agente."""
+    """Endpoint principal de chat com agente.
+
+    Fluxo:
+    1. SmartAgent tenta responder (regex + SQL templates, instantaneo)
+    2. Se nao matchou, cai no LLM Agent (Ollama, pode demorar)
+    """
     session = get_current_user(authorization)
     start = time.time()
     question = req.message.strip()
@@ -418,7 +444,6 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
             tipo="erro",
         )
 
-    # Usar o agente com contexto RBAC
     user_context = {
         "user": session["user"],
         "role": session.get("role", "vendedor"),
@@ -426,6 +451,37 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
         "tipvend": session.get("tipvend", ""),
         "team_codvends": session.get("team_codvends", []),
     }
+
+    # ---- SMART AGENT (instantaneo, sem LLM) ----
+    try:
+        smart_result = await smart_agent.ask(question, user_context=user_context)
+        if smart_result:
+            elapsed = int((time.time() - start) * 1000)
+            return ChatResponse(
+                response=smart_result.get("response", "Sem resposta"),
+                sources=[],
+                mode="smart",
+                tipo=smart_result.get("tipo", "consulta_banco"),
+                query_executed=smart_result.get("query_executed"),
+                query_results=smart_result.get("query_results"),
+                download_url=smart_result.get("download_url"),
+                time_ms=elapsed,
+            )
+    except Exception as e:
+        print(f"[SMART] Erro: {e}")
+
+    # ---- LLM AGENT (fallback - desabilitado se SMART_ONLY=true) ----
+    smart_only = os.getenv("SMART_ONLY", "true").lower() in ("true", "1", "yes")
+    if smart_only:
+        elapsed = int((time.time() - start) * 1000)
+        return ChatResponse(
+            response="🤔 Não entendi a pergunta.\n\nTente algo como:\n- *\"Pendência da marca Donaldson\"*\n- *\"Vendas de hoje\"*\n- *\"Estoque do produto 133346\"*\n\nOu digite **ajuda** para ver tudo que posso fazer.",
+            sources=[],
+            mode="smart",
+            tipo="info",
+            time_ms=elapsed,
+        )
+
     try:
         result = await agent.ask(question, user_context=user_context)
     except Exception as e:
@@ -454,6 +510,7 @@ async def clear_history(authorization: Optional[str] = Header(None)):
     """Limpa o historico do chat."""
     get_current_user(authorization)
     agent.clear_history()
+    smart_agent.clear()
     return {"status": "ok", "message": "Historico limpo"}
 
 
@@ -496,6 +553,6 @@ if __name__ == "__main__":
     uvicorn.run(
         "src.api.app:app",
         host="0.0.0.0",
-        port=8080,
+        port=8000,
         reload=True,
     )

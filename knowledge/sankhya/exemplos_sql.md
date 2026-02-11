@@ -379,6 +379,7 @@ SELECT
   NVL(TO_CHAR(CAB.DTPREVENT, 'DD/MM/YYYY'), 'Sem previsao') AS PREVISAO_ENTREGA,
   NVL(TO_CHAR(CAB.DTPREVENT, 'MM/YYYY'), 'Sem previsao') AS MES_PREVISAO,
   PAR.NOMEPARC AS FORNECEDOR,
+  PRO.CODPROD,
   PRO.DESCRPROD AS PRODUTO,
   MAR.DESCRICAO AS MARCA,
   ITE.QTDNEG AS QTD_PEDIDA,
@@ -424,7 +425,7 @@ ORDER BY CAB.DTPREVENT NULLS LAST, PRO.DESCRPROD
 **Pergunta:** Quais itens do pedido X ainda estao pendentes de entrega?
 
 ```sql
-SELECT I.NUNOTA, I.SEQUENCIA, PR.DESCRPROD, M.DESCRICAO AS MARCA,
+SELECT I.NUNOTA, I.SEQUENCIA, PR.CODPROD, PR.DESCRPROD, M.DESCRICAO AS MARCA,
   I.QTDNEG AS QTD_PEDIDA,
   NVL(V_AGG.TOTAL_ATENDIDO, 0) AS QTD_ENTREGUE,
   I.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0) AS QTD_PENDENTE
@@ -708,80 +709,108 @@ WHERE ITE.PENDENTE = 'S'
 
 ---
 
-## 24. Historico de compras por fornecedor
+## 24. Consulta de pendencias de compras por item detalhada
 
-**Pergunta:** Historico de compras do fornecedor X / Quanto compramos do fornecedor X? / Pedidos de compra do fornecedor X / Compras por fornecedor nos ultimos meses / Quanto ja chegou do fornecedor X?
+**Pergunta:** Pendencias de compra detalhada / Itens pendentes de compra com marca e produto / O que falta chegar por item? / Pendencias de compra com previsao de entrega / Quais itens estao atrasados na compra?
 
 ```sql
-SELECT * FROM (
-    SELECT
-        CAB.NUNOTA AS PEDIDO,
-        TO_CHAR(CAB.DTNEG, 'DD/MM/YYYY') AS DT_PEDIDO,
-        CASE CAB.TIPMOV
-            WHEN 'O' THEN 'Pedido'
-            WHEN 'C' THEN 'Nota Entrada'
-        END AS TIPO,
-        PAR.NOMEPARC AS FORNECEDOR,
-        SUM(ITE.VLRTOT) AS VLR_TOTAL_PEDIDO,
-        SUM(
-            CASE WHEN CAB.TIPMOV = 'C' THEN ITE.VLRTOT
-                 ELSE ROUND(NVL(V_AGG.TOTAL_ATENDIDO, 0) * ITE.VLRUNIT, 2)
-            END
-        ) AS VLR_TOTAL_ATENDIDO,
-        SUM(
-            CASE WHEN CAB.TIPMOV = 'C' THEN 0
-                 ELSE ROUND((ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) * ITE.VLRUNIT, 2)
-            END
-        ) AS VLR_TOTAL_PENDENTE,
-        CASE WHEN CAB.STATUSNOTA = 'L' THEN 'Confirmado' ELSE 'Pendente' END AS STATUS,
-        CASE CAB.PENDENTE WHEN 'S' THEN 'Sim' ELSE 'Nao' END AS PENDENTE,
-        NVL(TO_CHAR(CAB.DTPREVENT, 'DD/MM/YYYY'), '-') AS PREVISAO,
-        VEN.APELIDO AS COMPRADOR,
-        EMP.NOMEFANTASIA AS EMPRESA
-    FROM TGFCAB CAB
-    JOIN TGFPAR PAR ON PAR.CODPARC = CAB.CODPARC
-    JOIN TSIEMP EMP ON EMP.CODEMP = CAB.CODEMP
-    JOIN TGFITE ITE ON ITE.NUNOTA = CAB.NUNOTA
-    LEFT JOIN TGFVEN VEN ON VEN.CODVEND = CAB.CODVEND
-    LEFT JOIN (
-        SELECT V.NUNOTAORIG, V.SEQUENCIAORIG,
-               SUM(V.QTDATENDIDA) AS TOTAL_ATENDIDO
-        FROM TGFVAR V
-        JOIN TGFCAB C ON C.NUNOTA = V.NUNOTA
-        WHERE C.STATUSNOTA <> 'C'
-        GROUP BY V.NUNOTAORIG, V.SEQUENCIAORIG
-    ) V_AGG ON V_AGG.NUNOTAORIG = ITE.NUNOTA
-           AND V_AGG.SEQUENCIAORIG = ITE.SEQUENCIA
-    WHERE CAB.TIPMOV IN ('C', 'O')
-      AND CAB.STATUSNOTA <> 'C'
-      AND UPPER(PAR.NOMEPARC) LIKE UPPER('%DONALDSON%')
-      AND CAB.DTNEG >= ADD_MONTHS(TRUNC(SYSDATE), -6)
-    GROUP BY CAB.NUNOTA, CAB.DTNEG, CAB.TIPMOV, PAR.NOMEPARC,
-             CAB.STATUSNOTA, CAB.PENDENTE, CAB.DTPREVENT,
-             VEN.APELIDO, EMP.NOMEFANTASIA
-    ORDER BY CAB.DTNEG DESC
-) WHERE ROWNUM <= 100
+-- Consulta de pendencias de compras por item detalhada
+SELECT
+    ITE.CODEMP AS COD_EMPRESA,
+    EMP.NOMEFANTASIA AS NOME_EMPRESA,
+    CAB.NUNOTA AS PEDIDO,
+    CAB.CODTIPOPER,
+    CASE
+       WHEN CAB.CODTIPOPER = 1313 THEN 'Casada'
+       WHEN CAB.CODTIPOPER = 1301 THEN 'Estoque'
+    END AS TIPO_COMPRA,
+    CAB.DTNEG AS DT_PEDIDO,
+    CAB.DTPREVENT AS PREVISAO_ENTREGA,
+    CASE
+       WHEN CAB.STATUSNOTA = 'L' THEN 'Sim'
+       ELSE 'Não'
+    END AS CONFIRMADO,
+    PAR.CODPARC,
+    PAR.NOMEPARC AS FORNECEDOR,
+    MAR.AD_CODVEND AS COD_COMPRADOR,
+    VEN.APELIDO AS COMPRADOR,
+    PRO.CODPROD,
+    PRO.DESCRPROD AS PRODUTO,
+    MAR.CODIGO AS COD_MARCA,
+    MAR.DESCRICAO AS MARCA,
+    PRO.AD_NUMFABRICANTE AS NUM_FABRICANTE,
+    PRO.AD_NUMORIGINAL AS NUM_ORIGINAL,
+    ITE.CODVOL AS UNIDADE,
+    ITE.QTDNEG AS QTD_PEDIDA,
+    NVL(V_AGG.TOTAL_ATENDIDO, 0) AS QTD_ATENDIDA,
+    (ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) AS QTD_PENDENTE,
+    ITE.VLRUNIT AS VLR_UNITARIO,
+    ITE.VLRTOT AS VLR_TOTAL_PEDIDO,
+    ROUND((ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) * ITE.VLRUNIT, 2) AS VLR_TOTAL_PENDENTE,
+    TRUNC(SYSDATE) - TRUNC(CAB.DTNEG) AS DIAS_ABERTO,
+    CASE
+        WHEN CAB.DTPREVENT IS NULL THEN 'SEM PREVISÃO'
+        WHEN CAB.DTPREVENT < SYSDATE THEN 'ATRASADO'
+        WHEN CAB.DTPREVENT < SYSDATE + 7 THEN 'PRÓXIMO'
+        ELSE 'NO PRAZO'
+    END AS STATUS_ENTREGA
+FROM TGFITE ITE
+JOIN TGFCAB CAB ON CAB.NUNOTA = ITE.NUNOTA
+JOIN TSIEMP EMP ON EMP.CODEMP = ITE.CODEMP
+JOIN TGFPRO PRO ON PRO.CODPROD = ITE.CODPROD
+LEFT JOIN TGFPAR PAR ON PAR.CODPARC = CAB.CODPARC
+LEFT JOIN TGFMAR MAR ON MAR.CODIGO = PRO.CODMARCA
+LEFT JOIN TGFVEN VEN ON VEN.CODVEND = MAR.AD_CODVEND
+LEFT JOIN (
+    SELECT V.NUNOTAORIG, V.SEQUENCIAORIG,
+           SUM(V.QTDATENDIDA) AS TOTAL_ATENDIDO
+    FROM TGFVAR V
+    JOIN TGFCAB C ON C.NUNOTA = V.NUNOTA
+    WHERE C.STATUSNOTA <> 'C'
+    GROUP BY V.NUNOTAORIG, V.SEQUENCIAORIG
+) V_AGG ON V_AGG.NUNOTAORIG = ITE.NUNOTA
+       AND V_AGG.SEQUENCIAORIG = ITE.SEQUENCIA
+WHERE CAB.CODTIPOPER IN (1301, 1313)
+  AND CAB.STATUSNOTA <> 'C'
+  AND CAB.PENDENTE = 'S'
+  AND ITE.PENDENTE = 'S'
+  --AND UPPER(MAR.DESCRICAO) = UPPER('TOME')
+  AND (ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) > 0
+  --AND CAB.NUNOTA = 1168013
+ORDER BY
+    CASE
+        WHEN CAB.DTPREVENT IS NULL THEN 1
+        WHEN CAB.DTPREVENT < SYSDATE THEN 0
+        WHEN CAB.DTPREVENT < SYSDATE + 7 THEN 2
+        ELSE 3
+    END,
+    MAR.DESCRICAO,
+    PRO.DESCRPROD
 ```
 
-**Explicacao:** (1) TIPMOV IN ('C','O') inclui pedidos e notas de entrada (historico completo). (2) LIKE com UPPER para busca parcial do nome. (3) Ultimos 6 meses como padrao. (4) STATUS traduz STATUSNOTA='L' como Confirmado (regra MMarra). (5) **Colunas de valor**: VLR_TOTAL_PEDIDO = valor pedido. VLR_TOTAL_ATENDIDO = valor ja entregue. VLR_TOTAL_PENDENTE = valor faltando. (6) Para notas de entrada (TIPMOV='C') tudo eh atendido (VLR_TOTAL_ATENDIDO = VLR_TOTAL_PEDIDO, VLR_TOTAL_PENDENTE = 0). Para pedidos (TIPMOV='O') usa TGFVAR para calcular entregas parciais.
+**Explicacao:** (1) Query no nivel mais granular: cada LINHA = 1 item pendente de 1 pedido. (2) Usa TGFVAR para calcular entregas parciais (QTD_ATENDIDA vs QTD_PENDENTE). (3) Filtro `ITE.PENDENTE = 'S'` exclui itens cancelados/cortados. (4) Filtro `(QTDNEG - TOTAL_ATENDIDO) > 0` garante que so aparecem itens com saldo pendente real. (5) STATUS_ENTREGA classifica em ATRASADO, PROXIMO (7 dias), NO PRAZO ou SEM PREVISAO. (6) Ordenacao prioriza atrasados primeiro, depois proximos, sem previsao, e por ultimo no prazo. (7) COMPRADOR vem de MAR.AD_CODVEND (comprador da marca), nao do cabecalho.
 
-**Filtros opcionais:**
-- Apenas pedidos: `AND CAB.TIPMOV = 'O'`
-- CODTIPOPERs MMarra: `AND CAB.CODTIPOPER IN (1301, 1313)` (mais preciso para pedidos)
-- Ultimo ano: `AND CAB.DTNEG >= ADD_MONTHS(TRUNC(SYSDATE), -12)`
+**Filtros opcionais (comentados na query):**
+- Por marca: `AND UPPER(MAR.DESCRICAO) = UPPER('TOME')`
+- Por pedido especifico: `AND CAB.NUNOTA = 1168013`
+- Por fornecedor: `AND UPPER(PAR.NOMEPARC) LIKE UPPER('%NOME%')`
+- Por comprador: `AND VEN.CODVEND = 123`
 
-**Explicacao detalhada:**
-1. **Nivel ITEM com GROUP BY**: Precisa descer para TGFITE + TGFVAR para calcular valores atendido/pendente, depois agrupa por pedido.
-2. **TIPMOV IN ('C','O')**: 'O' = pedidos de compra, 'C' = notas de entrada (ja recebidas). Juntos formam o historico completo.
-3. **CASE WHEN TIPMOV = 'C'**: Nota de entrada = mercadoria ja recebida, entao VLR_TOTAL_ATENDIDO = valor total e VLR_TOTAL_PENDENTE = 0. Pedido de compra = usa TGFVAR para calcular entregas parciais.
-4. **LIKE com %**: Busca parcial permite encontrar "DONALDSON FILTROS" mesmo digitando "DONALDSON".
-5. **STATUSNOTA <> 'C'**: Exclui cancelados do historico.
-6. **Periodo ajustavel**: 6 meses como padrao; ajustar conforme pergunta (3 meses, 1 ano, etc).
+**Tabelas envolvidas:**
+- TGFITE - Itens do pedido (base da query)
+- TGFCAB - Cabecalho (pedido, datas, status)
+- TSIEMP - Empresa
+- TGFPRO - Produto (descricao, numeros fabricante/original)
+- TGFPAR - Parceiro/Fornecedor
+- TGFMAR - Marca (codigo, descricao, comprador AD_CODVEND)
+- TGFVEN - Vendedor/Comprador (apelido)
+- TGFVAR - Variacao/Entregas parciais (QTDATENDIDA)
 
 **Quando usar este exemplo:**
-- Usuario pergunta sobre compras de um fornecedor especifico
-- Usuario quer ver historico, lista de pedidos, total comprado, valor entregue ou pendente por pedido
-- Para detalhes por item/produto de um fornecedor, usar Exemplo 23 com filtro `AND UPPER(PAR.NOMEPARC) LIKE UPPER('%NOME%')`
+- Usuario quer ver pendencias de compra no nivel mais detalhado (item a item)
+- Usuario pergunta sobre itens atrasados ou proximos de vencer
+- Usuario quer filtrar pendencias por marca, fornecedor ou comprador
+- Diferenca do Exemplo 23: este eh a versao mais completa com empresa, tipo de compra, confirmacao, numeros de fabricante/original e STATUS_ENTREGA
 
 ---
 

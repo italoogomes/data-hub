@@ -45,6 +45,28 @@
 
 ---
 
+## TOPs de Empenho (Venda com reserva de estoque) - ESPECIFICO
+
+> Empenho = reserva de estoque para um pedido de venda. Todas sao TIPMOV='P' com AD_RESERVAEMPENHO='S'.
+
+| Termo do usuario | CODTIPOPER | Descricao | Volume |
+|---|---|---|---|
+| empenho, pedido com empenho, reserva de estoque | 1007 | Pedido Venda Expedicao c/ Empenho WMS (Consumo) - PRINCIPAL | 2.573 notas, R$ 5,7M |
+| empenho expedicao revenda | 1017 | Pedido Venda Expedicao c/ Empenho WMS (Revenda) | 106 notas |
+| empenho expedicao industrializacao | 1018 | Pedido Venda Expedicao c/ Empenho WMS (Industrializacao) | 68 notas |
+| empenho presencial consumo | 1024 | Pedido Venda Presencial c/ Empenho WMS (Consumo) | 69 notas |
+| empenho presencial revenda | 1023 | Pedido Venda Presencial c/ Empenho WMS (Revenda) | 13 notas |
+| transferencia com empenho | 1057, 1964 | Transferencia Saida c/ Empenho (Service / Entre Filiais) | 52 notas |
+
+**Regra para a LLM:**
+- "pedidos com empenho" / "empenho de venda" → `CODTIPOPER = 1007` (cobre 90%+ dos casos)
+- Se quiser TODOS os empenhos de venda → `CODTIPOPER IN (1007, 1017, 1018, 1023, 1024)`
+- Empenho de COMPRA (entrega futura) → `CODTIPOPER IN (1313, 1349)` (diferente de empenho de venda!)
+- TOPs 1019, 1020, 1025, 1028 existem mas tem 0-1 notas (ignorar)
+- TOP 1319 esta INATIVA
+
+---
+
 ## Status (STATUSNOTA) - CORRIGIDO (dicionario oficial)
 
 | Termo do usuario | Significado no banco | Filtro SQL |
