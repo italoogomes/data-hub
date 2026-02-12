@@ -401,7 +401,10 @@ async def logout(authorization: Optional[str] = Header(None)):
     """Encerra sessao do usuario."""
     if authorization and authorization.startswith("Bearer "):
         token = authorization.replace("Bearer ", "")
-        user = sessions.pop(token, {}).get("user", "?")
+        session = sessions.pop(token, {})
+        user = session.get("user", "?")
+        # Limpar contexto de conversa do usuario
+        smart_agent.clear_user(user)
         print(f"[AUTH] Logout: {user} ({len(sessions)} sessoes ativas)")
     return {"status": "ok"}
 
@@ -508,9 +511,10 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
 @app.post("/api/clear")
 async def clear_history(authorization: Optional[str] = Header(None)):
     """Limpa o historico do chat."""
-    get_current_user(authorization)
+    session = get_current_user(authorization)
+    user = session.get("user", "")
     agent.clear_history()
-    smart_agent.clear()
+    smart_agent.clear_user(user)
     return {"status": "ok", "message": "Historico limpo"}
 
 
