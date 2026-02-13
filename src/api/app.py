@@ -285,6 +285,18 @@ class ChatResponse(BaseModel):
     query_results: Optional[int] = None
     download_url: Optional[str] = None
     time_ms: int = 0
+    message_id: Optional[str] = None
+
+class FeedbackRequest(BaseModel):
+    message_id: str
+    rating: str  # "positive" | "negative"
+    comment: Optional[str] = None
+
+class AliasRequest(BaseModel):
+    action: str  # "add" | "approve" | "reject" | "remove"
+    apelido: str
+    nome_real: Optional[str] = None
+    codprod: Optional[int] = None
 
 # ============================================================
 # ROUTES
@@ -469,6 +481,7 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
                 query_results=smart_result.get("query_results"),
                 download_url=smart_result.get("download_url"),
                 time_ms=elapsed,
+                message_id=smart_result.get("message_id"),
             )
     except Exception as e:
         print(f"[SMART] Erro: {e}")
@@ -506,6 +519,87 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
         query_results=result.get("query_results"),
         time_ms=elapsed,
     )
+
+
+@app.post("/api/feedback")
+async def feedback(req: FeedbackRequest, authorization: Optional[str] = Header(None)):
+    """Registra feedback do usuario sobre uma resposta."""
+    get_current_user(authorization)
+    if req.rating not in ("positive", "negative"):
+        raise HTTPException(status_code=400, detail="Rating deve ser 'positive' ou 'negative'")
+    found = smart_agent.query_logger.save_feedback(req.message_id, req.rating, req.comment)
+
+    # B3: Detectar alias via feedback negativo
+    if req.rating == "negative" and found:
+        log_entry = smart_agent.query_logger.get_entry(req.message_id)
+        if log_entry:
+            smart_agent.alias_resolver.detect_alias_from_feedback(log_entry, req.rating, req.comment or "")
+
+    return {"ok": found}
+
+
+@app.get("/api/suggestions")
+async def suggestions(authorization: Optional[str] = Header(None)):
+    """Retorna sugestoes de perguntas baseadas no historico."""
+    session = get_current_user(authorization)
+    user = session.get("user", "")
+    return smart_agent.query_logger.get_suggestions(user=user)
+
+
+@app.get("/api/analytics")
+async def analytics(authorization: Optional[str] = Header(None)):
+    """Analytics de uso (admin only)."""
+    session = get_current_user(authorization)
+    if session.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores")
+    return smart_agent.query_logger.get_analytics(days=30)
+
+
+@app.get("/api/aliases")
+async def get_aliases(authorization: Optional[str] = Header(None)):
+    """Retorna todos os apelidos e sugestoes (admin only)."""
+    session = get_current_user(authorization)
+    if session.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores")
+    return {
+        "aliases": smart_agent.alias_resolver.get_all_aliases(),
+        "suggestions": smart_agent.alias_resolver.get_suggestions("pending"),
+        "stats": smart_agent.alias_resolver.stats(),
+    }
+
+
+@app.post("/api/aliases")
+async def manage_aliases(req: AliasRequest, authorization: Optional[str] = Header(None)):
+    """Gerencia apelidos (admin only). Actions: add, approve, reject, remove."""
+    session = get_current_user(authorization)
+    if session.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores")
+
+    if req.action == "add":
+        if not req.nome_real and not req.codprod:
+            raise HTTPException(status_code=400, detail="Informe nome_real ou codprod")
+        ok = smart_agent.alias_resolver.add_alias(
+            req.apelido, nome_real=req.nome_real, codprod=req.codprod,
+            confidence=0.95, origem="admin"
+        )
+        return {"ok": ok, "action": "add"}
+
+    elif req.action == "approve":
+        ok = smart_agent.alias_resolver.approve_suggestion(
+            req.apelido, nome_real=req.nome_real, codprod=req.codprod
+        )
+        return {"ok": ok, "action": "approve"}
+
+    elif req.action == "reject":
+        ok = smart_agent.alias_resolver.reject_suggestion(req.apelido)
+        return {"ok": ok, "action": "reject"}
+
+    elif req.action == "remove":
+        ok = smart_agent.alias_resolver.remove_alias(req.apelido)
+        return {"ok": ok, "action": "remove"}
+
+    else:
+        raise HTTPException(status_code=400, detail="Action invalida. Use: add, approve, reject, remove")
 
 
 @app.post("/api/clear")

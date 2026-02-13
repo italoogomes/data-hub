@@ -35,8 +35,8 @@
 | Termo do usuario | CODTIPOPER | Descrição | Uso |
 |---|---|---|---|
 | pedidos de compra, compras em aberto, pendencia de compra | 1301, 1313 | Compra Casada (empenho) + Entrega Futura | CODTIPOPER IN (1301, 1313) AND PENDENTE='S' |
-| compra casada, empenho, compra vinculada | 1301 | Vinculado a venda específica | CODTIPOPER = 1301 |
-| entrega futura, compra programada | 1313 | Compra com entrega programada | CODTIPOPER = 1313 |
+| compra casada, empenho, compra vinculada | 1313 | Vinculado a venda específica | CODTIPOPER = 1313 |
+| entrega futura, compra programada | 1301 | Compra com entrega programada | CODTIPOPER = 1301 |
 
 **Quando usar:**
 - "pedidos de compra" / "pendencia por marca" → `CODTIPOPER IN (1301, 1313)` (mais preciso)
@@ -239,7 +239,7 @@
 | itens pendentes de entrega | TGFITE.QTDNEG - SUM(TGFVAR.QTDATENDIDA) |
 | itens pendentes, produtos pendentes, detalhe pendencia, item por item | Query nivel ITEM detalhada (exemplo 23). Sem GROUP BY, mostra cada item. |
 | relatorio detalhado de pendencia, detalhar itens | Query nivel ITEM detalhada (exemplo 23). Inclui marca, fornecedor, comprador, tipo compra. |
-| tipo de compra, casada, estoque | CODTIPOPER: 1301=Estoque, 1313=Casada. CASE para traduzir. |
+| tipo de compra, casada, estoque | CODTIPOPER: 1313=Casada, 1301=Estoque. CASE para traduzir. |
 | numero fabricante, referencia fabricante | PRO.AD_NUMFABRICANTE (campo customizado MMarra) |
 | numero original, referencia original | PRO.AD_NUMORIGINAL (campo customizado MMarra) |
 | historico de compras, compras por fornecedor, pedidos do fornecedor | Exemplo 24. TIPMOV IN ('C','O'), filtro por PAR.NOMEPARC. VLR_TOTAL_PEDIDO, VLR_TOTAL_ATENDIDO, VLR_TOTAL_PENDENTE por pedido. |
@@ -285,3 +285,28 @@ A palavra "pendencia" tem 3 significados diferentes. A LLM DEVE identificar qual
 - Pendencia financeira usa TGFFIN.VLRDESDOB para valor. NAO usar TGFITE.
 - NUNCA usar STATUSNOTA='P' para pendencia. Usar PENDENTE='S' (campo correto do Sankhya).
 - "pedidos de compra" = TIPMOV='O'. "notas de compra" = TIPMOV='C'.
+
+---
+
+## Tipos de Compra (TIPO_COMPRA)
+
+| Termo do usuario | Campo | Valor | Filtro |
+|------------------|-------|-------|--------|
+| casada, compra casada, empenho, vinculada | TIPO_COMPRA | Casada | TIPO_COMPRA = 'Casada' |
+| estoque, compra estoque, entrega futura, reposicao | TIPO_COMPRA | Estoque | TIPO_COMPRA = 'Estoque' |
+
+## Pessoas no Processo de Compra
+
+| Termo do usuario | Campo | Significado |
+|------------------|-------|-------------|
+| comprador, quem compra | COMPRADOR | Funcionario responsavel pelas compras da marca (VEN.APELIDO) |
+| fornecedor, quem fornece | FORNECEDOR | Empresa que vende pra MMarra (PAR.NOMEPARC) |
+| solicitante | COMPRADOR ou campo de solicitacao | Quem pediu a compra internamente |
+
+## Campos de Data (CUIDADO - nao confundir!)
+
+| Termo do usuario | Campo correto | NAO confundir com |
+|------------------|---------------|-------------------|
+| data de entrega, previsao, quando chega | PREVISAO_ENTREGA | DT_PEDIDO |
+| data do pedido, quando comprou | DT_PEDIDO | PREVISAO_ENTREGA |
+| prazo, prazo de entrega | PREVISAO_ENTREGA | DT_PEDIDO |

@@ -45,7 +45,8 @@
       "Bash(powershell:*)",
       "Bash(tasklist:*)",
       "Bash(echo:*)",
-      "Bash(cmd /c \"taskkill /PID 7068 /F\")"
+      "Bash(cmd /c \"taskkill /PID 7068 /F\")",
+      "Bash(ls \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\data\"\" 2>&1 || dir \"c:Usersitalo.gomesOneDrive - MMarra Distribuidora AutomotivaDocumentosdata-hubdata\"\")"
     ]
   },
   "model": "claude-opus-4-6"

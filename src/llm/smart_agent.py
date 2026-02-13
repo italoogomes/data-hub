@@ -29,6 +29,9 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 from src.llm.query_executor import SafeQueryExecutor
 from src.llm.knowledge_base import KnowledgeBase, score_knowledge
+from src.llm.alias_resolver import AliasResolver
+from src.llm.query_logger import QueryLogger, generate_auto_tags
+from src.llm.result_validator import ResultValidator, build_result_data_summary
 
 # Config
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
@@ -69,6 +72,13 @@ INTENT_SCORES = {
         # Verbos
         "falta": 4, "faltam": 4, "faltando": 4, "chegar": 3, "chegando": 3,
         "entrega": 3, "entregar": 3, "previsao": 3,
+        # Tipos de compra
+        "casada": 6, "casadas": 6, "empenho": 6, "empenhado": 6, "empenhados": 6,
+        "vinculada": 5, "vinculado": 5,
+        "reposicao": 5, "futura": 4,
+        # Perguntas sobre pessoas
+        "quem": 4, "responsavel": 4,
+        "fornece": 5,
     },
     "estoque": {
         "estoque": 10, "saldo": 8, "disponivel": 6,
@@ -77,6 +87,13 @@ INTENT_SCORES = {
         "acabando": 5, "faltando": 4,
         "quantos": 2, "quanto": 2, "quais": 2,
         "codigo": 2, "cod": 2,
+        # Referencia/fabricante (reforco - roteamento real e via detect_product_query)
+        "referencia": 4, "fabricante": 4, "similar": 5, "similares": 5,
+        "equivalente": 5, "equivalentes": 5, "crossref": 5,
+        # Aplicacao/veiculo (roteamento real e via detect_product_query)
+        "aplicacao": 5, "aplica": 5, "serve": 4, "compativel": 4,
+        "veiculo": 3, "motor": 3, "caminhao": 3,
+        "scania": 3, "mercedes": 3, "volvo": 3, "vw": 3, "man": 3, "daf": 3, "iveco": 3,
     },
     "vendas": {
         "vendas": 10, "venda": 10, "faturamento": 10,
@@ -176,6 +193,7 @@ Analise a pergunta do usuario e retorne APENAS um JSON (sem markdown, sem explic
 - pendencia_compras: pedidos de compra pendentes, o que falta chegar, entregas, previsoes
 - estoque: quantidade em estoque, saldo, estoque critico, disponibilidade
 - vendas: vendas, faturamento, notas fiscais de venda, receita
+- produto: busca por produto especifico, codigo fabricante (HU711/51, WK950/21), similares, cross-reference, visao 360
 - conhecimento: como funcionam processos, regras, politicas, explicacoes do ERP
 - saudacao: oi, bom dia, ola
 - ajuda: o que voce faz, como funciona, help
@@ -192,6 +210,8 @@ Analise a pergunta do usuario e retorne APENAS um JSON (sem markdown, sem explic
 - filtro: objeto com instrucoes de filtragem ou null (ver abaixo)
 - ordenar: campo para ordenar + _DESC ou _ASC (ver campos abaixo)
 - top: numero de resultados desejados ou null (ex: 1 para "qual o...", 5 para "top 5")
+- tipo_compra: "casada"|"estoque" ou null (tipo de compra mencionado - casada=empenho/vinculada, estoque=reposicao/entrega futura)
+- aplicacao: veiculo/motor/maquina mencionado para busca por aplicacao ou null (ex: "SCANIA R450", "MERCEDES ACTROS", "MOTOR DC13")
 
 # FILTRO - como interpretar pedidos de filtragem
 O campo "filtro" permite filtrar os dados retornados. Formato: {"campo": "NOME_DO_CAMPO", "operador": "tipo", "valor": "X"}
@@ -213,7 +233,8 @@ Operadores:
 - DIAS_ABERTO: quantos dias o pedido esta em aberto sem receber
 - VLR_PENDENTE: valor em reais do que falta receber
 - QTD_PENDENTE: quantidade de pecas que falta receber
-- FORNECEDOR, CODPROD, PRODUTO, MARCA, QTD_PEDIDA, VLR_UNITARIO, EMPRESA, COMPRADOR, TIPO_COMPRA
+- FORNECEDOR, CODPROD, PRODUTO, MARCA, QTD_PEDIDA, VLR_UNITARIO, EMPRESA, COMPRADOR
+- TIPO_COMPRA: tipo do pedido de compra ("Casada" = empenho/vinculada a venda, "Estoque" = reposicao geral)
 
 IMPORTANTE - Diferencie corretamente:
 - "data de entrega" / "previsao de entrega" / "quando vai chegar" = PREVISAO_ENTREGA (NAO e DT_PEDIDO!)
@@ -226,37 +247,73 @@ Campos para vendas: NUNOTA, CLIENTE, PRODUTO, QTD, VLR_TOTAL, DT_VENDA
 
 # EXEMPLOS
 Pergunta: "o que falta chegar da mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "qual pedido esta sem previsao de entrega da tome?"
-{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":1}
+{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":1,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "pedidos atrasados da Donaldson"
-{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null}
+{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "qual pedido da sabo tem a maior previsao de entrega?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"PREVISAO_ENTREGA_DESC","top":1}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"PREVISAO_ENTREGA_DESC","top":1,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "qual pedido da mann foi feito mais recentemente?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"DT_PEDIDO_DESC","top":1}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"DT_PEDIDO_DESC","top":1,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "qual o pedido mais caro da Mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "quais pedidos estao confirmados?"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"CONFIRMADO","operador":"igual","valor":"S"},"ordenar":null,"top":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"CONFIRMADO","operador":"igual","valor":"S"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "qual item com maior quantidade pendente da Tome?"
-{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":"QTD_PENDENTE_DESC","top":1}
+{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":"QTD_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "tem algum pedido acima de 50 mil reais?"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"VLR_PENDENTE","operador":"maior","valor":"50000"},"ordenar":null,"top":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"VLR_PENDENTE","operador":"maior","valor":"50000"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "vendas de hoje"
-{"intent":"vendas","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":"hoje","view":"pedidos","filtro":null,"ordenar":null,"top":null}
+{"intent":"vendas","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":"hoje","view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
 
 Pergunta: "como funciona a compra casada?"
-{"intent":"conhecimento","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null}
+{"intent":"conhecimento","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+
+Pergunta: "quais pedidos casados da sabo?"
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Casada"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null}
+
+Pergunta: "quem compra a marca mann?"
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+
+Pergunta: "quem fornece a marca sabo?"
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+
+Pergunta: "pedidos de empenho atrasados"
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null}
+
+Pergunta: "compras de estoque da eaton"
+{"intent":"pendencia_compras","marca":"EATON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Estoque"},"ordenar":null,"top":null,"tipo_compra":"estoque","aplicacao":null}
+
+Pergunta: "HU711/51"
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+
+Pergunta: "tudo sobre o produto 133346"
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+
+Pergunta: "similares do produto 133346"
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+
+Pergunta: "quem tem o filtro WK 950/21"
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+
+Pergunta: "pecas para scania r450"
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA R450"}
+
+Pergunta: "qual filtro serve no mercedes actros"
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MERCEDES ACTROS"}
+
+Pergunta: "filtros mann para motor dc13"
+{"intent":"produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MOTOR DC13"}
 
 Agora classifique:
 Pergunta: "{question}"
@@ -315,7 +372,7 @@ async def groq_classify(question: str) -> Optional[dict]:
         print(f"[GROQ] OK ({elapsed:.1f}s): {result}")
 
         # Normalizar entidades para MAIUSCULO
-        for key in ["marca", "fornecedor", "empresa", "comprador"]:
+        for key in ["marca", "fornecedor", "empresa", "comprador", "aplicacao"]:
             if result.get(key):
                 result[key] = result[key].upper().strip()
 
@@ -670,7 +727,7 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
     if "marca" not in params:
         # DA/DE/DO (standalone) + captura ate verbo/preposicao/pontuacao/fim
         stop_after = r'(?:\s+(?:QUE|TEM|TEMOS|COM|SEM|ESTA|ESTAO|FOI|NAO|PARA|POR|EM|NO|NA|NOS|COMO|ONDE|QUAL|QUAIS|ENTRE|ACIMA|ABAIXO)|\s*[?,!.]|\s*$)'
-        m = re.search(r'\b(?:DA|DE|DO)\s+([A-Z][A-Z0-9\s\.\-&]{1,30}?)' + stop_after, q_upper)
+        m = re.search(r'\b(?:DA|DE|DO|PELA|PELO|PELAS|PELOS)\s+([A-Z][A-Z0-9\s\.\-&]{1,30}?)' + stop_after, q_upper)
         if m:
             candidate = m.group(1).strip()
             noise = {"COMPRA", "COMPRAS", "VENDA", "VENDAS", "EMPRESA", "FORNECEDOR",
@@ -679,7 +736,10 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
                      "TODAS", "TODOS", "TUDO", "GERAL", "MINHA", "MINHAS",
                      "ENTREGA", "PREVISAO", "DATA", "CONFIRMACAO", "COMPRADOR",
                      "VALOR", "QUANTIDADE", "STATUS", "PRAZO", "ATRASO",
-                     "ESTA", "ESTAO", "ESSE", "ESSA", "ISSO", "AQUI", "ONDE"}
+                     "ESTA", "ESTAO", "ESSE", "ESSA", "ISSO", "AQUI", "ONDE",
+                     "QUEM", "RESPONSAVEL", "FORNECEDORES", "COMPRADORES",
+                     "CASADA", "CASADAS", "CASADO", "CASADOS", "EMPENHO",
+                     "FUTURA", "REPOSICAO"}
             first_word = candidate.split()[0] if candidate else ""
             if first_word in noise:
                 # Buscar ultimo DA/DO (provavelmente antes do nome real)
@@ -722,9 +782,13 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
                 break
 
     # ---- FORNECEDOR ----
+    # "fornecedor Odapel" = filtrar por fornecedor. "fornecedor da SABO" = quem fornece marca (ignorar).
     m = re.search(r'FORNECEDOR\s+([A-Z][A-Z\s\.\-&]{2,40}?)(?:\s*[?,!.]|\s*$)', q_upper)
     if m:
-        params["fornecedor"] = m.group(1).strip()
+        candidate_forn = m.group(1).strip()
+        # Se comeca com DA/DE/DO = provavelmente "fornecedor da [marca]", nao nome de fornecedor
+        if not re.match(r'^D[AEOI]\s', candidate_forn):
+            params["fornecedor"] = candidate_forn
 
     # ---- EMPRESA ----
     m = re.search(r'(?:EMPRESA|FILIAL|UNIDADE|LOJA)\s+([A-Z][A-Z\s\-]{2,30}?)(?:\s*[?,!.]|\s*$)', q_upper)
@@ -747,9 +811,12 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
                 break
 
     # ---- COMPRADOR ----
+    # "comprador Ana" = filtrar por comprador. "comprador da SABO" = quem compra marca (ignorar).
     m = re.search(r'COMPRADOR[A]?\s+([A-Z][A-Z\s]{2,25}?)(?:\s*[?,!.]|\s*$)', q_upper)
     if m:
-        params["comprador"] = m.group(1).strip()
+        candidate_comp = m.group(1).strip()
+        if not re.match(r'^D[AEOI]\s', candidate_comp):
+            params["comprador"] = candidate_comp
 
     if "comprador" not in params and known_compradores:
         for comp in known_compradores:
@@ -767,13 +834,60 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
     if m:
         params["codprod"] = int(m.group(1))
 
+    # ---- CODIGO FABRICANTE (alfanumerico) ----
+    # Detecta codigos de fabricante que NAO sao CODPROD interno
+    # Ex: "WK 950/21", "HU711/51", "078115561J", "F026407032"
+    if "codprod" not in params:
+        # 1. Apos keyword: "referencia WK 950/21", "fabricante 078115561J"
+        m = re.search(r'(?:REFERENCIA|FABRICANTE|NUM(?:ERO)?\s*(?:DO\s+)?FAB(?:RICANTE)?|COD(?:IGO)?\s*FAB(?:RICANTE)?|ORIGINAL)\s+([A-Z0-9][A-Z0-9\s\-/\.]{2,30})', q_upper)
+        if m:
+            params["codigo_fabricante"] = m.group(1).strip()
+        # 2. Codigo alfanumerico solto: letras + numeros misturados
+        # Ex: "WK 950/21", "HU711/51", "F026407032", "LB13145/3"
+        if "codigo_fabricante" not in params:
+            m = re.search(r'\b([A-Z]{1,5}\d{2,}[A-Z0-9/\-\.]*)\b', q_upper)
+            if m:
+                candidate_fab = m.group(1).strip()
+                # Evitar falsos positivos com marcas conhecidas curtas
+                if len(candidate_fab) >= 4 and not (known_marcas and candidate_fab in known_marcas):
+                    params["codigo_fabricante"] = candidate_fab
+        # 3. Numero LONGO (7+ digitos) = provavelmente codigo fabricante, nao CODPROD
+        if "codigo_fabricante" not in params:
+            m = re.search(r'\b(\d{7,15}[A-Z]?)\b', q_upper)
+            if m:
+                params["codigo_fabricante"] = m.group(1)
+
     # ---- NOME PRODUTO ----
     m = re.search(r'(?:PRODUTO|PECA|ITEM)\s+([A-Z][A-Z0-9\s\-/]{3,40}?)(?:\s*[?,!.]|\s*$)', q_upper)
-    if m and "codprod" not in params:
+    if m and "codprod" not in params and "codigo_fabricante" not in params:
         candidate = m.group(1).strip()
-        noise_prod = {"TEM", "TEMOS", "NO", "ESTOQUE", "PENDENTE", "EM", "ABERTO"}
+        noise_prod = {"TEM", "TEMOS", "NO", "ESTOQUE", "PENDENTE", "EM", "ABERTO", "SIMILAR", "SIMILARES", "EQUIVALENTE"}
         if candidate not in noise_prod:
             params["produto_nome"] = candidate
+
+    # ---- APLICACAO / VEICULO ----
+    if "codprod" not in params and "codigo_fabricante" not in params:
+        aplic_match = re.search(
+            r'(?:SERVE|APLICA|COMPATIVEL|ENCAIXA|CABE)\s+(?:NO|NA|NOS|NAS|PRA|PARA|COM|EM)\s+([A-Z][A-Z0-9\s\-/]{2,30})',
+            q_upper
+        )
+        if not aplic_match:
+            aplic_match = re.search(
+                r'(?:PECAS?|PRODUTOS?|FILTROS?)\s+(?:DO|DA|PRO|PRA|PARA|P/)\s+([A-Z][A-Z0-9\s\-/]{2,30})',
+                q_upper
+            )
+        if not aplic_match:
+            aplic_match = re.search(
+                r'(?:MOTOR|VEICULO|CAMINHAO|ONIBUS|CARRO|MAQUINA)\s+([A-Z][A-Z0-9\s\-/]{2,30})',
+                q_upper
+            )
+        if aplic_match:
+            candidate_aplic = aplic_match.group(1).strip()
+            noise_aplic = {"ESTOQUE", "PENDENTE", "PENDENCIA", "COMPRA", "COMPRAS",
+                           "VENDA", "VENDAS", "MARCA", "EMPRESA", "PRODUTO", "PRODUTOS"}
+            first_w = candidate_aplic.split()[0] if candidate_aplic else ""
+            if first_w not in noise_aplic and candidate_aplic not in noise_aplic:
+                params["aplicacao"] = candidate_aplic
 
     # ---- PERIODO ----
     q_lower = question.lower()
@@ -835,6 +949,19 @@ def _build_where_extra(params, user_context=None):
         w += f" AND UPPER(VEN.APELIDO) LIKE UPPER('%{params['comprador']}%')"
     if params.get("nunota"):
         w += f" AND CAB.NUNOTA = {params['nunota']}"
+    if params.get("codprod"):
+        w += f" AND PRO.CODPROD = {params['codprod']}"
+    if params.get("produto_nome") and not params.get("codprod"):
+        w += f" AND UPPER(PRO.DESCRPROD) LIKE UPPER('%{params['produto_nome']}%')"
+    if params.get("aplicacao"):
+        safe_app = params["aplicacao"].replace("'", "''")
+        w += f" AND UPPER(PRO.CARACTERISTICAS) LIKE UPPER('%{safe_app}%')"
+    # Tipo de compra (casada/estoque) via CODTIPOPER (mais eficiente que filtrar pos-query)
+    tc = (params.get("tipo_compra") or "").upper()
+    if tc in ("CASADA", "EMPENHO", "VINCULADA"):
+        w += " AND CAB.CODTIPOPER = 1313"
+    elif tc in ("ESTOQUE", "FUTURA", "REPOSICAO"):
+        w += " AND CAB.CODTIPOPER = 1301"
     if user_context:
         role = user_context.get("role", "vendedor")
         if role in ("admin", "diretor", "ti"):
@@ -873,6 +1000,7 @@ def sql_pendencia_compras(params, user_context=None):
             PRO.CODPROD,
             PRO.DESCRPROD AS PRODUTO,
             NVL(MAR.DESCRICAO, '') AS MARCA,
+            NVL(PRO.CARACTERISTICAS, '') AS APLICACAO,
             ITE.CODVOL AS UNIDADE,
             ITE.QTDNEG AS QTD_PEDIDA,
             NVL(V_AGG.TOTAL_ATENDIDO, 0) AS QTD_ATENDIDA,
@@ -898,6 +1026,8 @@ def sql_pendencia_compras(params, user_context=None):
     if params.get("empresa"): filtro_desc.append(f"empresa **{params['empresa']}**")
     if params.get("comprador"): filtro_desc.append(f"comprador **{params['comprador']}**")
     if params.get("nunota"): filtro_desc.append(f"pedido **{params['nunota']}**")
+    if params.get("codprod"): filtro_desc.append(f"produto **{params['codprod']}**")
+    if params.get("produto_nome") and not params.get("codprod"): filtro_desc.append(f"produto **{params['produto_nome']}**")
     desc = "pendencia de compras"
     if filtro_desc: desc += " da " + ", ".join(filtro_desc)
     return sql_kpis, sql_detail, desc
@@ -942,6 +1072,500 @@ def fmt_num(valor):
         return "0"
 
 
+# ============================================================
+# PRODUTO - Resolucao de codigo fabricante e similares
+# ============================================================
+
+SIMILAR_WORDS = {"similar", "similares", "equivalente", "equivalentes",
+                 "alternativ", "substitut", "cross", "crossref",
+                 "auxiliar", "auxiliares", "outras marcas", "outra marca",
+                 "quais marcas", "que marcas"}
+
+
+def _trunc(text, max_len=40):
+    """Trunca texto para caber em tabelas."""
+    if not text:
+        return ""
+    s = str(text).strip()
+    return s[:max_len] + "..." if len(s) > max_len else s
+
+
+def _sanitize_code(code: str) -> str:
+    """Remove espacos, tracos e barras para comparacao flexivel de codigos."""
+    return re.sub(r'[\s\-/\.]', '', code).upper()
+
+
+async def resolve_manufacturer_code(code_input: str, executor) -> dict:
+    """Busca produto pelo codigo do fabricante em TGFPRO.
+
+    Busca nos campos: REFERENCIA, AD_NUMFABRICANTE, AD_NUMFABRICANTE2, AD_NUMORIGINAL, REFFORN.
+    Normaliza: remove espacos, tracos, barras antes de comparar.
+
+    Returns:
+        {"found": bool, "products": [...], "code_searched": str}
+    """
+    safe_code = code_input.replace("'", "''").strip()
+    clean = _sanitize_code(safe_code)
+
+    sql = f"""SELECT DISTINCT PRO.CODPROD, PRO.DESCRPROD AS PRODUTO,
+        NVL(MAR.DESCRICAO, '') AS MARCA,
+        PRO.REFERENCIA, PRO.REFFORN,
+        PRO.AD_NUMFABRICANTE, PRO.AD_NUMFABRICANTE2, PRO.AD_NUMORIGINAL,
+        NVL(PRO.CARACTERISTICAS, '') AS APLICACAO
+    FROM TGFPRO PRO
+    LEFT JOIN TGFMAR MAR ON MAR.CODIGO = PRO.CODMARCA
+    WHERE PRO.ATIVO = 'S'
+      AND (
+        UPPER(REPLACE(REPLACE(REPLACE(PRO.REFERENCIA,' ',''),'-',''),'/',''))
+            LIKE '%{clean}%'
+        OR UPPER(REPLACE(REPLACE(PRO.AD_NUMFABRICANTE,' ',''),'-',''))
+            LIKE '%{clean}%'
+        OR UPPER(REPLACE(REPLACE(PRO.AD_NUMFABRICANTE2,' ',''),'-',''))
+            LIKE '%{clean}%'
+        OR UPPER(REPLACE(REPLACE(PRO.AD_NUMORIGINAL,' ',''),'-',''))
+            LIKE '%{clean}%'
+        OR UPPER(REPLACE(REPLACE(PRO.REFFORN,' ',''),'-',''))
+            LIKE '%{clean}%'
+      )
+    AND ROWNUM <= 10"""
+
+    result = await executor.execute(sql)
+    cols = ["CODPROD", "PRODUTO", "MARCA", "REFERENCIA", "REFFORN",
+            "AD_NUMFABRICANTE", "AD_NUMFABRICANTE2", "AD_NUMORIGINAL", "APLICACAO"]
+
+    products = []
+    if result.get("success"):
+        data = result.get("data", [])
+        if data and isinstance(data[0], (list, tuple)):
+            rc = result.get("columns") or cols
+            data = [dict(zip(rc if rc and len(rc) == len(data[0]) else cols, row)) for row in data]
+        for row in data:
+            if isinstance(row, dict):
+                # Identificar qual campo matchou
+                campo_match = "?"
+                for campo in ["REFERENCIA", "AD_NUMFABRICANTE", "AD_NUMFABRICANTE2", "AD_NUMORIGINAL", "REFFORN"]:
+                    val = str(row.get(campo, "") or "")
+                    if clean in _sanitize_code(val):
+                        campo_match = campo
+                        break
+                products.append({
+                    "codprod": int(row.get("CODPROD", 0) or 0),
+                    "produto": str(row.get("PRODUTO", "")),
+                    "marca": str(row.get("MARCA", "")),
+                    "referencia": str(row.get("REFERENCIA", "") or ""),
+                    "aplicacao": str(row.get("APLICACAO", "") or ""),
+                    "campo_match": campo_match,
+                })
+
+    print(f"[PRODUTO] resolve_manufacturer_code('{code_input}'): {len(products)} resultado(s)")
+    return {"found": len(products) > 0, "products": products, "code_searched": code_input}
+
+
+async def buscar_similares(codprod: int, executor) -> dict:
+    """Busca codigos auxiliares/similares de um produto em AD_TGFPROAUXMMA.
+
+    Returns:
+        {"found": bool, "codprod": int, "produto": str, "marca": str,
+         "auxiliares": [{"codigo": str, "marca": str, "observacao": str, "origem": str}]}
+    """
+    # Dados do produto
+    sql_prod = f"""SELECT PRO.CODPROD, PRO.DESCRPROD AS PRODUTO, NVL(MAR.DESCRICAO,'') AS MARCA,
+        PRO.REFERENCIA, PRO.AD_NUMFABRICANTE, NVL(PRO.CARACTERISTICAS,'') AS APLICACAO
+    FROM TGFPRO PRO LEFT JOIN TGFMAR MAR ON MAR.CODIGO = PRO.CODMARCA
+    WHERE PRO.CODPROD = {codprod}"""
+
+    sql_aux = f"""SELECT AUX.NUMAUX AS CODIGO, NVL(MAR.DESCRICAO, 'SEM MARCA') AS MARCA,
+        NVL(AUX.OBSERVACAO, '') AS OBSERVACAO, NVL(AUX.ORIGEM, '') AS ORIGEM
+    FROM AD_TGFPROAUXMMA AUX
+    LEFT JOIN TGFMAR MAR ON MAR.CODIGO = AUX.CODIGO
+    WHERE AUX.CODPROD = {codprod}
+    ORDER BY MAR.DESCRICAO, AUX.NUMAUX"""
+
+    prod_result = await executor.execute(sql_prod)
+    aux_result = await executor.execute(sql_aux)
+
+    produto_info = {"codprod": codprod, "produto": "?", "marca": "", "referencia": "", "aplicacao": ""}
+    if prod_result.get("success") and prod_result.get("data"):
+        pdata = prod_result["data"]
+        if pdata and isinstance(pdata[0], (list, tuple)):
+            cols = prod_result.get("columns") or ["CODPROD", "PRODUTO", "MARCA", "REFERENCIA", "AD_NUMFABRICANTE", "APLICACAO"]
+            pdata = [dict(zip(cols, row)) for row in pdata]
+        if pdata and isinstance(pdata[0], dict):
+            produto_info["produto"] = str(pdata[0].get("PRODUTO", "?"))
+            produto_info["marca"] = str(pdata[0].get("MARCA", ""))
+            produto_info["referencia"] = str(pdata[0].get("REFERENCIA", "") or "")
+            produto_info["aplicacao"] = str(pdata[0].get("APLICACAO", "") or "")
+
+    auxiliares = []
+    if aux_result.get("success") and aux_result.get("data"):
+        adata = aux_result["data"]
+        if adata and isinstance(adata[0], (list, tuple)):
+            cols = aux_result.get("columns") or ["CODIGO", "MARCA", "OBSERVACAO", "ORIGEM"]
+            adata = [dict(zip(cols, row)) for row in adata]
+        for row in adata:
+            if isinstance(row, dict):
+                auxiliares.append({
+                    "codigo": str(row.get("CODIGO", "")),
+                    "marca": str(row.get("MARCA", "")),
+                    "observacao": str(row.get("OBSERVACAO", "")),
+                    "origem": str(row.get("ORIGEM", "")),
+                })
+
+    print(f"[PRODUTO] buscar_similares({codprod}): {len(auxiliares)} codigo(s) auxiliar(es)")
+    return {"found": len(auxiliares) > 0, **produto_info, "auxiliares": auxiliares}
+
+
+async def buscar_similares_por_codigo(code_input: str, executor) -> dict:
+    """Dado um codigo auxiliar, encontra o produto e lista todos os similares."""
+    safe_code = code_input.replace("'", "''").strip()
+    clean = _sanitize_code(safe_code)
+
+    sql = f"""SELECT DISTINCT AUX.CODPROD
+    FROM AD_TGFPROAUXMMA AUX
+    WHERE UPPER(REPLACE(REPLACE(AUX.NUMAUX, ' ', ''), '-', ''))
+          LIKE '%{clean}%'
+    AND ROWNUM <= 5"""
+
+    result = await executor.execute(sql)
+    codprods = []
+    if result.get("success") and result.get("data"):
+        for row in result["data"]:
+            if isinstance(row, dict):
+                codprods.append(int(row.get("CODPROD", 0) or 0))
+            elif isinstance(row, (list, tuple)):
+                codprods.append(int(row[0] or 0))
+
+    if not codprods:
+        return {"found": False, "code_searched": code_input, "products": []}
+
+    # Se 1 resultado, listar similares completos
+    if len(codprods) == 1:
+        return await buscar_similares(codprods[0], executor)
+
+    # Se multiplos, listar os produtos encontrados
+    products = []
+    for cp in codprods[:5]:
+        sql_p = f"SELECT PRO.CODPROD, PRO.DESCRPROD AS PRODUTO, NVL(MAR.DESCRICAO,'') AS MARCA, NVL(PRO.CARACTERISTICAS,'') AS APLICACAO FROM TGFPRO PRO LEFT JOIN TGFMAR MAR ON MAR.CODIGO=PRO.CODMARCA WHERE PRO.CODPROD={cp}"
+        pr = await executor.execute(sql_p)
+        if pr.get("success") and pr.get("data"):
+            pdata = pr["data"]
+            if pdata and isinstance(pdata[0], (list, tuple)):
+                cols = pr.get("columns") or ["CODPROD", "PRODUTO", "MARCA", "APLICACAO"]
+                pdata = [dict(zip(cols, row)) for row in pdata]
+            if pdata and isinstance(pdata[0], dict):
+                products.append({"codprod": cp, "produto": str(pdata[0].get("PRODUTO", "")), "marca": str(pdata[0].get("MARCA", "")), "aplicacao": str(pdata[0].get("APLICACAO", "") or "")})
+
+    return {"found": True, "code_searched": code_input, "products": products, "multiple": True}
+
+
+def detect_product_query(q_norm: str, params: dict) -> str | None:
+    """Detecta se a pergunta e centrada em produto e qual tipo de consulta.
+
+    Returns:
+        "produto_360" - visao completa (estoque + pendencia + info)
+        "busca_fabricante" - resolver codigo fabricante pra CODPROD
+        "similares" - buscar cross-reference/similares
+        "busca_aplicacao" - buscar por veiculo/aplicacao
+        None - nao e query centrada em produto
+    """
+    # Busca por aplicacao: tem aplicacao mas nao codprod/codigo_fabricante
+    if params.get("aplicacao") and not params.get("codprod") and not params.get("codigo_fabricante"):
+        return "busca_aplicacao"
+
+    has_product = params.get("codprod") or params.get("produto_nome") or params.get("codigo_fabricante")
+    if not has_product:
+        return None
+
+    q = q_norm.lower()
+
+    # Similares / cross-reference
+    if any(w in q for w in SIMILAR_WORDS):
+        return "similares"
+
+    # Se tem codigo fabricante, precisa resolver primeiro
+    if params.get("codigo_fabricante") and not params.get("codprod"):
+        return "busca_fabricante"
+
+    # Visao 360: "tudo sobre", "situacao do", "me fala tudo"
+    full_view_patterns = ["tudo sobre", "situacao do", "como esta o", "me fala", "resumo do",
+                          "informac", "detalhe do produto", "visao geral"]
+    if any(p in q for p in full_view_patterns):
+        return "produto_360"
+
+    # Cross-intent: menciona estoque E pendencia juntos
+    pend_words = {"pendente", "pendencia", "falta chegar", "pedido aberto", "compra"}
+    est_words = {"estoque", "saldo", "disponivel"}
+    has_pend = any(w in q for w in pend_words)
+    has_est = any(w in q for w in est_words)
+    if has_pend and has_est:
+        return "produto_360"
+
+    return None
+
+
+def format_produto_360(prod_info: dict, estoque_data: list, pendencia_data: dict, vendas_info: dict = None) -> str:
+    """Formata a visao 360 de um produto."""
+    codprod = prod_info.get("codprod", "?")
+    produto = prod_info.get("produto", "?")
+    marca = prod_info.get("marca", "")
+    ref = prod_info.get("referencia", "")
+
+    aplicacao = prod_info.get("aplicacao", "")
+    complemento = prod_info.get("complemento", "")
+    num_original = prod_info.get("num_original", "")
+    ref_forn = prod_info.get("ref_fornecedor", "")
+
+    lines = []
+    header = f"\U0001f4e6 **Produto {codprod} - {produto}**"
+    if marca:
+        header += f" ({marca})"
+    lines.append(header)
+    if aplicacao:
+        lines.append(f"Aplicacao: {aplicacao}")
+    refs = []
+    if ref:
+        refs.append(f"Ref: {ref}")
+    if num_original and num_original != ref:
+        refs.append(f"Nro. Original: {num_original}")
+    if ref_forn and ref_forn != ref:
+        refs.append(f"Ref. Forn: {ref_forn}")
+    if refs:
+        lines.append(" | ".join(refs))
+    if complemento:
+        lines.append(f"Complemento: {complemento}")
+    lines.append("")
+
+    # ESTOQUE
+    if estoque_data:
+        total_est = sum(int(float(r.get("ESTOQUE", 0) or 0)) for r in estoque_data if isinstance(r, dict))
+        lines.append(f"\U0001f4ca **Estoque:** {fmt_num(total_est)} unidades\n")
+        if len(estoque_data) > 1:
+            lines.append("| Empresa | Estoque | Est. Min. |")
+            lines.append("|---------|---------|-----------|")
+            for r in estoque_data[:8]:
+                if isinstance(r, dict):
+                    est = fmt_num(r.get("ESTOQUE", 0))
+                    estmin = fmt_num(r.get("ESTMIN", 0))
+                    emp = str(r.get("EMPRESA", "?"))[:25]
+                    lines.append(f"| {emp} | {est} | {estmin} |")
+            lines.append("")
+    else:
+        lines.append("\U0001f4ca **Estoque:** sem dados\n")
+
+    # PENDENCIA
+    if pendencia_data and pendencia_data.get("detail_data"):
+        detail = pendencia_data["detail_data"]
+        qtd_ped = len(set(str(r.get("PEDIDO", "")) for r in detail if isinstance(r, dict)))
+        vlr_total = sum(float(r.get("VLR_PENDENTE", 0) or 0) for r in detail if isinstance(r, dict))
+        qtd_pend = sum(int(r.get("QTD_PENDENTE", 0) or 0) for r in detail if isinstance(r, dict))
+
+        lines.append(f"\U0001f69a **Compras Pendentes:** {fmt_num(qtd_ped)} pedido(s), {fmt_num(qtd_pend)} un., {fmt_brl(vlr_total)}\n")
+        lines.append("| Pedido | Tipo | Fornecedor | Qtd Pend. | Valor | Status |")
+        lines.append("|--------|------|-----------|-----------|-------|--------|")
+        shown_pedidos = set()
+        for r in detail[:8]:
+            if isinstance(r, dict):
+                ped = str(r.get("PEDIDO", "?"))
+                if ped in shown_pedidos:
+                    continue
+                shown_pedidos.add(ped)
+                tipo = str(r.get("TIPO_COMPRA", ""))
+                forn = str(r.get("FORNECEDOR", "?"))[:25]
+                qtd = fmt_num(r.get("QTD_PENDENTE", 0))
+                vlr = fmt_brl(r.get("VLR_PENDENTE", 0))
+                status = str(r.get("STATUS_ENTREGA", "?"))
+                lines.append(f"| {ped} | {tipo} | {forn} | {qtd} | {vlr} | {status} |")
+        lines.append("")
+    else:
+        lines.append("\U0001f69a **Compras Pendentes:** nenhuma\n")
+
+    # VENDAS
+    if vendas_info and int(vendas_info.get("QTD_VENDAS", 0) or 0) > 0:
+        qv = fmt_num(vendas_info.get("QTD_VENDAS", 0))
+        qtdv = fmt_num(vendas_info.get("QTD_VENDIDA", 0))
+        vlrv = fmt_brl(vendas_info.get("VLR_TOTAL", 0))
+        lines.append(f"\U0001f4c8 **Vendas (3 meses):** {qv} notas, {qtdv} un., {vlrv}\n")
+
+    return "\n".join(lines)
+
+
+def format_busca_fabricante(resolved: dict) -> str:
+    """Formata resultado da busca por codigo fabricante."""
+    code = resolved.get("code_searched", "?")
+    products = resolved.get("products", [])
+
+    if not products:
+        return f"\U0001f50d Nenhum produto encontrado com o codigo **{code}**.\n\nTente buscar por similares: *\"similares do {code}\"*"
+
+    if len(products) == 1:
+        p = products[0]
+        response = f"\U0001f50d O codigo **{code}** corresponde ao produto:\n\n"
+        response += f"| Campo | Valor |\n|---|---|\n"
+        response += f"| **Codigo** | {p['codprod']} |\n"
+        response += f"| **Produto** | {p['produto']} |\n"
+        if p.get("marca"):
+            response += f"| **Marca** | {p['marca']} |\n"
+        if p.get("aplicacao"):
+            response += f"| **Aplicacao** | {p['aplicacao']} |\n"
+        if p.get("referencia"):
+            response += f"| **Referencia** | {p['referencia']} |\n"
+        response += f"| **Campo encontrado** | {p['campo_match']} |\n"
+        response += f"\nQuer ver a visao completa? Pergunte: *\"tudo sobre o produto {p['codprod']}\"*"
+        return response
+
+    response = f"\U0001f50d Encontrei **{len(products)} produtos** com o codigo **{code}**:\n\n"
+    response += "| CodProd | Produto | Marca | Aplicacao | Campo |\n|---------|---------|-------|-----------|-------|\n"
+    for p in products:
+        aplic = _trunc(p.get('aplicacao',''), 40)
+        response += f"| {p['codprod']} | {str(p['produto'])[:35]} | {p.get('marca','')} | {aplic} | {p['campo_match']} |\n"
+    response += f"\nEspecifique o produto pelo codigo. Ex: *\"tudo sobre o produto {products[0]['codprod']}\"*"
+    return response
+
+
+def format_similares(sim_data: dict) -> str:
+    """Formata resultado da busca de similares/cross-reference."""
+    if not sim_data.get("found"):
+        code = sim_data.get("code_searched", sim_data.get("codprod", "?"))
+        return f"Nao encontrei codigos auxiliares/similares para **{code}**."
+
+    # Se veio de busca por codigo texto com multiplos produtos
+    if sim_data.get("multiple"):
+        products = sim_data.get("products", [])
+        response = f"\U0001f504 O codigo **{sim_data.get('code_searched', '?')}** aparece em {len(products)} produtos:\n\n"
+        response += "| CodProd | Produto | Marca |\n|---------|---------|-------|\n"
+        for p in products:
+            response += f"| {p['codprod']} | {str(p['produto'])[:40]} | {p.get('marca','')} |\n"
+        response += f"\nPara ver similares de um produto especifico: *\"similares do produto {products[0]['codprod']}\"*"
+        return response
+
+    codprod = sim_data.get("codprod", "?")
+    produto = sim_data.get("produto", "?")
+    marca = sim_data.get("marca", "")
+    aplicacao = sim_data.get("aplicacao", "")
+    auxiliares = sim_data.get("auxiliares", [])
+
+    response = f"\U0001f504 **Similares do produto {codprod} - {produto}**"
+    if marca:
+        response += f" ({marca})"
+    if aplicacao:
+        response += f"\nAplicacao: {aplicacao}"
+    response += f"\n\nEncontrei **{len(auxiliares)}** codigo(s) auxiliar(es):\n\n"
+
+    # Agrupar por marca
+    from collections import defaultdict
+    por_marca = defaultdict(list)
+    for aux in auxiliares:
+        por_marca[aux.get("marca", "?")].append(aux)
+
+    response += "| Codigo | Marca | Obs. |\n|--------|-------|------|\n"
+    count = 0
+    for m_name in sorted(por_marca.keys()):
+        for aux in por_marca[m_name][:5]:
+            obs = str(aux.get("observacao", ""))[:20]
+            response += f"| {aux['codigo']} | {m_name} | {obs} |\n"
+            count += 1
+            if count >= 30:
+                break
+        if count >= 30:
+            break
+
+    if len(auxiliares) > 30:
+        response += f"\n*...e mais {len(auxiliares) - 30} codigo(s).*"
+
+    response += f"\n\n{len(por_marca)} marca(s) diferente(s)."
+    return response
+
+
+# ============================================================
+# VIEWS AGREGADAS - Perguntas "quem compra/fornece marca X?"
+# ============================================================
+
+def detect_aggregation_view(question_norm: str) -> str | None:
+    """Detecta se a pergunta pede uma visao agregada em vez de listagem.
+
+    Returns:
+        "comprador_marca" - quem compra marca X
+        "fornecedor_marca" - quem fornece marca X
+        None - pergunta normal (listagem)
+    """
+    q = question_norm.lower()
+
+    # "quem compra/e o comprador/e responsavel pela marca X"
+    if re.search(r'quem\s+(compra|e\s+o?\s*comprador|e\s+responsavel)', q):
+        return "comprador_marca"
+    if re.search(r'comprador(es?)?\s+(da|de|do)\s+', q):
+        return "comprador_marca"
+    if re.search(r'responsavel\s+(pela|pela\s+marca|pelas?\s+compras?\s+d)', q):
+        return "comprador_marca"
+
+    # "quem fornece/e o fornecedor da marca X"
+    if re.search(r'quem\s+(fornece|e\s+o?\s*fornecedor|vende|entrega)', q):
+        return "fornecedor_marca"
+    if re.search(r'fornecedor(es?)?\s+(da|de|do)\s+marca', q):
+        return "fornecedor_marca"
+
+    # "fornecedor da SABO" sem "pedido/pendencia" = quem fornece
+    if re.search(r'fornecedor(es?)?\s+(da|de|do)\s+\w+', q) and not re.search(r'(pedido|pendencia|pend)', q):
+        return "fornecedor_marca"
+
+    return None
+
+
+def format_comprador_marca(detail_data: list, marca: str) -> str:
+    """Formata resposta 'quem compra marca X' agrupando por COMPRADOR."""
+    from collections import defaultdict
+    compradores = defaultdict(lambda: {"pedidos": set(), "itens": 0, "valor": 0.0})
+
+    for r in detail_data:
+        if not isinstance(r, dict):
+            continue
+        comp = r.get("COMPRADOR") or "SEM COMPRADOR"
+        compradores[comp]["pedidos"].add(str(r.get("PEDIDO", "")))
+        compradores[comp]["itens"] += 1
+        compradores[comp]["valor"] += float(r.get("VLR_PENDENTE", 0) or 0)
+
+    if not compradores:
+        return f"Nao encontrei pedidos pendentes da marca {marca}."
+
+    sorted_comp = sorted(compradores.items(), key=lambda x: -x[1]["valor"])
+
+    response = f"\U0001f3f7\ufe0f **Comprador(es) da marca {marca}:**\n\n"
+    response += "| Comprador | Pedidos | Itens | Valor Pendente |\n|---|---|---|---|\n"
+    for comp, data in sorted_comp:
+        response += f"| {comp} | {len(data['pedidos'])} | {data['itens']} | R$ {fmt_num(data['valor'])} |\n"
+
+    if len(sorted_comp) == 1:
+        response += f"\n**{sorted_comp[0][0]}** e o comprador responsavel pela marca {marca}."
+
+    return response
+
+
+def format_fornecedor_marca(detail_data: list, marca: str) -> str:
+    """Formata resposta 'quem fornece marca X' agrupando por FORNECEDOR."""
+    from collections import defaultdict
+    fornecedores = defaultdict(lambda: {"pedidos": set(), "itens": 0, "valor": 0.0})
+
+    for r in detail_data:
+        if not isinstance(r, dict):
+            continue
+        forn = r.get("FORNECEDOR") or "?"
+        fornecedores[forn]["pedidos"].add(str(r.get("PEDIDO", "")))
+        fornecedores[forn]["itens"] += 1
+        fornecedores[forn]["valor"] += float(r.get("VLR_PENDENTE", 0) or 0)
+
+    if not fornecedores:
+        return f"Nao encontrei fornecedores com pedidos pendentes da marca {marca}."
+
+    sorted_forn = sorted(fornecedores.items(), key=lambda x: -x[1]["valor"])
+
+    response = f"\U0001f3ed **Fornecedor(es) da marca {marca}:**\n\n"
+    response += "| Fornecedor | Pedidos | Itens | Valor Pendente |\n|---|---|---|---|\n"
+    for forn, data in sorted_forn:
+        response += f"| {forn} | {len(data['pedidos'])} | {data['itens']} | R$ {fmt_num(data['valor'])} |\n"
+
+    return response
+
+
 def format_pendencia_response(kpis_data, detail_data, description, params, view_mode="pedidos"):
     if not kpis_data:
         filtro = params.get("marca") or params.get("fornecedor") or params.get("empresa") or ""
@@ -964,12 +1588,21 @@ def format_pendencia_response(kpis_data, detail_data, description, params, view_
 
     if detail_data:
         if view_mode == "itens":
+            has_aplic = any(item.get("APLICACAO") for item in detail_data[:12] if isinstance(item, dict))
             lines.append("**Itens pendentes:**\n")
-            lines.append("| Pedido | CodProd | Produto | Marca | Qtd Pend. | Valor | Status |")
-            lines.append("|--------|---------|---------|-------|-----------|-------|--------|")
+            if has_aplic:
+                lines.append("| Pedido | CodProd | Produto | Aplicacao | Qtd Pend. | Valor | Status |")
+                lines.append("|--------|---------|---------|-----------|-----------|-------|--------|")
+            else:
+                lines.append("| Pedido | CodProd | Produto | Marca | Qtd Pend. | Valor | Status |")
+                lines.append("|--------|---------|---------|-------|-----------|-------|--------|")
             for item in detail_data[:12]:
                 if isinstance(item, dict):
-                    lines.append(f"| {item.get('PEDIDO','?')} | {item.get('CODPROD','?')} | {str(item.get('PRODUTO',''))[:30]} | {str(item.get('MARCA',''))[:15]} | {item.get('QTD_PENDENTE',0)} | {fmt_brl(item.get('VLR_PENDENTE',0))} | {item.get('STATUS_ENTREGA','?')} |")
+                    if has_aplic:
+                        aplic = _trunc(item.get('APLICACAO',''), 30)
+                        lines.append(f"| {item.get('PEDIDO','?')} | {item.get('CODPROD','?')} | {str(item.get('PRODUTO',''))[:30]} | {aplic} | {item.get('QTD_PENDENTE',0)} | {fmt_brl(item.get('VLR_PENDENTE',0))} | {item.get('STATUS_ENTREGA','?')} |")
+                    else:
+                        lines.append(f"| {item.get('PEDIDO','?')} | {item.get('CODPROD','?')} | {str(item.get('PRODUTO',''))[:30]} | {str(item.get('MARCA',''))[:15]} | {item.get('QTD_PENDENTE',0)} | {fmt_brl(item.get('VLR_PENDENTE',0))} | {item.get('STATUS_ENTREGA','?')} |")
             if len(detail_data) > 12:
                 lines.append(f"\n*...e mais {len(detail_data) - 12} itens.*\n")
         else:
@@ -1016,6 +1649,8 @@ def format_estoque_response(data, params):
         row = data[0] if isinstance(data[0], dict) else {}
         lines.append(f"\U0001f4e6 **Estoque do produto {row.get('CODPROD','?')}**\n")
         lines.append(f"**{row.get('PRODUTO','?')}**" + (f" ({row.get('MARCA','')})" if row.get('MARCA') else ""))
+        if row.get('APLICACAO'):
+            lines.append(f"Aplicacao: {row.get('APLICACAO','')}")
         lines.append(f"Estoque atual: **{fmt_num(row.get('ESTOQUE',0))}** unidades")
         if row.get('ESTMIN'):
             lines.append(f"Estoque minimo: **{fmt_num(row.get('ESTMIN',0))}**")
@@ -1130,6 +1765,11 @@ FOLLOWUP_PATTERNS = [
 # Regras de filtro/ordenacao sobre dados anteriores
 # ORDEM IMPORTA: patterns mais longos/especificos primeiro
 FILTER_RULES = [
+    # === TIPO DE COMPRA ===
+    {"match": ["compra casada", "compras casadas", "pedido casado", "pedidos casados", "empenho", "empenhado", "empenhados", "vinculada"],
+     "filter": {"TIPO_COMPRA": "Casada"}},
+    {"match": ["compra estoque", "compra de estoque", "compra para estoque", "compras de estoque", "entrega futura", "reposicao"],
+     "filter": {"TIPO_COMPRA": "Estoque"}},
     # === PREVISAO DE ENTREGA (mais especificos primeiro!) ===
     {"match": ["maior data de entrega", "maior previsao de entrega", "maior previsao entrega"],
      "sort": "PREVISAO_ENTREGA_DESC", "top": 1},
@@ -1243,6 +1883,15 @@ def _llm_to_filters(llm_result: dict, question: str = "") -> dict:
     elif top and isinstance(top, str) and top.isdigit():
         filters["_top"] = int(top)
 
+    # tipo_compra (campo extra retornado pelo Groq)
+    tipo_compra = llm_result.get("tipo_compra")
+    if tipo_compra and isinstance(tipo_compra, str):
+        tc = tipo_compra.lower().strip()
+        if tc in ("casada", "empenho", "vinculada"):
+            filters["TIPO_COMPRA"] = "Casada"
+        elif tc in ("estoque", "futura", "reposicao"):
+            filters["TIPO_COMPRA"] = "Estoque"
+
     # === POS-PROCESSAMENTO: corrigir confusoes comuns da LLM ===
     if question:
         q_lower = question.lower()
@@ -1310,12 +1959,16 @@ def detect_filter_request(question_norm: str, tokens: list) -> dict:
             # Filtro especial (ex: campo vazio)
             result[f"_fn_{rule['filter_fn']}"] = rule["filter_field"]
         if "sort" in rule:
-            result["_sort"] = rule["sort"]
+            if "_sort" not in result:  # Primeiro sort ganha
+                result["_sort"] = rule["sort"]
         if "top" in rule:
-            result["_top"] = rule["top"]
+            if "_top" not in result:  # Primeiro top ganha
+                result["_top"] = rule["top"]
 
-        # Primeiro match ganha (mais especifico primeiro)
-        break
+        # Se regra tem sort/top, parar (evitar conflito de ordenacao)
+        # Se regra so tem filter, continuar acumulando (ex: TIPO_COMPRA + STATUS_ENTREGA)
+        if "sort" in rule or "top" in rule:
+            break
 
     # Detectar numero explicito na pergunta: "5 mais caros", "top 10", "3 primeiros"
     num_match = re.search(r'\b(\d{1,3})\s+(?:mais|primeiro|primeiros|maior|menor|ultim)', question_norm)
@@ -1469,6 +2122,9 @@ class SmartAgent:
         self._known_compradores = set()
         self._entities_loaded = False
         self.kb = KnowledgeBase()  # Knowledge Base para perguntas sobre processos
+        self.alias_resolver = AliasResolver()  # Apelidos de produto
+        self.query_logger = QueryLogger()
+        self.result_validator = ResultValidator()
         # Contexto POR USUARIO
         self._user_contexts = {}  # {user_id: ConversationContext}
 
@@ -1520,6 +2176,107 @@ class SmartAgent:
         self._entities_loaded = True
 
     async def ask(self, question: str, user_context: dict = None) -> Optional[dict]:
+        """Entry point com logging integrado."""
+        user_id = (user_context or {}).get("user", "")
+        _log = self.query_logger.create_entry(question, user=user_id)
+
+        try:
+            result = await self._ask_core(question, user_context, _log)
+        except Exception as e:
+            print(f"[SMART] Erro no ask: {e}")
+            result = self._handle_fallback(question)
+            _log["processing"]["layer"] = "error"
+
+        # Finalizar log e salvar
+        try:
+            # Extrair detail_data temporario (nao vai pro usuario)
+            _detail_data = result.pop("_detail_data", None) if result else None
+            self._finalize_log(_log, result, _detail_data)
+            self.query_logger.save(_log)
+        except Exception:
+            pass
+
+        if result:
+            result["message_id"] = _log["id"]
+
+            # B2: Registrar termos sem match como sugestao de alias
+            query_results = result.get("query_results")
+            produto_nome_used = getattr(self, '_last_produto_nome', None)
+
+            if query_results == 0 and produto_nome_used:
+                self.alias_resolver.suggest_alias(
+                    produto_nome_used,
+                    context=question,
+                    user=user_id
+                )
+                # B4: Salvar failed term para deteccao de sequencia
+                if not hasattr(self, '_failed_terms'):
+                    self._failed_terms = {}
+                self._failed_terms[user_id] = produto_nome_used
+            elif query_results and query_results > 0 and produto_nome_used:
+                # B4: Sequencia detectada - query anterior falhou, esta passou
+                failed = getattr(self, '_failed_terms', {}).get(user_id)
+                if failed and failed != produto_nome_used:
+                    codprod_found = None
+                    detail = result.get("_detail_data") or []
+                    if detail and isinstance(detail[0], dict):
+                        codprod_found = detail[0].get("CODPROD")
+                    self.alias_resolver.detect_alias_from_sequence(failed, produto_nome_used, codprod_found)
+                    self._failed_terms.pop(user_id, None)
+
+            self._last_produto_nome = None
+
+            # Prefixar resposta com alias resolvido
+            if hasattr(self, '_last_alias_resolved') and self._last_alias_resolved:
+                alias_info = self._last_alias_resolved
+                self._last_alias_resolved = None
+                resp = result.get("response", "")
+                prefix = f"*'{alias_info['from']}' = {alias_info['to']}*\n\n"
+                result["response"] = prefix + resp
+        return result
+
+    def _finalize_log(self, _log: dict, result: dict, _detail_data: list = None):
+        """Preenche metadata final do log a partir do resultado."""
+        if not result:
+            return
+        proc = _log.get("processing", {})
+        proc["time_ms"] = result.get("time_ms", 0)
+        # Result type mapping
+        tipo = result.get("tipo", "info")
+        type_map = {"consulta_banco": "table", "info": "knowledge", "arquivo": "table", "erro": "error"}
+        records = result.get("query_results") or 0
+        _log["result"] = {
+            "type": type_map.get(tipo, tipo),
+            "records_found": records,
+            "records_shown": records,
+            "response_preview": (result.get("response") or "")[:200],
+        }
+        _log["auto_tags"] = generate_auto_tags(_log)
+
+        # Result data summary (para validacao offline)
+        if _detail_data and isinstance(_detail_data, list):
+            _log["result_data_summary"] = build_result_data_summary(_detail_data, _log)
+
+        # Auto-auditoria: validacao em tempo real
+        try:
+            validation = self.result_validator.validate(_log, _detail_data)
+            _log["validation"] = {
+                "passed": validation["passed"],
+                "checks_run": validation["checks_run"],
+                "checks_failed": validation["checks_failed"],
+                "severity": validation.get("severity"),
+                "suggested_fix": validation.get("suggested_fix"),
+                "checks": validation.get("checks", []),
+            }
+            # Console warnings para severity alta
+            if validation.get("severity") in ("high", "critical"):
+                for check in validation.get("checks", []):
+                    if not check.get("passed"):
+                        print(f"[AUDIT] {check.get('check', '?')}: {check.get('detail', '?')}")
+        except Exception as e:
+            print(f"[AUDIT] Erro na validacao: {e}")
+
+    async def _ask_core(self, question: str, user_context: dict = None, _log: dict = None) -> Optional[dict]:
         await self._load_entities()
         t0 = time.time()
         tokens = tokenize(question)
@@ -1532,22 +2289,29 @@ class SmartAgent:
         best_intent = max(scores, key=scores.get)
         best_score = scores[best_intent]
 
+        if _log:
+            _log["processing"]["score"] = best_score
+
         # ========== CONFIRMACAO CURTA (follow-up excel) ==========
         if len(tokens) <= 3 and any(t in CONFIRM_WORDS for t in tokens) and ctx.has_data():
             print(f"[SMART] Follow-up: gerar_excel")
+            if _log: _log["processing"].update(layer="scoring", intent="gerar_excel")
             return await self._handle_excel_followup(user_context, ctx)
 
         # Excel explicito
         if scores.get("gerar_excel", 0) >= INTENT_THRESHOLDS["gerar_excel"]:
             if ctx.has_data():
+                if _log: _log["processing"].update(layer="scoring", intent="gerar_excel")
                 return await self._handle_excel_followup(user_context, ctx)
 
         # Saudacao (so se for curta e score alto)
         if scores.get("saudacao", 0) >= INTENT_THRESHOLDS["saudacao"] and len(tokens) <= 5:
+            if _log: _log["processing"].update(layer="scoring", intent="saudacao")
             return self._handle_saudacao(user_context)
 
         # Ajuda
         if scores.get("ajuda", 0) >= INTENT_THRESHOLDS["ajuda"]:
+            if _log: _log["processing"].update(layer="scoring", intent="ajuda")
             return self._handle_ajuda()
 
         # ========== DETECTAR FOLLOW-UP (referencia a dados anteriores) ==========
@@ -1557,6 +2321,7 @@ class SmartAgent:
         if is_followup and ctx.has_data() and filters:
             # Filtrar dados anteriores
             print(f"[CTX] Follow-up com filtro: {filters} | ctx={ctx}")
+            if _log: _log["processing"].update(layer="scoring", intent=ctx.intent or "follow_up", filters_source="pattern", filters_applied={k: str(v) for k, v in filters.items()})
             result = self._handle_filter_followup(ctx, filters, question, t0)
             if result:
                 return result
@@ -1581,8 +2346,44 @@ class SmartAgent:
                 best_score = INTENT_THRESHOLDS.get(best_intent, 8)  # Forca threshold
                 print(f"[CTX] Herdando intent: {best_intent} (follow-up sem score)")
 
+        # Salvar produto_nome original para B2 (registro de termos sem match)
+        self._last_produto_nome = params.get("produto_nome")
+
+        # ========== LAYER 0.4: ALIAS RESOLVER ==========
+        self._last_alias_resolved = None
+        if params.get("produto_nome"):
+            alias = self.alias_resolver.resolve(params["produto_nome"])
+            if alias:
+                original_term = params["produto_nome"]
+                resolved_to = alias.get("nome_real") or str(alias.get("codprod"))
+                if alias.get("codprod"):
+                    params["codprod"] = alias["codprod"]
+                    params.pop("produto_nome", None)
+                elif alias.get("nome_real"):
+                    params["produto_nome"] = alias["nome_real"]
+                self._last_alias_resolved = {"from": original_term, "to": resolved_to}
+                print(f"[ALIAS] Resolvido: '{original_term}' -> {resolved_to} (conf={alias.get('confidence',0):.0%})")
+
+        # ========== LAYER 0.5: PRODUTO (roteamento especial) ==========
+        product_type = detect_product_query(q_norm, params)
+        if product_type:
+            print(f"[SMART] Layer 0.5 (produto): type={product_type} | params={params}")
+            if _log: _log["processing"].update(layer="produto", intent=product_type)
+            if product_type == "busca_fabricante":
+                return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
+            elif product_type == "similares":
+                return await self._handle_similares(question, user_context, t0, params, ctx)
+            elif product_type == "produto_360":
+                return await self._handle_produto_360(question, user_context, t0, params, ctx)
+            elif product_type == "busca_aplicacao":
+                return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
+
         # ========== LAYER 1: SCORING (0ms) ==========
         print(f"[SMART] Scores: pend={scores.get('pendencia_compras',0)} est={scores.get('estoque',0)} vend={scores.get('vendas',0)} | best={best_intent}({best_score}) | followup={is_followup}")
+
+        # Log: entities extraidas
+        if _log:
+            _log["processing"]["entities"] = {k: v for k, v in params.items() if v and k != "periodo"}
 
         # Checar knowledge score antes pra decidir rota
         kb_score = score_knowledge(question)
@@ -1590,6 +2391,7 @@ class SmartAgent:
         # Se KB score alto E data score nao e dominante, vai pra knowledge
         if kb_score >= 8 and (best_score < kb_score or best_score < 12):
             print(f"[SMART] Layer 1.2 (knowledge): kb={kb_score} vs data={best_score}")
+            if _log: _log["processing"].update(layer="scoring", intent="conhecimento")
             kb_result = await self.kb.answer(question)
             if kb_result:
                 kb_result["time_ms"] = int((time.time() - t0) * 1000)
@@ -1598,9 +2400,20 @@ class SmartAgent:
         if best_score >= INTENT_THRESHOLDS.get(best_intent, 8):
             # Score alto = confianca alta no INTENT, mas query pode ter filtros complexos
             print(f"[SMART] Layer 1 (scoring): {best_intent} (score={best_score})")
+            if _log: _log["processing"].update(layer="scoring", intent=best_intent)
 
             # Detectar se query e complexa (filtros/ordenacao que o pattern nao pegou)
             pattern_filters = detect_filter_request(q_norm, tokens)
+
+            # Intent override: se filter rules detectou TIPO_COMPRA, forcar pendencia_compras
+            # (evita "compras de estoque da eaton" cair em intent=estoque)
+            if pattern_filters.get("TIPO_COMPRA") and best_intent != "pendencia_compras":
+                print(f"[SMART] Intent override: {best_intent} -> pendencia_compras (TIPO_COMPRA detectado)")
+                best_intent = "pendencia_compras"
+                if _log: _log["processing"]["intent"] = "pendencia_compras"
+                # Propagar tipo_compra para params (usado no _build_where_extra)
+                params["tipo_compra"] = pattern_filters["TIPO_COMPRA"]
+
             is_complex = _is_complex_query(q_norm, tokens, pattern_filters)
 
             if is_complex and best_intent in ("pendencia_compras", "estoque", "vendas") and GROQ_API_KEY:
@@ -1608,9 +2421,10 @@ class SmartAgent:
                 print(f"[SMART] Layer 1+ (Groq filtro): query complexa, consultando Groq...")
                 llm_result = await groq_classify(question)
                 if llm_result:
+                    if _log: _log["processing"].update(layer="scoring+groq", groq_raw=dict(llm_result))
                     llm_filters = _llm_to_filters(llm_result, question)
                     # Usar entidades da LLM se scoring nao extraiu direito
-                    for key in ["marca", "fornecedor", "empresa", "comprador", "periodo"]:
+                    for key in ["marca", "fornecedor", "empresa", "comprador", "periodo", "aplicacao"]:
                         if llm_result.get(key) and not params.get(key):
                             params[key] = llm_result[key]
                         elif llm_result.get(key) and params.get(key):
@@ -1622,9 +2436,14 @@ class SmartAgent:
                                 if llm_val in self._known_marcas and cur_val not in self._known_marcas:
                                     print(f"[SMART] LLM corrigiu {key}: {cur_val} -> {llm_val}")
                                     params[key] = llm_val
+                                    if _log: _log["processing"]["groq_corrected"] = True
                     view_mode = llm_result.get("view") or detect_view_mode(tokens)
+                    if _log:
+                        _log["processing"]["view_mode"] = view_mode
+                        _log["processing"]["entities"] = {k: v for k, v in params.items() if v and k != "periodo"}
                     if llm_filters:
                         print(f"[SMART] LLM filters: {llm_filters}")
+                        if _log: _log["processing"].update(filters_source="llm", filters_applied={k: str(v) for k, v in llm_filters.items()})
                     if best_intent == "pendencia_compras":
                         return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx, llm_filters=llm_filters)
                     elif best_intent == "estoque":
@@ -1632,12 +2451,18 @@ class SmartAgent:
                     elif best_intent == "vendas":
                         return await self._handle_vendas(question, user_context, t0, params, ctx)
 
+            if _log and pattern_filters:
+                _log["processing"].update(filters_source="pattern", filters_applied={k: str(v) for k, v in pattern_filters.items()})
+            # Propagar tipo_compra do filter para params (SQL WHERE)
+            if pattern_filters.get("TIPO_COMPRA") and not params.get("tipo_compra"):
+                params["tipo_compra"] = pattern_filters["TIPO_COMPRA"]
             return await self._dispatch(best_intent, question, user_context, t0, tokens, params, ctx)
 
         # ========== LAYER 1.5: ENTITY DETECTION ==========
         if has_entity and best_score >= 3:
             # Tem entidade + algum score = provavelmente pendencia
             print(f"[SMART] Layer 1.5 (entidade + score): pendencia | params={params}")
+            if _log: _log["processing"].update(layer="scoring", intent="pendencia_compras")
             view_mode = detect_view_mode(tokens)
             return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx)
 
@@ -1650,6 +2475,10 @@ class SmartAgent:
                 intent = llm_result["intent"]
                 print(f"[SMART] LLM classificou: {intent} | filtro={llm_result.get('filtro')} | ordenar={llm_result.get('ordenar')} | top={llm_result.get('top')}")
 
+                if _log:
+                    _layer = "groq" if GROQ_API_KEY else "ollama"
+                    _log["processing"].update(layer=_layer, intent=intent, groq_raw=dict(llm_result) if GROQ_API_KEY else None)
+
                 # Se LLM classificou como conhecimento
                 if intent == "conhecimento":
                     kb_result = await self.kb.answer(question)
@@ -1658,7 +2487,7 @@ class SmartAgent:
                         return kb_result
 
                 # Usar entidades da LLM se nao extraiu pelo scoring
-                for key in ["marca", "fornecedor", "empresa", "comprador", "periodo"]:
+                for key in ["marca", "fornecedor", "empresa", "comprador", "periodo", "aplicacao"]:
                     if llm_result.get(key) and not params.get(key):
                         params[key] = llm_result[key]
 
@@ -1668,6 +2497,27 @@ class SmartAgent:
                 llm_filters = _llm_to_filters(llm_result, question)
                 if llm_filters:
                     print(f"[SMART] LLM filters convertidos: {llm_filters}")
+                    if _log: _log["processing"].update(filters_source="llm", filters_applied={k: str(v) for k, v in llm_filters.items()})
+
+                # Propagar tipo_compra da LLM para params (SQL WHERE)
+                if llm_result.get("tipo_compra") and not params.get("tipo_compra"):
+                    tc = llm_result["tipo_compra"].lower()
+                    if tc in ("casada", "empenho", "vinculada"):
+                        params["tipo_compra"] = "Casada"
+                    elif tc in ("estoque", "futura", "reposicao"):
+                        params["tipo_compra"] = "Estoque"
+                # LLM filters tambem podem ter TIPO_COMPRA
+                if llm_filters.get("TIPO_COMPRA") and not params.get("tipo_compra"):
+                    params["tipo_compra"] = llm_filters["TIPO_COMPRA"]
+                # Intent override se LLM retornou tipo_compra mas intent errado
+                if params.get("tipo_compra") and intent != "pendencia_compras":
+                    print(f"[SMART] Intent override (LLM): {intent} -> pendencia_compras (tipo_compra={params['tipo_compra']})")
+                    intent = "pendencia_compras"
+                    if _log: _log["processing"]["intent"] = "pendencia_compras"
+
+                if _log:
+                    _log["processing"]["view_mode"] = view_mode
+                    _log["processing"]["entities"] = {k: v for k, v in params.items() if v and k != "periodo"}
 
                 if intent == "pendencia_compras":
                     return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx, llm_filters=llm_filters)
@@ -1675,6 +2525,17 @@ class SmartAgent:
                     return await self._handle_estoque(question, user_context, t0, params, ctx)
                 elif intent == "vendas":
                     return await self._handle_vendas(question, user_context, t0, params, ctx)
+                elif intent == "produto":
+                    # Redirecionar para detect_product_query ou busca_fabricante como fallback
+                    product_type = detect_product_query(q_norm, params)
+                    if product_type == "similares":
+                        return await self._handle_similares(question, user_context, t0, params, ctx)
+                    elif product_type == "produto_360":
+                        return await self._handle_produto_360(question, user_context, t0, params, ctx)
+                    elif product_type == "busca_aplicacao":
+                        return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
+                    else:
+                        return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
                 elif intent == "saudacao":
                     return self._handle_saudacao(user_context)
                 elif intent == "ajuda":
@@ -1684,17 +2545,20 @@ class SmartAgent:
         # Ultima tentativa: se tem entidade, assume pendencia
         if has_entity:
             print(f"[SMART] Layer 3 (fallback c/ entidade): {params}")
+            if _log: _log["processing"].update(layer="fallback", intent="pendencia_compras")
             view_mode = detect_view_mode(tokens)
             return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx)
 
         # Ultima tentativa: se tem algum score de knowledge, tenta KB
         if kb_score >= 4:
             print(f"[SMART] Layer 3 (fallback knowledge): kb_score={kb_score}")
+            if _log: _log["processing"].update(layer="fallback", intent="conhecimento")
             kb_result = await self.kb.answer(question)
             if kb_result:
                 kb_result["time_ms"] = int((time.time() - t0) * 1000)
                 return kb_result
 
+        if _log: _log["processing"]["layer"] = "fallback"
         return self._handle_fallback(question)
 
     async def _dispatch(self, intent: str, question: str, user_context: dict, t0: float, tokens: list, params: dict = None, ctx: ConversationContext = None):
@@ -1708,6 +2572,17 @@ class SmartAgent:
             return await self._handle_estoque(question, user_context, t0, params, ctx)
         elif intent == "vendas":
             return await self._handle_vendas(question, user_context, t0, params, ctx)
+        elif intent == "produto":
+            q_norm = normalize(question)
+            product_type = detect_product_query(q_norm, params)
+            if product_type == "similares":
+                return await self._handle_similares(question, user_context, t0, params, ctx)
+            elif product_type == "produto_360":
+                return await self._handle_produto_360(question, user_context, t0, params, ctx)
+            elif product_type == "busca_aplicacao":
+                return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
+            else:
+                return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
         elif intent == "saudacao":
             return self._handle_saudacao(user_context)
         elif intent == "ajuda":
@@ -1883,6 +2758,18 @@ class SmartAgent:
             ctx.update("pendencia_compras", params, result_data, question, view_mode)
             print(f"[CTX] Atualizado: {ctx}")
 
+        # ========== VIEWS AGREGADAS (quem compra/fornece marca X?) ==========
+        agg_view = detect_aggregation_view(normalize(question))
+        if agg_view and detail_data:
+            marca = params.get("marca", "")
+            elapsed = int((time.time() - t0) * 1000)
+            if agg_view == "comprador_marca" and marca:
+                response = format_comprador_marca(detail_data, marca)
+                return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": len(detail_data), "time_ms": elapsed, "_detail_data": detail_data}
+            elif agg_view == "fornecedor_marca" and marca:
+                response = format_fornecedor_marca(detail_data, marca)
+                return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": len(detail_data), "time_ms": elapsed, "_detail_data": detail_data}
+
         # ========== FILTROS (LLM ou pattern-based) ==========
         # Prioridade: LLM filters > inline pattern filters
         active_filters = llm_filters if llm_filters else detect_filter_request(normalize(question), tokenize(question))
@@ -1973,7 +2860,7 @@ class SmartAgent:
                             response += f"| {prod} | {marca_i} | {fmt_num(qtd_i)} | R$ {fmt_num(vlr_i)} |\n"
 
                     elapsed = int((time.time() - t0) * 1000)
-                    return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": total_itens, "time_ms": elapsed}
+                    return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": total_itens, "time_ms": elapsed, "_detail_data": filtered}
 
                 # Top 1 + view itens = mostrar 1 item (tabela vertical)
                 elif top_n == 1 and len(filtered) == 1:
@@ -1991,7 +2878,7 @@ class SmartAgent:
                     if r.get("PREVISAO_ENTREGA"): response += f"| **Previsao Entrega** | {r.get('PREVISAO_ENTREGA')} |\n"
                     if r.get("CONFIRMADO"): response += f"| **Confirmado** | {r.get('CONFIRMADO')} |\n"
                     elapsed = int((time.time() - t0) * 1000)
-                    return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": 1, "time_ms": elapsed}
+                    return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": 1, "time_ms": elapsed, "_detail_data": filtered}
                 else:
                     # Recalcular KPIs com dados filtrados
                     kpis_data = [{
@@ -2003,7 +2890,7 @@ class SmartAgent:
                     desc_filtered = f"{description} ({filter_label})" if filter_label else description
                     fallback_response = format_pendencia_response(kpis_data, detail_data, desc_filtered, params, "itens")
                     elapsed = int((time.time() - t0) * 1000)
-                    return {"response": fallback_response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": len(filtered), "time_ms": elapsed}
+                    return {"response": fallback_response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": len(filtered), "time_ms": elapsed, "_detail_data": filtered}
             else:
                 # Filtro retornou 0 resultados - avisar usuario
                 print(f"[SMART] Filtro ({filter_source}): 0 resultados")
@@ -2025,7 +2912,7 @@ class SmartAgent:
                 statuses = set(str(r.get("STATUS_ENTREGA", "?")) for r in detail_data if isinstance(r, dict))
                 response += ", ".join(f"**{s}**" for s in sorted(statuses)) + "."
                 elapsed = int((time.time() - t0) * 1000)
-                return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": 0, "time_ms": elapsed}
+                return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": 0, "time_ms": elapsed, "_detail_data": detail_data}
 
         fallback_response = format_pendencia_response(kpis_data, detail_data, description, params, view_mode)
 
@@ -2051,7 +2938,7 @@ class SmartAgent:
             response = fallback_response
 
         elapsed = int((time.time() - t0) * 1000)
-        return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": qtd, "time_ms": elapsed}
+        return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": qtd, "time_ms": elapsed, "_detail_data": detail_data}
 
     # ---- ESTOQUE ----
     async def _handle_estoque(self, question, user_context, t0, params=None, ctx=None):
@@ -2065,11 +2952,11 @@ class SmartAgent:
         is_critico = any(w in q_norm for w in ["critico", "baixo", "zerado", "minimo", "acabando", "faltando"])
 
         if params.get("codprod"):
-            sql = f"SELECT EMP.NOMEFANTASIA AS EMPRESA, E.CODPROD, PRO.DESCRPROD AS PRODUTO, NVL(MAR.DESCRICAO,'') AS MARCA, NVL(E.ESTOQUE,0) AS ESTOQUE, NVL(E.ESTMIN,0) AS ESTMIN FROM TGFEST E JOIN TGFPRO PRO ON PRO.CODPROD=E.CODPROD LEFT JOIN TGFMAR MAR ON MAR.CODIGO=PRO.CODMARCA LEFT JOIN TSIEMP EMP ON EMP.CODEMP=E.CODEMP WHERE E.CODPROD={params['codprod']} AND E.CODLOCAL=0 AND NVL(E.ATIVO,'S')='S' ORDER BY EMP.NOMEFANTASIA"
-            dcols = ["EMPRESA","CODPROD","PRODUTO","MARCA","ESTOQUE","ESTMIN"]
+            sql = f"SELECT EMP.NOMEFANTASIA AS EMPRESA, E.CODPROD, PRO.DESCRPROD AS PRODUTO, NVL(MAR.DESCRICAO,'') AS MARCA, NVL(PRO.CARACTERISTICAS,'') AS APLICACAO, NVL(E.ESTOQUE,0) AS ESTOQUE, NVL(E.ESTMIN,0) AS ESTMIN FROM TGFEST E JOIN TGFPRO PRO ON PRO.CODPROD=E.CODPROD LEFT JOIN TGFMAR MAR ON MAR.CODIGO=PRO.CODMARCA LEFT JOIN TSIEMP EMP ON EMP.CODEMP=E.CODEMP WHERE E.CODPROD={params['codprod']} AND E.CODLOCAL=0 AND NVL(E.ATIVO,'S')='S' ORDER BY EMP.NOMEFANTASIA"
+            dcols = ["EMPRESA","CODPROD","PRODUTO","MARCA","APLICACAO","ESTOQUE","ESTMIN"]
         elif params.get("produto_nome"):
-            sql = f"SELECT EMP.NOMEFANTASIA AS EMPRESA, E.CODPROD, PRO.DESCRPROD AS PRODUTO, NVL(MAR.DESCRICAO,'') AS MARCA, NVL(E.ESTOQUE,0) AS ESTOQUE, NVL(E.ESTMIN,0) AS ESTMIN FROM TGFEST E JOIN TGFPRO PRO ON PRO.CODPROD=E.CODPROD LEFT JOIN TGFMAR MAR ON MAR.CODIGO=PRO.CODMARCA LEFT JOIN TSIEMP EMP ON EMP.CODEMP=E.CODEMP WHERE UPPER(PRO.DESCRPROD) LIKE UPPER('%{params['produto_nome']}%') AND E.CODLOCAL=0 AND NVL(E.ATIVO,'S')='S' AND NVL(E.ESTOQUE,0)>0 ORDER BY E.ESTOQUE DESC"
-            dcols = ["EMPRESA","CODPROD","PRODUTO","MARCA","ESTOQUE","ESTMIN"]
+            sql = f"SELECT EMP.NOMEFANTASIA AS EMPRESA, E.CODPROD, PRO.DESCRPROD AS PRODUTO, NVL(MAR.DESCRICAO,'') AS MARCA, NVL(PRO.CARACTERISTICAS,'') AS APLICACAO, NVL(E.ESTOQUE,0) AS ESTOQUE, NVL(E.ESTMIN,0) AS ESTMIN FROM TGFEST E JOIN TGFPRO PRO ON PRO.CODPROD=E.CODPROD LEFT JOIN TGFMAR MAR ON MAR.CODIGO=PRO.CODMARCA LEFT JOIN TSIEMP EMP ON EMP.CODEMP=E.CODEMP WHERE UPPER(PRO.DESCRPROD) LIKE UPPER('%{params['produto_nome']}%') AND E.CODLOCAL=0 AND NVL(E.ATIVO,'S')='S' AND NVL(E.ESTOQUE,0)>0 ORDER BY E.ESTOQUE DESC"
+            dcols = ["EMPRESA","CODPROD","PRODUTO","MARCA","APLICACAO","ESTOQUE","ESTMIN"]
         elif is_critico or params.get("marca"):
             we = f"AND UPPER(MAR.DESCRICAO) LIKE UPPER('%{params['marca']}%')" if params.get("marca") else ""
             sql = f"SELECT E.CODPROD, PRO.DESCRPROD AS PRODUTO, NVL(MAR.DESCRICAO,'') AS MARCA, SUM(NVL(E.ESTOQUE,0)) AS ESTOQUE, MAX(NVL(E.ESTMIN,0)) AS ESTMIN FROM TGFEST E JOIN TGFPRO PRO ON PRO.CODPROD=E.CODPROD LEFT JOIN TGFMAR MAR ON MAR.CODIGO=PRO.CODMARCA WHERE E.CODLOCAL=0 AND NVL(E.ATIVO,'S')='S' AND NVL(E.ESTMIN,0)>0 {we} GROUP BY E.CODPROD, PRO.DESCRPROD, MAR.DESCRICAO HAVING SUM(NVL(E.ESTOQUE,0))<=MAX(NVL(E.ESTMIN,0)) ORDER BY SUM(NVL(E.ESTOQUE,0))"
@@ -2106,7 +2993,7 @@ class SmartAgent:
             response = fallback_response
 
         elapsed = int((time.time() - t0) * 1000)
-        return {"response": response, "tipo": "consulta_banco", "query_executed": sql[:200] + "...", "query_results": len(data), "time_ms": elapsed}
+        return {"response": response, "tipo": "consulta_banco", "query_executed": sql[:200] + "...", "query_results": len(data), "time_ms": elapsed, "_detail_data": data}
 
     # ---- VENDAS ----
     async def _handle_vendas(self, question, user_context, t0, params=None, ctx=None):
@@ -2177,7 +3064,303 @@ class SmartAgent:
         if ctx:
             ctx.update("vendas", params, result_data, question)
         elapsed = int((time.time() - t0) * 1000)
-        return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": int(kpi_row.get("QTD_VENDAS",0) or 0), "time_ms": elapsed}
+        return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": int(kpi_row.get("QTD_VENDAS",0) or 0), "time_ms": elapsed, "_detail_data": td}
+
+    # ---- BUSCA POR CODIGO FABRICANTE ----
+    async def _handle_busca_fabricante(self, question, user_context, t0, params=None, ctx=None):
+        """Busca produto pelo codigo do fabricante (referencia, numfabricante, etc.)."""
+        if params is None:
+            params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
+        cod_fab = params.get("codigo_fabricante")
+        if not cod_fab:
+            return {"response": "Informe o codigo do fabricante para buscar. Ex: *\"HU711/51\"* ou *\"referencia WK 950/21\"*", "tipo": "info", "query_executed": None, "query_results": None}
+
+        print(f"[SMART] Busca fabricante: '{cod_fab}'")
+
+        # Busca em TGFPRO (campos de referencia)
+        resolved = await resolve_manufacturer_code(cod_fab, self.executor)
+
+        # Se nao encontrou em TGFPRO, tenta em AD_TGFPROAUXMMA (auxiliares)
+        if not resolved.get("found"):
+            aux_result = await buscar_similares_por_codigo(cod_fab, self.executor)
+            if aux_result.get("found"):
+                response = format_similares(aux_result)
+                elapsed = int((time.time() - t0) * 1000)
+                return {"response": response, "tipo": "consulta_banco", "query_executed": f"busca auxiliar: {cod_fab}", "query_results": 1, "time_ms": elapsed}
+
+        response = format_busca_fabricante(resolved)
+
+        # Salvar no contexto se encontrou 1 produto
+        products = resolved.get("products", [])
+        if len(products) == 1 and ctx:
+            result_data = {"detail_data": products, "columns": ["codprod", "produto", "marca", "referencia"], "description": f"produto {cod_fab}", "params": params, "intent": "busca_fabricante"}
+            ctx.update("busca_fabricante", params, result_data, question)
+
+        elapsed = int((time.time() - t0) * 1000)
+        return {"response": response, "tipo": "consulta_banco", "query_executed": f"busca fabricante: {cod_fab}", "query_results": len(products), "time_ms": elapsed}
+
+    # ---- SIMILARES / CROSS-REFERENCE ----
+    async def _handle_similares(self, question, user_context, t0, params=None, ctx=None):
+        """Busca codigos auxiliares/similares de um produto."""
+        if params is None:
+            params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
+
+        codprod = params.get("codprod")
+        cod_fab = params.get("codigo_fabricante")
+
+        if not codprod and not cod_fab:
+            return {"response": "Para buscar similares, informe o codigo do produto ou referencia.\nEx: *\"similares do produto 133346\"* ou *\"similares do HU711/51\"*", "tipo": "info", "query_executed": None, "query_results": None}
+
+        # Se tem codigo fabricante mas nao codprod, resolver primeiro
+        if not codprod and cod_fab:
+            resolved = await resolve_manufacturer_code(cod_fab, self.executor)
+            if resolved.get("found"):
+                products = resolved.get("products", [])
+                if len(products) == 1:
+                    codprod = products[0]["codprod"]
+                else:
+                    # Multiplos produtos: buscar similares pelo texto auxiliar
+                    sim = await buscar_similares_por_codigo(cod_fab, self.executor)
+                    response = format_similares(sim)
+                    elapsed = int((time.time() - t0) * 1000)
+                    return {"response": response, "tipo": "consulta_banco", "query_executed": f"similares por codigo: {cod_fab}", "query_results": len(products), "time_ms": elapsed}
+            else:
+                # Tenta busca por codigo auxiliar direto
+                sim = await buscar_similares_por_codigo(cod_fab, self.executor)
+                response = format_similares(sim)
+                elapsed = int((time.time() - t0) * 1000)
+                return {"response": response, "tipo": "consulta_banco", "query_executed": f"similares por codigo: {cod_fab}", "query_results": 1 if sim.get("found") else 0, "time_ms": elapsed}
+
+        print(f"[SMART] Similares: codprod={codprod}")
+        sim_data = await buscar_similares(codprod, self.executor)
+        response = format_similares(sim_data)
+
+        if ctx and sim_data.get("found"):
+            result_data = {"detail_data": sim_data.get("auxiliares", []), "columns": ["codigo", "marca", "observacao"], "description": f"similares produto {codprod}", "params": params, "intent": "similares"}
+            ctx.update("similares", params, result_data, question)
+
+        elapsed = int((time.time() - t0) * 1000)
+        return {"response": response, "tipo": "consulta_banco", "query_executed": f"similares: codprod={codprod}", "query_results": len(sim_data.get("auxiliares", [])), "time_ms": elapsed}
+
+    # ---- BUSCA POR APLICACAO/VEICULO ----
+    async def _handle_busca_aplicacao(self, question, user_context, t0, params=None, ctx=None):
+        """Busca produtos por aplicacao/veiculo usando CARACTERISTICAS."""
+        if params is None:
+            params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
+
+        aplicacao = params.get("aplicacao", "")
+        if not aplicacao:
+            return {"response": "Para buscar por aplicacao, informe o veiculo ou motor.\nEx: *\"pecas para scania r450\"* ou *\"filtros para motor dc13\"*", "tipo": "info", "query_executed": None, "query_results": None}
+
+        safe_app = aplicacao.replace("'", "''")
+        marca_filter = ""
+        if params.get("marca"):
+            safe_marca = params['marca'].replace("'", "''")
+            marca_filter = f" AND UPPER(MAR.DESCRICAO) LIKE UPPER('%{safe_marca}%')"
+
+        sql = f"""SELECT DISTINCT PRO.CODPROD, PRO.DESCRPROD AS PRODUTO,
+            NVL(MAR.DESCRICAO,'') AS MARCA,
+            NVL(PRO.CARACTERISTICAS,'') AS APLICACAO, PRO.REFERENCIA
+        FROM TGFPRO PRO
+        LEFT JOIN TGFMAR MAR ON MAR.CODIGO = PRO.CODMARCA
+        WHERE PRO.ATIVO = 'S'
+          AND UPPER(PRO.CARACTERISTICAS) LIKE UPPER('%{safe_app}%')
+          {marca_filter}
+          AND ROWNUM <= 20
+        ORDER BY MAR.DESCRICAO, PRO.DESCRPROD"""
+
+        print(f"[SMART] Busca aplicacao: '{aplicacao}' marca={params.get('marca')}")
+        result = await self.executor.execute(sql)
+
+        if not result.get("success"):
+            return {"response": f"Erro ao buscar por aplicacao: {result.get('error','?')}", "tipo": "consulta_banco", "query_executed": sql[:200], "query_results": 0}
+
+        data = result.get("data", [])
+        if data and isinstance(data[0], (list, tuple)):
+            cols = result.get("columns") or ["CODPROD", "PRODUTO", "MARCA", "APLICACAO", "REFERENCIA"]
+            data = [dict(zip(cols, row)) for row in data]
+
+        if not data:
+            elapsed = int((time.time() - t0) * 1000)
+            return {"response": f"Nenhum produto encontrado com aplicacao **{aplicacao}**.\n\nVerifique se o nome do veiculo/motor esta correto.", "tipo": "consulta_banco", "query_executed": sql[:200], "query_results": 0, "time_ms": elapsed}
+
+        lines = [f"\U0001f50d Encontrei **{len(data)} produto(s)** para aplicacao **{aplicacao}**"]
+        if params.get("marca"):
+            lines[0] += f" (marca {params['marca']})"
+        lines[0] += ":\n"
+        lines.append("| CodProd | Produto | Marca | Aplicacao | Ref. |")
+        lines.append("|---------|---------|-------|-----------|------|")
+        for r in data:
+            aplic = _trunc(r.get('APLICACAO',''), 35)
+            lines.append(f"| {r.get('CODPROD','')} | {str(r.get('PRODUTO',''))[:30]} | {str(r.get('MARCA',''))[:15]} | {aplic} | {str(r.get('REFERENCIA','') or '')[:15]} |")
+        if len(data) >= 20:
+            lines.append("\n*Mostrando os 20 primeiros resultados. Refine a busca com a marca ou nome da peca.*")
+        lines.append(f"\nPara detalhes: *\"tudo sobre o produto {data[0].get('CODPROD','')}\"*")
+
+        response = "\n".join(lines)
+        elapsed = int((time.time() - t0) * 1000)
+
+        result_data = {"detail_data": data, "columns": ["CODPROD","PRODUTO","MARCA","APLICACAO","REFERENCIA"], "description": "aplicacao", "params": params, "intent": "produto"}
+        if ctx:
+            ctx.update("produto", params, result_data, question)
+
+        return {"response": response, "tipo": "consulta_banco", "query_executed": sql[:200] + "...", "query_results": len(data), "time_ms": elapsed, "_detail_data": data}
+
+    # ---- PRODUTO 360 (visao completa) ----
+    async def _handle_produto_360(self, question, user_context, t0, params=None, ctx=None):
+        """Combina estoque + pendencia + vendas para visao completa de um produto."""
+        if params is None:
+            params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
+
+        codprod = params.get("codprod")
+        cod_fab = params.get("codigo_fabricante")
+        produto_nome = params.get("produto_nome")
+
+        # Resolver CODPROD se necessario
+        if not codprod and cod_fab:
+            resolved = await resolve_manufacturer_code(cod_fab, self.executor)
+            if resolved.get("found"):
+                products = resolved.get("products", [])
+                if len(products) == 1:
+                    codprod = products[0]["codprod"]
+                else:
+                    response = format_busca_fabricante(resolved)
+                    elapsed = int((time.time() - t0) * 1000)
+                    return {"response": response, "tipo": "consulta_banco", "query_executed": f"busca: {cod_fab}", "query_results": len(products), "time_ms": elapsed}
+            else:
+                elapsed = int((time.time() - t0) * 1000)
+                return {"response": f"Nenhum produto encontrado com o codigo **{cod_fab}**.", "tipo": "consulta_banco", "query_executed": f"busca: {cod_fab}", "query_results": 0, "time_ms": elapsed}
+
+        if not codprod and produto_nome:
+            sql_find = f"SELECT PRO.CODPROD, PRO.DESCRPROD, NVL(PRO.CARACTERISTICAS,'') AS APLICACAO FROM TGFPRO PRO WHERE UPPER(PRO.DESCRPROD) LIKE UPPER('%{produto_nome.replace(chr(39), chr(39)+chr(39))}%') AND PRO.ATIVO='S' AND ROWNUM<=5"
+            r_find = await self.executor.execute(sql_find)
+            if r_find.get("success") and r_find.get("data"):
+                fdata = r_find["data"]
+                if fdata and isinstance(fdata[0], (list, tuple)):
+                    fdata = [dict(zip(["CODPROD", "DESCRPROD", "APLICACAO"], row)) for row in fdata]
+                if len(fdata) == 1:
+                    codprod = int(fdata[0].get("CODPROD", 0) or 0)
+                else:
+                    lines = [f"Encontrei **{len(fdata)} produtos** com '{produto_nome}':\n"]
+                    lines.append("| CodProd | Produto | Aplicacao |")
+                    lines.append("|---------|---------|-----------|")
+                    for r in fdata:
+                        aplic = _trunc(r.get('APLICACAO',''), 40)
+                        lines.append(f"| {r.get('CODPROD','')} | {str(r.get('DESCRPROD',''))[:50]} | {aplic} |")
+                    lines.append(f"\nEspecifique: *\"tudo sobre o produto {fdata[0].get('CODPROD','')}\"*")
+                    elapsed = int((time.time() - t0) * 1000)
+                    return {"response": "\n".join(lines), "tipo": "consulta_banco", "query_executed": sql_find[:200], "query_results": len(fdata), "time_ms": elapsed}
+
+        if not codprod:
+            return {"response": "Para ver a visao 360, informe o codigo do produto.\nEx: *\"tudo sobre o produto 133346\"*", "tipo": "info", "query_executed": None, "query_results": None}
+
+        print(f"[SMART] Produto 360: codprod={codprod}")
+
+        # Executar consultas em paralelo
+        sql_prod = f"""SELECT PRO.CODPROD, PRO.DESCRPROD AS PRODUTO, NVL(MAR.DESCRICAO,'') AS MARCA,
+            PRO.REFERENCIA, PRO.AD_NUMFABRICANTE, PRO.NCM, PRO.CODVOL,
+            NVL(PRO.CARACTERISTICAS,'') AS APLICACAO,
+            NVL(PRO.COMPLDESC,'') AS COMPLEMENTO,
+            NVL(PRO.AD_NUMORIGINAL,'') AS NUM_ORIGINAL,
+            NVL(PRO.REFFORN,'') AS REF_FORNECEDOR
+        FROM TGFPRO PRO LEFT JOIN TGFMAR MAR ON MAR.CODIGO = PRO.CODMARCA
+        WHERE PRO.CODPROD = {codprod}"""
+
+        sql_est = f"""SELECT EMP.NOMEFANTASIA AS EMPRESA, NVL(E.ESTOQUE,0) AS ESTOQUE, NVL(E.ESTMIN,0) AS ESTMIN
+        FROM TGFEST E
+        LEFT JOIN TSIEMP EMP ON EMP.CODEMP = E.CODEMP
+        WHERE E.CODPROD = {codprod} AND E.CODLOCAL = 0 AND NVL(E.ATIVO,'S') = 'S'
+        ORDER BY EMP.NOMEFANTASIA"""
+
+        sql_vendas = f"""SELECT COUNT(DISTINCT C.NUNOTA) AS QTD_VENDAS, SUM(I.QTDNEG) AS QTD_VENDIDA,
+            SUM(I.VLRTOT) AS VLR_TOTAL
+        FROM TGFITE I JOIN TGFCAB C ON C.NUNOTA = I.NUNOTA
+        WHERE I.CODPROD = {codprod}
+          AND C.TIPMOV = 'V' AND C.CODTIPOPER IN (1100,1101) AND C.STATUSNOTA <> 'C'
+          AND C.DTNEG >= ADD_MONTHS(TRUNC(SYSDATE), -3)"""
+
+        # Executar em paralelo
+        r_prod, r_est, r_vendas = await asyncio.gather(
+            self.executor.execute(sql_prod),
+            self.executor.execute(sql_est),
+            self.executor.execute(sql_vendas),
+        )
+
+        # Montar info do produto
+        prod_info = {"codprod": codprod, "produto": "?", "marca": "", "referencia": ""}
+        if r_prod.get("success") and r_prod.get("data"):
+            pdata = r_prod["data"]
+            if pdata and isinstance(pdata[0], (list, tuple)):
+                cols = r_prod.get("columns") or ["CODPROD", "PRODUTO", "MARCA", "REFERENCIA", "AD_NUMFABRICANTE", "NCM", "CODVOL", "APLICACAO", "COMPLEMENTO", "NUM_ORIGINAL", "REF_FORNECEDOR"]
+                pdata = [dict(zip(cols, row)) for row in pdata]
+            if pdata and isinstance(pdata[0], dict):
+                p = pdata[0]
+                prod_info["produto"] = str(p.get("PRODUTO", "?"))
+                prod_info["marca"] = str(p.get("MARCA", ""))
+                prod_info["referencia"] = str(p.get("REFERENCIA", "") or p.get("AD_NUMFABRICANTE", "") or "")
+                prod_info["aplicacao"] = str(p.get("APLICACAO", "") or "")
+                prod_info["complemento"] = str(p.get("COMPLEMENTO", "") or "")
+                prod_info["num_original"] = str(p.get("NUM_ORIGINAL", "") or "")
+                prod_info["ref_fornecedor"] = str(p.get("REF_FORNECEDOR", "") or "")
+
+        # Estoque
+        estoque_data = []
+        if r_est.get("success") and r_est.get("data"):
+            edata = r_est["data"]
+            if edata and isinstance(edata[0], (list, tuple)):
+                cols = r_est.get("columns") or ["EMPRESA", "ESTOQUE", "ESTMIN"]
+                edata = [dict(zip(cols, row)) for row in edata]
+            estoque_data = [r for r in edata if isinstance(r, dict)]
+
+        # Pendencia de compras (usa handler existente internamente)
+        pend_params = {"codprod": codprod}
+        sql_pend = f"""SELECT CAB.NUNOTA AS PEDIDO,
+            CASE WHEN CAB.CODTIPOPER = 1313 THEN 'Casada' WHEN CAB.CODTIPOPER = 1301 THEN 'Estoque' END AS TIPO_COMPRA,
+            PAR.NOMEPARC AS FORNECEDOR, SUM(ITE.QTDNEG - NVL(ITE.QTDENTREGUE,0)) AS QTD_PENDENTE,
+            SUM((ITE.QTDNEG - NVL(ITE.QTDENTREGUE,0)) * ITE.VLRUNIT) AS VLR_PENDENTE,
+            CASE WHEN CAB.AD_DTPREVCHEG IS NULL THEN 'SEM PREVISAO'
+                 WHEN CAB.AD_DTPREVCHEG < TRUNC(SYSDATE) THEN 'ATRASADO'
+                 ELSE 'NO PRAZO' END AS STATUS_ENTREGA
+        FROM TGFCAB CAB
+        JOIN TGFITE ITE ON ITE.NUNOTA = CAB.NUNOTA
+        JOIN TGFPRO PRO ON PRO.CODPROD = ITE.CODPROD
+        JOIN TGFPAR PAR ON PAR.CODPARC = CAB.CODPARC
+        WHERE CAB.CODTIPOPER IN (1301, 1313) AND CAB.PENDENTE = 'S'
+          AND ITE.CODPROD = {codprod}
+          AND (ITE.QTDNEG - NVL(ITE.QTDENTREGUE,0)) > 0
+        GROUP BY CAB.NUNOTA, CAB.CODTIPOPER, PAR.NOMEPARC, CAB.AD_DTPREVCHEG
+        ORDER BY CAB.NUNOTA"""
+
+        r_pend = await self.executor.execute(sql_pend)
+        pendencia_data = {"detail_data": []}
+        if r_pend.get("success") and r_pend.get("data"):
+            pd_data = r_pend["data"]
+            if pd_data and isinstance(pd_data[0], (list, tuple)):
+                cols = r_pend.get("columns") or ["PEDIDO", "TIPO_COMPRA", "FORNECEDOR", "QTD_PENDENTE", "VLR_PENDENTE", "STATUS_ENTREGA"]
+                pd_data = [dict(zip(cols, row)) for row in pd_data]
+            pendencia_data["detail_data"] = [r for r in pd_data if isinstance(r, dict)]
+
+        # Vendas
+        vendas_info = {}
+        if r_vendas.get("success") and r_vendas.get("data"):
+            vdata = r_vendas["data"]
+            if vdata and isinstance(vdata[0], (list, tuple)):
+                cols = r_vendas.get("columns") or ["QTD_VENDAS", "QTD_VENDIDA", "VLR_TOTAL"]
+                vdata = [dict(zip(cols, row)) for row in vdata]
+            if vdata and isinstance(vdata[0], dict):
+                vendas_info = vdata[0]
+
+        # Formatar resposta
+        response = format_produto_360(prod_info, estoque_data, pendencia_data, vendas_info)
+
+        # Salvar no contexto
+        if ctx:
+            all_data = estoque_data + pendencia_data.get("detail_data", [])
+            result_data = {"detail_data": all_data, "columns": ["CODPROD"], "description": f"produto 360 - {codprod}", "params": params, "intent": "produto_360"}
+            ctx.update("produto_360", params, result_data, question)
+
+        elapsed = int((time.time() - t0) * 1000)
+        return {"response": response, "tipo": "consulta_banco", "query_executed": f"produto 360: codprod={codprod}", "query_results": 1, "time_ms": elapsed}
 
     # ---- EXCEL ----
     async def _handle_excel_followup(self, user_context, ctx=None):

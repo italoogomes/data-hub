@@ -1,0 +1,19 @@
+{
+    "_meta": {
+        "descricao": "Apelidos de produto usados pelos usuarios da MMarra. Mapeia termos informais para nomes reais de produto ou CODPROD.",
+        "formato": "chave = apelido normalizado (minusculo, sem acento), valor = objeto com nome_real, codprod, confidence, hits, criado_em, origem",
+        "versao": "1.0",
+        "atualizado_em": "2026-02-12"
+    },
+    "aliases": {
+        "boneca": {
+            "nome_real": "PINO DO CABECALHO",
+            "codprod": null,
+            "confidence": 0.90,
+            "hits": 0,
+            "criado_em": "2026-02-12",
+            "origem": "manual"
+        }
+    },
+    "suggestions": []
+}

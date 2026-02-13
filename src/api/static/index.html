@@ -539,6 +539,231 @@
             margin-bottom: 4px;
         }
 
+        .suggestions-section-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-align: left;
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .suggestions-section-title:first-child {
+            margin-top: 28px;
+        }
+
+        /* Analytics */
+        .analytics-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .analytics-header {
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .analytics-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .analytics-header p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .analytics-refresh {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .analytics-refresh:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .analytics-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .analytics-kpi {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .analytics-kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-light);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .analytics-kpi-value.success { color: var(--success); }
+        .analytics-kpi-value.error { color: var(--error); }
+
+        .analytics-kpi-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .analytics-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .analytics-card.analytics-full {
+            margin-bottom: 16px;
+        }
+
+        .analytics-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .analytics-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .analytics-bar-label {
+            width: 120px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .analytics-bar-track {
+            flex: 1;
+            height: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .analytics-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+            min-width: 2px;
+        }
+
+        .analytics-bar-fill.positive { background: var(--success); }
+        .analytics-bar-fill.negative { background: var(--error); opacity: 0.7; }
+        .analytics-bar-fill.neutral { background: var(--accent); }
+
+        .analytics-bar-value {
+            width: 50px;
+            text-align: right;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .analytics-problem {
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .analytics-problem-q {
+            font-size: 13px;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .analytics-problem-count {
+            font-size: 11px;
+            color: var(--error);
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .analytics-improvement {
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .analytics-improvement strong {
+            color: var(--accent-light);
+        }
+
+        .analytics-empty-msg {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 60px 20px;
+            font-size: 14px;
+        }
+
+        .analytics-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .analytics-kpis { grid-template-columns: repeat(2, 1fr); }
+            .analytics-grid { grid-template-columns: 1fr; }
+        }
+
         /* Messages */
         .messages {
             max-width: 780px;
@@ -717,6 +942,108 @@
             font-size: 10px;
             color: var(--text-muted);
             font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Feedback buttons */
+        .feedback-bar {
+            padding-left: 32px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .feedback-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.15s ease;
+            opacity: 0.5;
+        }
+
+        .feedback-btn:hover {
+            opacity: 1;
+            border-color: var(--border-hover);
+            background: var(--bg-tertiary);
+        }
+
+        .feedback-btn.selected {
+            opacity: 1;
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .feedback-btn.selected.positive {
+            border-color: var(--success);
+            background: rgba(46, 204, 113, 0.12);
+        }
+
+        .feedback-btn.selected.negative {
+            border-color: var(--error);
+            background: rgba(231, 76, 60, 0.12);
+        }
+
+        .feedback-btn.hidden {
+            display: none;
+        }
+
+        .feedback-thanks {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            margin-left: 4px;
+        }
+
+        .feedback-comment {
+            display: none;
+            padding-left: 32px;
+            margin-top: 6px;
+        }
+
+        .feedback-comment.visible {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .feedback-comment input {
+            flex: 1;
+            max-width: 300px;
+            padding: 6px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+        }
+
+        .feedback-comment input:focus {
+            border-color: var(--accent);
+        }
+
+        .feedback-comment button {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .feedback-comment button:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
         }
 
         /* Query info collapsible */
@@ -1696,6 +2023,10 @@
                     <span class="nav-item-icon">&#128202;</span>
                     <span>Relatorios</span>
                 </div>
+                <div class="nav-item admin-only" data-section="analytics" onclick="switchSection('analytics')" id="nav-analytics" style="display:none;">
+                    <span class="nav-item-icon">&#128200;</span>
+                    <span>Analytics</span>
+                </div>
             </div>
 
             <div class="nav-footer">
@@ -1740,7 +2071,10 @@
                         <img src="imagens/logo.png" class="welcome-logo" alt="MMarra">
                         <h2>Data Hub</h2>
                         <p>Assistente inteligente sobre os dados, processos e regras de negocio da MMarra Distribuidora Automotiva.</p>
-                        <div class="suggestions">
+                        <!-- Sugestoes dinamicas (carregadas da API) -->
+                        <div id="dynamic-suggestions"></div>
+                        <!-- Sugestoes estaticas (fallback) -->
+                        <div class="suggestions" id="static-suggestions">
                             <div class="suggestion" onclick="askSuggestion(this)">
                                 <div class="suggestion-label">Processo</div>
                                 Como funciona o fluxo de compras?
@@ -1908,6 +2242,55 @@
                 </div>
             </div>
 
+            <!-- ANALYTICS SECTION (admin only) -->
+            <div class="section" id="section-analytics">
+                <div class="analytics-container">
+                    <div class="analytics-header">
+                        <h2>&#128200; Analytics</h2>
+                        <p>Metricas de uso do assistente nos ultimos 30 dias</p>
+                        <button class="analytics-refresh" onclick="loadAnalytics()">&#8635; Atualizar</button>
+                    </div>
+
+                    <div id="analytics-loading" class="analytics-loading" style="display:none;">
+                        <div class="report-loading-spinner"></div>
+                        <span>Carregando analytics...</span>
+                    </div>
+
+                    <div id="analytics-content" style="display:none;">
+                        <!-- KPIs -->
+                        <div class="analytics-kpis" id="analytics-kpis"></div>
+
+                        <!-- Grid 2 colunas: By Intent + By Layer -->
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <h3>Por Intent</h3>
+                                <div id="analytics-by-intent"></div>
+                            </div>
+                            <div class="analytics-card">
+                                <h3>Por Layer</h3>
+                                <div id="analytics-by-layer"></div>
+                            </div>
+                        </div>
+
+                        <!-- Problem queries -->
+                        <div class="analytics-card analytics-full">
+                            <h3>&#9888; Perguntas com problema</h3>
+                            <div id="analytics-problems"></div>
+                        </div>
+
+                        <!-- Improvement suggestions -->
+                        <div class="analytics-card analytics-full">
+                            <h3>&#128161; Sugestoes de melhoria</h3>
+                            <div id="analytics-improvements"></div>
+                        </div>
+                    </div>
+
+                    <div id="analytics-empty" style="display:none;">
+                        <p class="analytics-empty-msg">Nenhum dado de analytics disponivel ainda. As metricas aparecerao conforme os usuarios usarem o chat.</p>
+                    </div>
+                </div>
+            </div>
+
         </div><!-- /main-content -->
     </div><!-- /app-layout -->
 
@@ -2061,6 +2444,12 @@
             // Filtrar report cards por perfil
             filterReportCards();
 
+            // Mostrar Analytics para admin
+            const navAnalytics = document.getElementById('nav-analytics');
+            if (navAnalytics) {
+                navAnalytics.style.display = (userRole === 'admin') ? '' : 'none';
+            }
+
             init();
         }
 
@@ -2126,8 +2515,11 @@
             document.getElementById('section-' + section).classList.add('active');
 
             // Update header title
-            const titles = { chat: 'Chat IA', reports: 'Relatorios' };
+            const titles = { chat: 'Chat IA', reports: 'Relatorios', analytics: 'Analytics' };
             document.getElementById('section-title').textContent = titles[section] || section;
+
+            // Carregar analytics ao abrir a aba
+            if (section === 'analytics') loadAnalytics();
 
             // Close mobile nav
             document.getElementById('nav-sidebar').classList.remove('mobile-open');
@@ -2177,6 +2569,9 @@
             } catch (e) {
                 document.getElementById('model-info').textContent = 'erro ao conectar';
             }
+
+            // Carregar sugestoes dinamicas (nao bloqueia)
+            loadSuggestions();
         }
 
         // ===== INPUT =====
@@ -2198,10 +2593,241 @@
 
         // ===== SUGGESTIONS =====
         function askSuggestion(el) {
-            const text = el.textContent.replace(el.querySelector('.suggestion-label').textContent, '').trim();
+            const labelEl = el.querySelector('.suggestion-label');
+            const text = labelEl ? el.textContent.replace(labelEl.textContent, '').trim() : el.textContent.trim();
             input.value = text;
             sendBtn.disabled = false;
             sendMessage();
+        }
+
+        function askDynSuggestion(text) {
+            input.value = text;
+            sendBtn.disabled = false;
+            sendMessage();
+        }
+
+        async function loadSuggestions() {
+            try {
+                const res = await fetch('/api/suggestions', { headers: authHeaders() });
+                if (!res.ok) return;
+                const data = await res.json();
+
+                const popular = data.popular || [];
+                const personalized = data.personalized || [];
+                const recent = data.recent_successful || [];
+
+                // Se nao tem sugestoes dinamicas, manter estaticas
+                if (popular.length === 0 && personalized.length === 0 && recent.length === 0) return;
+
+                const container = document.getElementById('dynamic-suggestions');
+                const staticEl = document.getElementById('static-suggestions');
+                if (!container) return;
+
+                let html = '';
+
+                // Personalizadas primeiro (se houver)
+                if (personalized.length > 0) {
+                    html += '<div class="suggestions-section-title">&#128161; Para voce</div>';
+                    html += '<div class="suggestions">';
+                    personalized.forEach(function(q) {
+                        html += '<div class="suggestion" onclick="askDynSuggestion(\'' + escapeAttr(q) + '\')">';
+                        html += '<div class="suggestion-label">Seu perfil</div>';
+                        html += escapeHtml(q);
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                // Populares
+                if (popular.length > 0) {
+                    html += '<div class="suggestions-section-title">&#128293; Populares</div>';
+                    html += '<div class="suggestions">';
+                    popular.slice(0, 6).forEach(function(q) {
+                        html += '<div class="suggestion" onclick="askDynSuggestion(\'' + escapeAttr(q) + '\')">';
+                        html += '<div class="suggestion-label">Popular</div>';
+                        html += escapeHtml(q);
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                // Recentes com sucesso
+                if (recent.length > 0) {
+                    html += '<div class="suggestions-section-title">&#9989; Recentes que funcionaram</div>';
+                    html += '<div class="suggestions">';
+                    recent.slice(0, 4).forEach(function(q) {
+                        html += '<div class="suggestion" onclick="askDynSuggestion(\'' + escapeAttr(q) + '\')">';
+                        html += '<div class="suggestion-label">Recente</div>';
+                        html += escapeHtml(q);
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                container.innerHTML = html;
+                // Esconder sugestoes estaticas quando dinamicas estao disponiveis
+                if (staticEl) staticEl.style.display = 'none';
+
+            } catch (e) {
+                // Falha silenciosa - manter sugestoes estaticas
+                console.log('Sugestoes dinamicas indisponiveis:', e);
+            }
+        }
+
+        function escapeAttr(str) {
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        // ===== ANALYTICS (admin) =====
+        let analyticsLoaded = false;
+
+        async function loadAnalytics() {
+            if (userRole !== 'admin') return;
+
+            const loadingEl = document.getElementById('analytics-loading');
+            const contentEl = document.getElementById('analytics-content');
+            const emptyEl = document.getElementById('analytics-empty');
+
+            loadingEl.style.display = 'flex';
+            contentEl.style.display = 'none';
+            emptyEl.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/analytics', { headers: authHeaders() });
+                if (!res.ok) {
+                    loadingEl.style.display = 'none';
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+                const data = await res.json();
+                loadingEl.style.display = 'none';
+
+                if (data.total_queries === 0) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+
+                contentEl.style.display = 'block';
+                renderAnalytics(data);
+                analyticsLoaded = true;
+
+            } catch (e) {
+                console.error('Erro ao carregar analytics:', e);
+                loadingEl.style.display = 'none';
+                emptyEl.style.display = 'block';
+            }
+        }
+
+        function renderAnalytics(data) {
+            // KPIs
+            const fb = data.feedback_summary || {};
+            const kpisEl = document.getElementById('analytics-kpis');
+            kpisEl.innerHTML =
+                '<div class="analytics-kpi">' +
+                    '<div class="analytics-kpi-value">' + fmtNum(data.total_queries) + '</div>' +
+                    '<div class="analytics-kpi-label">Total de perguntas</div>' +
+                '</div>' +
+                '<div class="analytics-kpi">' +
+                    '<div class="analytics-kpi-value success">' + fmtNum(fb.positive || 0) + '</div>' +
+                    '<div class="analytics-kpi-label">Feedback positivo</div>' +
+                '</div>' +
+                '<div class="analytics-kpi">' +
+                    '<div class="analytics-kpi-value error">' + fmtNum(fb.negative || 0) + '</div>' +
+                    '<div class="analytics-kpi-label">Feedback negativo</div>' +
+                '</div>' +
+                '<div class="analytics-kpi">' +
+                    '<div class="analytics-kpi-value' + (fb.satisfaction_rate >= 80 ? ' success' : fb.satisfaction_rate >= 50 ? '' : ' error') + '">' + (fb.satisfaction_rate || 0).toFixed(1) + '%</div>' +
+                    '<div class="analytics-kpi-label">Satisfacao</div>' +
+                '</div>';
+
+            // By Intent
+            renderBarChart('analytics-by-intent', data.by_intent || {}, data.total_queries);
+
+            // By Layer
+            renderBarChart('analytics-by-layer', data.by_layer || {}, data.total_queries);
+
+            // Problem queries
+            renderProblems(data.problem_queries || []);
+
+            // Improvement suggestions
+            renderImprovements(data.improvement_suggestions || []);
+        }
+
+        function renderBarChart(containerId, byData, total) {
+            const el = document.getElementById(containerId);
+            if (!el) return;
+            const entries = Object.entries(byData).sort(function(a, b) { return b[1].total - a[1].total; });
+
+            if (entries.length === 0) {
+                el.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">Sem dados</div>';
+                return;
+            }
+
+            const maxVal = Math.max(...entries.map(function(e) { return e[1].total; }));
+            let html = '';
+
+            entries.forEach(function(entry) {
+                const name = entry[0];
+                const stats = entry[1];
+                const pct = maxVal > 0 ? (stats.total / maxVal * 100) : 0;
+                const posPct = stats.total > 0 ? (stats.positive / stats.total * 100) : 0;
+                const negPct = stats.total > 0 ? (stats.negative / stats.total * 100) : 0;
+
+                html += '<div class="analytics-bar-row">' +
+                    '<div class="analytics-bar-label" title="' + escapeHtml(name) + '">' + escapeHtml(name) + '</div>' +
+                    '<div class="analytics-bar-track">' +
+                        '<div class="analytics-bar-fill positive" style="width:' + posPct + '%;position:absolute;z-index:2;"></div>' +
+                        '<div class="analytics-bar-fill neutral" style="width:' + pct + '%;"></div>' +
+                    '</div>' +
+                    '<div class="analytics-bar-value">' + stats.total + '</div>' +
+                '</div>';
+            });
+
+            el.innerHTML = html;
+        }
+
+        function renderProblems(problems) {
+            const el = document.getElementById('analytics-problems');
+            if (!el) return;
+            if (problems.length === 0) {
+                el.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">Nenhuma pergunta com feedback negativo</div>';
+                return;
+            }
+            let html = '';
+            problems.forEach(function(p) {
+                html += '<div class="analytics-problem">' +
+                    '<div class="analytics-problem-q">"' + escapeHtml(p.question || '?') + '"</div>' +
+                    '<div class="analytics-problem-count">&#128078; ' + p.negative + 'x</div>' +
+                '</div>';
+            });
+            el.innerHTML = html;
+        }
+
+        function renderImprovements(suggestions) {
+            const el = document.getElementById('analytics-improvements');
+            if (!el) return;
+            if (suggestions.length === 0) {
+                el.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">Nenhuma sugestao automatica no momento</div>';
+                return;
+            }
+            let html = '';
+            suggestions.forEach(function(s) {
+                if (s.type === 'groq_correction_frequent') {
+                    html += '<div class="analytics-improvement"><strong>Correcao frequente:</strong> ' + escapeHtml(s.field || '') + ' (' + s.count + 'x) - considere ajustar o prompt do Groq</div>';
+                } else if (s.type === 'unrecognized_pattern') {
+                    html += '<div class="analytics-improvement"><strong>Padrao nao reconhecido:</strong> "' + escapeHtml(s.question || '') + '" (' + s.count + 'x) - considere adicionar novo intent ou keywords</div>';
+                } else if (s.type === 'scoring_gap') {
+                    html += '<div class="analytics-improvement"><strong>Scoring gap:</strong> intent <strong>' + escapeHtml(s.intent || '') + '</strong> resolvido via LLM ' + s.llm_calls + 'x - ' + escapeHtml(s.suggestion || '') + '</div>';
+                } else {
+                    html += '<div class="analytics-improvement">' + escapeHtml(JSON.stringify(s)) + '</div>';
+                }
+            });
+            el.innerHTML = html;
+        }
+
+        function fmtNum(n) {
+            if (n === null || n === undefined) return '0';
+            return Number(n).toLocaleString('pt-BR');
         }
 
         // ===== SEND MESSAGE =====
@@ -2238,7 +2864,7 @@
 
                 const data = await res.json();
                 removeThinking(thinkingId);
-                addMessage('assistant', data.response, data.sources, data.time_ms, data.tipo, data.query_executed, data.query_results);
+                addMessage('assistant', data.response, data.sources, data.time_ms, data.tipo, data.query_executed, data.query_results, data.message_id);
 
                 const statHistory = document.getElementById('stat-history');
                 statHistory.textContent = parseInt(statHistory.textContent || 0) + 1;
@@ -2253,7 +2879,7 @@
         }
 
         // ===== MESSAGES =====
-        function addMessage(role, content, sources, timeMs, tipo, queryExecuted, queryResults) {
+        function addMessage(role, content, sources, timeMs, tipo, queryExecuted, queryResults, messageId) {
             sources = sources || [];
             timeMs = timeMs || 0;
             const div = document.createElement('div');
@@ -2313,6 +2939,19 @@
                 html += '<div class="response-meta">' + timeMs + 'ms</div>';
             }
 
+            // Feedback buttons (only for assistant messages with message_id)
+            if (role === 'assistant' && messageId) {
+                const fbId = 'fb-' + messageId.substring(0, 8);
+                html += '<div class="feedback-bar" id="' + fbId + '">' +
+                    '<button class="feedback-btn positive" onclick="sendFeedback(\'' + messageId + '\', \'positive\', \'' + fbId + '\')" title="Resposta util">&#128077;</button>' +
+                    '<button class="feedback-btn negative" onclick="sendFeedback(\'' + messageId + '\', \'negative\', \'' + fbId + '\')" title="Resposta incorreta">&#128078;</button>' +
+                    '</div>' +
+                    '<div class="feedback-comment" id="' + fbId + '-comment">' +
+                    '<input type="text" placeholder="O que estava errado?" maxlength="200" onkeydown="if(event.key===\'Enter\')submitComment(\'' + messageId + '\', \'' + fbId + '\')">' +
+                    '<button onclick="submitComment(\'' + messageId + '\', \'' + fbId + '\')">Enviar</button>' +
+                    '</div>';
+            }
+
             div.innerHTML = html;
             messagesEl.appendChild(div);
             scrollToBottom();
@@ -2322,6 +2961,76 @@
             const content = document.getElementById(id);
             content.classList.toggle('visible');
             btn.classList.toggle('expanded');
+        }
+
+        // ===== FEEDBACK =====
+        async function sendFeedback(messageId, rating, fbId) {
+            const bar = document.getElementById(fbId);
+            if (!bar) return;
+
+            const btns = bar.querySelectorAll('.feedback-btn');
+            btns.forEach(function(btn) {
+                if (btn.classList.contains(rating)) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.add('hidden');
+                }
+            });
+
+            // Se negativo, mostrar campo de comentario
+            if (rating === 'negative') {
+                const commentDiv = document.getElementById(fbId + '-comment');
+                if (commentDiv) {
+                    commentDiv.classList.add('visible');
+                    const inp = commentDiv.querySelector('input');
+                    if (inp) inp.focus();
+                }
+            } else {
+                // Positivo: mostrar agradecimento
+                const thanks = document.createElement('span');
+                thanks.className = 'feedback-thanks';
+                thanks.textContent = 'Obrigado!';
+                bar.appendChild(thanks);
+            }
+
+            // Enviar para API
+            try {
+                await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                    body: JSON.stringify({ message_id: messageId, rating: rating }),
+                });
+            } catch (e) {
+                console.error('Erro ao enviar feedback:', e);
+            }
+        }
+
+        async function submitComment(messageId, fbId) {
+            const commentDiv = document.getElementById(fbId + '-comment');
+            if (!commentDiv) return;
+            const inp = commentDiv.querySelector('input');
+            const comment = (inp ? inp.value.trim() : '') || null;
+
+            // Enviar com comentario
+            try {
+                await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                    body: JSON.stringify({ message_id: messageId, rating: 'negative', comment: comment }),
+                });
+            } catch (e) {
+                console.error('Erro ao enviar comentario:', e);
+            }
+
+            // Substituir campo por agradecimento
+            commentDiv.classList.remove('visible');
+            const bar = document.getElementById(fbId);
+            if (bar) {
+                const thanks = document.createElement('span');
+                thanks.className = 'feedback-thanks';
+                thanks.textContent = comment ? 'Obrigado pelo feedback!' : 'Obrigado!';
+                bar.appendChild(thanks);
+            }
         }
 
         function addThinking() {
