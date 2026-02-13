@@ -1171,6 +1171,39 @@
             text-decoration: underline;
         }
 
+        /* Column toggle chips */
+        .column-toggles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 0 4px 32px;
+        }
+        .column-toggles .label {
+            font-size: 11px;
+            color: var(--text-muted);
+            align-self: center;
+            margin-right: 2px;
+        }
+        .col-chip {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .col-chip:hover { border-color: var(--accent-dim); }
+        .col-chip.active {
+            background: var(--accent-glow);
+            color: var(--accent-light);
+            border-color: var(--accent-dim);
+        }
+
         /* Thinking indicator */
         .thinking {
             display: flex;
@@ -2864,7 +2897,7 @@
 
                 const data = await res.json();
                 removeThinking(thinkingId);
-                addMessage('assistant', data.response, data.sources, data.time_ms, data.tipo, data.query_executed, data.query_results, data.message_id);
+                addMessage('assistant', data.response, data.sources, data.time_ms, data.tipo, data.query_executed, data.query_results, data.message_id, data.table_data);
 
                 const statHistory = document.getElementById('stat-history');
                 statHistory.textContent = parseInt(statHistory.textContent || 0) + 1;
@@ -2879,7 +2912,7 @@
         }
 
         // ===== MESSAGES =====
-        function addMessage(role, content, sources, timeMs, tipo, queryExecuted, queryResults, messageId) {
+        function addMessage(role, content, sources, timeMs, tipo, queryExecuted, queryResults, messageId, tableData) {
             sources = sources || [];
             timeMs = timeMs || 0;
             const div = document.createElement('div');
@@ -2954,6 +2987,12 @@
 
             div.innerHTML = html;
             messagesEl.appendChild(div);
+
+            // Renderizar toggle de colunas se houver table_data
+            if (role === 'assistant' && tableData && tableData.rows && tableData.rows.length > 0) {
+                setTimeout(function() { renderColumnToggles(div, tableData); }, 50);
+            }
+
             scrollToBottom();
         }
 
@@ -3104,6 +3143,178 @@
             var div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
+        }
+
+        // ===== COLUMN TOGGLE =====
+        var TOGGLEABLE_COLUMNS = {
+            'NUM_FABRICANTE': 'Cod. Fabricante',
+            'NUM_ORIGINAL':   'Nro. Original',
+            'REFERENCIA':     'Referencia',
+            'REF_FORNECEDOR': 'Ref. Forn.',
+            'COMPLEMENTO':    'Complemento',
+            'NCM':            'NCM',
+            'GRUPO_PRODUTO':  'Grupo',
+            'ESTOQUE':        'Estoque',
+            'APLICACAO':      'Aplicacao',
+            'VLR_UNITARIO':   'Vlr Unit.',
+            'QTD_PEDIDA':     'Qtd Pedida',
+            'QTD_ATENDIDA':   'Qtd Atend.',
+            'CONFIRMADO':     'Confirmado',
+            'DT_PEDIDO':      'Data Pedido',
+            'PREVISAO_ENTREGA': 'Previsao',
+            'EMPRESA':        'Empresa',
+            'COMPRADOR':      'Comprador',
+            'TIPO_COMPRA':    'Tipo',
+        };
+        var COLUMN_LABELS = {
+            'PEDIDO': 'Pedido', 'CODPROD': 'CodProd', 'PRODUTO': 'Produto',
+            'MARCA': 'Marca', 'QTD_PENDENTE': 'Qtd Pend.', 'VLR_PENDENTE': 'Valor',
+            'STATUS_ENTREGA': 'Status', 'FORNECEDOR': 'Fornecedor',
+            'DT_PEDIDO': 'Data', 'PREVISAO_ENTREGA': 'Previsao',
+            'EMPRESA': 'Empresa', 'TIPO_COMPRA': 'Tipo', 'COMPRADOR': 'Comprador',
+            'CONFIRMADO': 'Confirmado', 'APLICACAO': 'Aplicacao',
+            'UNIDADE': 'Unid.', 'QTD_PEDIDA': 'Qtd Pedida', 'QTD_ATENDIDA': 'Qtd Atend.',
+            'VLR_UNITARIO': 'Vlr Unit.', 'DIAS_ABERTO': 'Dias',
+            'NUM_FABRICANTE': 'Cod. Fabricante', 'NUM_ORIGINAL': 'Nro. Original',
+            'REFERENCIA': 'Referencia', 'REF_FORNECEDOR': 'Ref. Forn.',
+            'COMPLEMENTO': 'Complemento', 'NCM': 'NCM',
+            'GRUPO_PRODUTO': 'Grupo', 'ESTOQUE': 'Estoque',
+            '_itens': 'Itens', '_valor': 'Valor Pendente',
+        };
+
+        function renderColumnToggles(msgDiv, tableData) {
+            if (!tableData || !tableData.rows || tableData.rows.length === 0) return;
+
+            var body = msgDiv.querySelector('.message-body');
+            if (!body) return;
+
+            // Colunas visiveis atualmente na tabela markdown
+            var currentTable = body.querySelector('table');
+            if (!currentTable) return;
+
+            var currentCols = [];
+            var ths = currentTable.querySelectorAll('thead th');
+            ths.forEach(function(th) { currentCols.push(th.textContent.trim()); });
+
+            // Determinar colunas toggleaveis que existem nos dados
+            var availableToggles = [];
+            var allDataCols = tableData.columns || Object.keys(tableData.rows[0] || {});
+            var activeCols = (tableData.visible_columns || []).slice();
+
+            for (var key in TOGGLEABLE_COLUMNS) {
+                if (allDataCols.indexOf(key) !== -1) {
+                    var label = TOGGLEABLE_COLUMNS[key];
+                    var isActive = activeCols.indexOf(key) !== -1;
+                    // Verificar se ja esta na tabela atual
+                    var inTable = currentCols.indexOf(label) !== -1 || currentCols.indexOf(key) !== -1;
+                    availableToggles.push({ key: key, label: label, active: isActive || inTable });
+                }
+            }
+
+            if (availableToggles.length === 0) return;
+
+            // Criar container de toggles
+            var container = document.createElement('div');
+            container.className = 'column-toggles';
+            container.innerHTML = '<span class="label">Colunas:</span>';
+
+            // Guardar dados no elemento
+            msgDiv._tableData = tableData;
+            msgDiv._activeCols = availableToggles.filter(function(t) { return t.active; }).map(function(t) { return t.key; });
+
+            availableToggles.forEach(function(toggle) {
+                var chip = document.createElement('span');
+                chip.className = 'col-chip' + (toggle.active ? ' active' : '');
+                chip.textContent = toggle.label;
+                chip.dataset.col = toggle.key;
+                chip.onclick = function() {
+                    chip.classList.toggle('active');
+                    var idx = msgDiv._activeCols.indexOf(toggle.key);
+                    if (idx === -1) {
+                        msgDiv._activeCols.push(toggle.key);
+                    } else {
+                        msgDiv._activeCols.splice(idx, 1);
+                    }
+                    rerenderTable(msgDiv);
+                };
+                container.appendChild(chip);
+            });
+
+            // Inserir antes do feedback-bar ou no final do body
+            var feedbackBar = msgDiv.querySelector('.feedback-bar');
+            if (feedbackBar) {
+                msgDiv.insertBefore(container, feedbackBar);
+            } else {
+                body.parentNode.insertBefore(container, body.nextSibling);
+            }
+        }
+
+        function rerenderTable(msgDiv) {
+            var td = msgDiv._tableData;
+            if (!td || !td.rows || td.rows.length === 0) return;
+
+            var body = msgDiv.querySelector('.message-body');
+            if (!body) return;
+
+            var oldTable = body.querySelector('table');
+            if (!oldTable) return;
+
+            var activeCols = msgDiv._activeCols || [];
+            var rows = td.rows;
+
+            // Colunas base (sempre visiveis na tabela original)
+            var baseCols = ['PEDIDO', 'CODPROD', 'PRODUTO', 'MARCA', 'FORNECEDOR'];
+            var numCols = ['QTD_PENDENTE', 'VLR_PENDENTE', 'STATUS_ENTREGA', 'DIAS_ABERTO'];
+
+            // Construir colunas finais: base + extras ativas + numericas
+            var finalCols = [];
+            baseCols.forEach(function(c) {
+                if (rows[0].hasOwnProperty(c)) finalCols.push(c);
+            });
+            activeCols.forEach(function(c) {
+                if (finalCols.indexOf(c) === -1 && rows[0].hasOwnProperty(c)) finalCols.push(c);
+            });
+            numCols.forEach(function(c) {
+                if (finalCols.indexOf(c) === -1 && rows[0].hasOwnProperty(c)) finalCols.push(c);
+            });
+
+            // Construir nova tabela HTML
+            var html = '<table><thead><tr>';
+            finalCols.forEach(function(c) {
+                html += '<th>' + (COLUMN_LABELS[c] || c) + '</th>';
+            });
+            html += '</tr></thead><tbody>';
+
+            var maxRows = Math.min(rows.length, 50);
+            for (var i = 0; i < maxRows; i++) {
+                html += '<tr>';
+                finalCols.forEach(function(c) {
+                    var val = rows[i][c];
+                    if (val === null || val === undefined) val = '';
+                    // Formatar valores numericos
+                    if (c === 'VLR_PENDENTE' || c === 'VLR_UNITARIO') {
+                        var num = parseFloat(val);
+                        if (!isNaN(num)) val = 'R$ ' + num.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    } else if (c === 'QTD_PENDENTE' || c === 'QTD_PEDIDA' || c === 'QTD_ATENDIDA' || c === 'ESTOQUE') {
+                        var n = parseInt(val);
+                        if (!isNaN(n)) val = n.toLocaleString('pt-BR');
+                    }
+                    // Truncar textos longos
+                    var s = String(val);
+                    if (s.length > 30 && (c === 'PRODUTO' || c === 'FORNECEDOR' || c === 'COMPLEMENTO' || c === 'APLICACAO')) {
+                        s = s.substring(0, 28) + '...';
+                    }
+                    html += '<td>' + escapeHtml(s) + '</td>';
+                });
+                html += '</tr>';
+            }
+            if (rows.length > maxRows) {
+                html += '<tr><td colspan="' + finalCols.length + '" style="text-align:center;color:var(--text-muted);font-style:italic;">... e mais ' + (rows.length - maxRows) + ' registros</td></tr>';
+            }
+            html += '</tbody></table>';
+
+            oldTable.outerHTML = html;
+            scrollToBottom();
         }
 
         // ===== UTILS =====

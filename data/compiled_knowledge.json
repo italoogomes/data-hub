@@ -1,0 +1,4935 @@
+{
+  "intent_keywords": {
+    "estoque": [
+      {
+        "word": "numero fabricante",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/codigo_fabricante.md"
+      },
+      {
+        "word": "codigo fabricante",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/codigo_fabricante.md"
+      },
+      {
+        "word": "numero original",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/codigo_fabricante.md"
+      },
+      {
+        "word": "ref",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/codigo_fabricante.md"
+      },
+      {
+        "word": "refforn",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/codigo_fabricante.md"
+      },
+      {
+        "word": "compra de estoque",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/compra_estoque.md"
+      },
+      {
+        "word": "entrega futura",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/compra_estoque.md"
+      },
+      {
+        "word": "compra programada",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/compra_estoque.md"
+      },
+      {
+        "word": "reposicao",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/compra_estoque.md"
+      },
+      {
+        "word": "comprador",
+        "weight": 5,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/comprador.md"
+      },
+      {
+        "word": "marca",
+        "weight": 5,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/comprador.md"
+      },
+      {
+        "word": "pedidos",
+        "weight": 5,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/comprador.md"
+      },
+      {
+        "word": "ana",
+        "weight": 5,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/comprador.md"
+      },
+      {
+        "word": "joao",
+        "weight": 5,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/comprador.md"
+      },
+      {
+        "word": "sabo",
+        "weight": 5,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/comprador.md"
+      },
+      {
+        "word": "compra",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "nota de compra",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "nf entrada",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pedido de compra",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "solicitacao",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "requisicao de compra",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "devolucao de compra",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "transferencia",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pedido de transferencia",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "requisicao",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "recebimento",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "entrada",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "producao",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pagamento",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "financeiro",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "movimento bancario",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "faturamento",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pedidos de compra",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "casada",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "compra casada",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "empenho",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "vinculada",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "compra estoque",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "quem compra",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "fornecedor",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "quem fornece",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "solicitante",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "data de entrega",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "previsao",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "quando chega",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "data do pedido",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "quando comprou",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "prazo",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "prazo de entrega",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "solicitacoes",
+        "weight": 3,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "devolucao",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/estoque/devolucao.md"
+      },
+      {
+        "word": "refatura",
+        "weight": 3,
+        "confidence": 0.8,
+        "source": "knowledge/processos/estoque/devolucao.md"
+      },
+      {
+        "word": "saida",
+        "weight": 4,
+        "confidence": 0.8,
+        "source": "knowledge/processos/estoque/transferencia.md"
+      },
+      {
+        "word": "filial",
+        "weight": 2,
+        "confidence": 0.8,
+        "source": "knowledge/processos/estoque/transferencia.md"
+      },
+      {
+        "word": "nfe",
+        "weight": 2,
+        "confidence": 0.8,
+        "source": "knowledge/processos/estoque/transferencia.md"
+      },
+      {
+        "word": "cross-reference",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/codigos_auxiliares.md"
+      },
+      {
+        "word": "busca flexivel",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/codigos_auxiliares.md"
+      },
+      {
+        "word": "multiplas origens",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/codigos_auxiliares.md"
+      },
+      {
+        "word": "vinculo com marca",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/codigos_auxiliares.md"
+      },
+      {
+        "word": "sem duplicacao",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/codigos_auxiliares.md"
+      },
+      {
+        "word": "cotacao",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "pedido",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "vinculo",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "peso",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "criterio",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "cancelamento",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "itens",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "sistema",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "ciclo",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "observacao",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/cotacao_compra.md"
+      },
+      {
+        "word": "custo",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/custos_produto.md"
+      },
+      {
+        "word": "historico",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/custos_produto.md"
+      },
+      {
+        "word": "regra",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/custos_produto.md"
+      },
+      {
+        "word": "necessidade",
+        "weight": 3,
+        "confidence": 0.85,
+        "source": "knowledge/regras/solicitacao_compra.md"
+      },
+      {
+        "word": "equivalencias",
+        "weight": 2,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+      },
+      {
+        "word": "nota",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+      },
+      {
+        "word": "vendedor",
+        "weight": 2,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+      },
+      {
+        "word": "parceiro",
+        "weight": 2,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+      },
+      {
+        "word": "preco",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+      },
+      {
+        "word": "entrega",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+      },
+      {
+        "word": "garantia",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+      },
+      {
+        "word": "produtos",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFEST.md"
+      },
+      {
+        "word": "quantidade",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFEST.md"
+      },
+      {
+        "word": "reservado",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFEST.md"
+      },
+      {
+        "word": "bloqueado",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFEST.md"
+      },
+      {
+        "word": "lote",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFEST.md"
+      },
+      {
+        "word": "unidade",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFITE.md"
+      },
+      {
+        "word": "cliente",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+      },
+      {
+        "word": "ativo",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+      },
+      {
+        "word": "maximo",
+        "weight": 6,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+      },
+      {
+        "word": "atendimento",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+      },
+      {
+        "word": "comissao",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+      },
+      {
+        "word": "meta",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+      }
+    ],
+    "pendencia_compras": [
+      {
+        "word": "compra vinculada",
+        "weight": 5,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/compra_casada.md"
+      },
+      {
+        "word": "pedido casado",
+        "weight": 4,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/compra_casada.md"
+      },
+      {
+        "word": "compra casada",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/empenho.md"
+      },
+      {
+        "word": "reserva",
+        "weight": 4,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/empenho.md"
+      },
+      {
+        "word": "pendencia de compra",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pedido pendente",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pendencia por marca",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pendencia financeira",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "contas a pagar",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "titulos pendentes",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pendencia de venda",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pedido de venda pendente",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "financeiro",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "vencido",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "contas atrasadas",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "a receber",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "clientes devendo",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "cotacao",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/fluxo_compra.md"
+      },
+      {
+        "word": "aprovacao",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/aprovacao_compras.md"
+      },
+      {
+        "word": "liberacao",
+        "weight": 2,
+        "confidence": 0.85,
+        "source": "knowledge/regras/aprovacao_compras.md"
+      },
+      {
+        "word": "aprovar",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/solicitacao_compra.md"
+      },
+      {
+        "word": "pontualidade",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "confiabilidade",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "performance",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "ranking",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "top",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "nota",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+      }
+    ],
+    "vendas": [
+      {
+        "word": "nota de venda",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "nf saida",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pedido de venda",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "devolucao de venda",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "pedido",
+        "weight": 4,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/fluxo_compra.md"
+      },
+      {
+        "word": "fornecedores",
+        "weight": 2,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "vencidos",
+        "weight": 2,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "credito",
+        "weight": 4,
+        "confidence": 0.8,
+        "source": "knowledge/processos/estoque/devolucao.md"
+      },
+      {
+        "word": "nota",
+        "weight": 4,
+        "confidence": 0.8,
+        "source": "knowledge/processos/vendas/fluxo_venda.md"
+      },
+      {
+        "word": "relatorio",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+      },
+      {
+        "word": "fatura",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+      }
+    ],
+    "gerar_excel": [
+      {
+        "word": "financeiro",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/fluxo_compra.md"
+      },
+      {
+        "word": "gerar_excel",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "compras",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "pagamentos",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "produtividade",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "ultimas",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "codigos",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+      },
+      {
+        "word": "auxiliares",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+      },
+      {
+        "word": "aprovacao",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+      },
+      {
+        "word": "liberacao",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+      },
+      {
+        "word": "nota",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+      },
+      {
+        "word": "usuario",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+      },
+      {
+        "word": "aprovacoes",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+      },
+      {
+        "word": "registrar",
+        "weight": 2,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+      },
+      {
+        "word": "relatório",
+        "weight": 2,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+      }
+    ],
+    "saudacao": [
+      {
+        "word": "saudacao",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/compras/rotina_comprador.md"
+      }
+    ],
+    "ajuda": [],
+    "compras": [
+      {
+        "word": "fornecedor",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/estoque/devolucao.md"
+      }
+    ],
+    "financeiro": [
+      {
+        "word": "pagar",
+        "weight": 10,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      },
+      {
+        "word": "duplicata",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      },
+      {
+        "word": "baixa",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      },
+      {
+        "word": "movimento",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      },
+      {
+        "word": "vencido",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+      },
+      {
+        "word": "boleto",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+      },
+      {
+        "word": "conta",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+      },
+      {
+        "word": "mes",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+      },
+      {
+        "word": "vencidos",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+      },
+      {
+        "word": "taxa",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+      },
+      {
+        "word": "juro",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+      },
+      {
+        "word": "contas",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFEST.md"
+      },
+      {
+        "word": "vencimento",
+        "weight": 10,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+      },
+      {
+        "word": "vencida",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+      },
+      {
+        "word": "custo",
+        "weight": 10,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+      },
+      {
+        "word": "fatura",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+      }
+    ],
+    "produto": [
+      {
+        "word": "produto",
+        "weight": 8,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ],
+    "fornecedor": [
+      {
+        "word": "fornecedor",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ],
+    "compra": [
+      {
+        "word": "compra",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ],
+    "venda": [
+      {
+        "word": "venda",
+        "weight": 5,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ],
+    "historico": [
+      {
+        "word": "historico",
+        "weight": 4,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ],
+    "custo": [
+      {
+        "word": "custo",
+        "weight": 4,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ],
+    "preco": [
+      {
+        "word": "preco",
+        "weight": 4,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ],
+    "comissao": [
+      {
+        "word": "comissao",
+        "weight": 4,
+        "confidence": 0.9,
+        "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ]
+  },
+  "filter_rules": [
+    {
+      "match": [
+        "HU711/51",
+        "HU71151",
+        "HU 711/51"
+      ],
+      "description": "Busca em TGFPRO nos 5 campos de referencia e em AD_TGFPROAUXMMA (auxiliares)",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/codigo_fabricante.md"
+    },
+    {
+      "match": [
+        "pendencias de compra casada"
+      ],
+      "description": "TIPO_COMPRA = 'Casada' AND MARCA = 'MANN'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/compra_casada.md"
+    },
+    {
+      "match": [
+        "quais pedidos casados estao pendentes?"
+      ],
+      "description": "TIPO_COMPRA = 'Casada'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/compra_casada.md"
+    },
+    {
+      "match": [
+        "quanto temos em empenho?"
+      ],
+      "description": "somar VLR_PENDENTE onde TIPO_COMPRA = 'Casada'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/compra_casada.md"
+    },
+    {
+      "match": [
+        "compras de estoque",
+        "entrega futura",
+        "compra programada",
+        "reposicao"
+      ],
+      "description": "TIPO_COMPRA = 'Estoque'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/compra_estoque.md"
+    },
+    {
+      "match": [
+        "quais compras de estoque estao pendentes?",
+        "pedidos de entrega futura"
+      ],
+      "description": "TIPO_COMPRA = 'Estoque'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/compra_estoque.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "marca SABO"
+      ],
+      "description": "TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "marca SABO"
+      ],
+      "description": "TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "marca SABO"
+      ],
+      "description": "TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "marca SABO"
+      ],
+      "description": "TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "marca SABO"
+      ],
+      "description": "TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "marca SABO"
+      ],
+      "description": "TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "marca SABO"
+      ],
+      "description": "TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "marca SABO"
+      ],
+      "description": "TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "pedidos do comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quais marcas o Joao compra?"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "quem compra a marca SABO?"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFMAR.MARCA = 'SABO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Ana"
+      ],
+      "description": "TGFVEN.TIPVEND = 'C' AND TGFVEN.APELIDO = 'ANA'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "comprador Joao"
+      ],
+      "description": "TGFMAR.AD_CODVEND = 'JOAO'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/comprador.md"
+    },
+    {
+      "match": [
+        "compra vinculada"
+      ],
+      "description": "CODTIPOPER = 1313",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/empenho.md"
+    },
+    {
+      "match": [
+        "reserva"
+      ],
+      "description": "CODTIPOPER = 1313",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/empenho.md"
+    },
+    {
+      "match": [
+        "pendencia de compra"
+      ],
+      "description": "PENDENTE = 'S' AND TIPMOV = 'O' AND STATUSNOTA <> 'C'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "pendencia financeira"
+      ],
+      "description": "RECDESP = -1 AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "pendencia de venda"
+      ],
+      "description": "PENDENTE = 'S' AND TIPMOV = 'P' AND STATUSNOTA <> 'C'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "pendencia"
+      ],
+      "description": "PENDENTE = 'S' AND TIPMOV = 'O' AND STATUSNOTA <> 'C'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "financeiro"
+      ],
+      "description": "RECDESP = -1 AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "contas a pagar"
+      ],
+      "description": "RECDESP = -1 AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "titulos pendentes"
+      ],
+      "description": "RECDESP = -1 AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "vencido"
+      ],
+      "description": "DHBAIXA IS NULL AND DTVENC < TRUNC(SYSDATE)",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "contas atrasadas"
+      ],
+      "description": "DHBAIXA IS NULL AND DTVENC < TRUNC(SYSDATE)",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "a receber"
+      ],
+      "description": "RECDESP = 1 AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "clientes devendo"
+      ],
+      "description": "RECDESP = 1 AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "casada"
+      ],
+      "description": "TIPO_COMPRA = 'Casada'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "estoque"
+      ],
+      "description": "TIPO_COMPRA = 'Estoque'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "pedidos aprovados"
+      ],
+      "description": "STATUS = 'APROVADO'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "match": [
+        "compras efetivas"
+      ],
+      "description": "TOP 1209",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "match": [
+        "notas liberadas"
+      ],
+      "description": "STATUSNOTA = 'L'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "match": [
+        "notas pendentes"
+      ],
+      "description": "STATUSNOTA = 'P'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "match": [
+        "notas abertas"
+      ],
+      "description": "STATUSNOTA = 'A'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "match": [
+        "pedidos aprovados"
+      ],
+      "description": "STATUS = 'APROVADO'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "match": [
+        "solicitacoes abertas"
+      ],
+      "description": "TIPMOV='J' e STATUSNOTA IN ('A', 'P')",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "match": [
+        "fornecedores vencidos"
+      ],
+      "description": "RECDESP=-1, DTVENC < SYSDATE, DHBAIXA IS NULL",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "match": [
+        "compras realizadas"
+      ],
+      "description": "TIPMOV='C'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "match": [
+        "estoque zerado"
+      ],
+      "description": "ESTOQUE <= 0",
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "match": [
+        "devolucoes de venda"
+      ],
+      "description": "TIPMOV = 'D'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "match": [
+        "devolucoes de compra"
+      ],
+      "description": "TIPMOV = 'E'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "match": [
+        "produtos mais devolvidos"
+      ],
+      "description": "GROUP BY P.CODPROD, P.DESCRPROD",
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "match": [
+        "pedidos aprovados"
+      ],
+      "description": "STATUS = 'APROVADO'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "match": [
+        "transferencias pendentes"
+      ],
+      "description": "NUNOTA_ORIG IS NULL",
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "match": [
+        "pedidos aprovados"
+      ],
+      "description": "STATUS = 'APROVADO'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "match": [
+        "vendas balcao"
+      ],
+      "description": "CODTIPOPER = 1100",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "match": [
+        "vendas NFe"
+      ],
+      "description": "CODTIPOPER = 1101",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "match": [
+        "pedidos sem aprovacao"
+      ],
+      "description": "STATUSNOTA = 'P'",
+      "confidence": 0.85,
+      "source": "knowledge/regras/aprovacao_compras.md"
+    },
+    {
+      "match": [
+        "notas pendentes"
+      ],
+      "description": "STATUSNOTA = 'P'",
+      "confidence": 0.85,
+      "source": "knowledge/regras/aprovacao_compras.md"
+    },
+    {
+      "match": [
+        "pedidos sem aprovacao",
+        "codigos duplicados"
+      ],
+      "description": "STATUSNOTA = 'P'",
+      "confidence": 0.85,
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "match": [
+        "cotacoes sem vinculo"
+      ],
+      "description": "NUNOTAORIG = NULL",
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "match": [
+        "criterio unico"
+      ],
+      "description": "PESOPRECO = 1",
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "match": [
+        "alta taxa de cancelamento"
+      ],
+      "description": "SITUACAO = 'C'",
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "match": [
+        "itens nao formalizados"
+      ],
+      "description": "TGFCOI/TGFCOC vazias",
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "match": [
+        "sistema novo"
+      ],
+      "description": "DHINIC >= '2026-01-01'",
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "match": [
+        "historico completo"
+      ],
+      "description": "DTATUAL >= ADD_MONTHS(SYSDATE, -60)",
+      "confidence": 0.85,
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "match": [
+        "por empresa"
+      ],
+      "description": "CODEMP = :codemp",
+      "confidence": 0.85,
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "match": [
+        "varios tipos"
+      ],
+      "description": "CUSCOMICM > 0 AND CUSSEMICM > 0 AND CUSREP > 0 AND CUSGER > 0 AND CUSVARIAVEL > 0 AND CUSMEDSEMICM > 0",
+      "confidence": 0.85,
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "match": [
+        "nao sobrescreve"
+      ],
+      "description": "ROW_NUMBER() OVER (PARTITION BY CODPROD, CODEMP ORDER BY DTATUAL DESC) = 1",
+      "confidence": 0.85,
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "match": [
+        "custo de reposicao"
+      ],
+      "description": "CUSREP > CUSCOMICM",
+      "confidence": 0.85,
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "match": [
+        "TIPMOV='J'"
+      ],
+      "description": "STATUSNOTA = 'P'",
+      "confidence": 0.85,
+      "source": "knowledge/regras/solicitacao_compra.md"
+    },
+    {
+      "match": [
+        "TGFSOL vazia"
+      ],
+      "description": "TGFSOL nao utilizada",
+      "confidence": 0.85,
+      "source": "knowledge/regras/solicitacao_compra.md"
+    },
+    {
+      "match": [
+        "marca Cummins",
+        "fabricante MWM"
+      ],
+      "description": "SELECT * FROM AD_MARCAS WHERE DESCRICAO = 'Cummins'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "match": [
+        "peca ZF",
+        "vendas por marca"
+      ],
+      "description": "SELECT * FROM AD_TGFPROAUXMMA JOIN AD_MARCAS ON AD_TGFPROAUXMMA.CODIGO = AD_MARCAS.CODIGO WHERE DESCRICAO = 'ZF'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "match": [
+        "relatorio de vendas",
+        "vendas por marca"
+      ],
+      "description": "SELECT * FROM AD_TGFPROAUXMMA JOIN AD_MARCAS ON AD_TGFPROAUXMMA.CODIGO = AD_MARCAS.CODIGO GROUP BY DESCRICAO",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "match": [
+        "titulos vencidos",
+        "contas vencidas"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "match": [
+        "estoque do produto"
+      ],
+      "description": "SELECT * FROM AD_CADPRODMMA WHERE CODPROD = <produto>",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "match": [
+        "fornecedor"
+      ],
+      "description": "SELECT * FROM AD_FORNEMPPRO WHERE CODFORNEC = <fornecedor>",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "match": [
+        "compra"
+      ],
+      "description": "SELECT * FROM AD_SOLICITACAOCOMPRA WHERE CODFORNEC = <fornecedor>",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "match": [
+        "venda"
+      ],
+      "description": "SELECT * FROM AD_PEDIDOVENDA WHERE CODFORNEC = <fornecedor>",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "match": [
+        "titulos vencidos",
+        "contas vencidas"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "match": [
+        "estoque do produto"
+      ],
+      "description": "CODPROD = ?",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "match": [
+        "pedidos pendentes da MANN"
+      ],
+      "description": "CODPROD = ? AND DTATUAL > ?",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "match": [
+        "titulos vencidos",
+        "contas vencidas"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+    },
+    {
+      "match": [
+        "estoque do produto"
+      ],
+      "description": "IDNUMAUX = CODPROD",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+    },
+    {
+      "match": [
+        "pedidos pendentes",
+        "pedidos pendentes da MANN"
+      ],
+      "description": "PENDENTE = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "match": [
+        "estoque do produto 133346"
+      ],
+      "description": "NUMNOTA = 133346",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "match": [
+        "cotacao aberta",
+        "cotacao em aprovação"
+      ],
+      "description": "SITUACAO = 'A' OR SITUACAO = 'E'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "match": [
+        "cotacao cancelada",
+        "cotacao fechada"
+      ],
+      "description": "SITUACAO = 'C' OR SITUACAO = 'F'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "match": [
+        "cotacao aprovada"
+      ],
+      "description": "SITUACAO = 'P'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "match": [
+        "preco da cotacao"
+      ],
+      "description": "PESOPRECO > 0",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "match": [
+        "estoque vencido",
+        "produtos vencidos"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "match": [
+        "estoque bloqueado",
+        "produtos bloqueados"
+      ],
+      "description": "WMSBLOQUEADO > 0",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "match": [
+        "estoque reservado",
+        "produtos reservados"
+      ],
+      "description": "RESERVADO > 0",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "match": [
+        "titulos vencidos",
+        "contas vencidas"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "match": [
+        "nota pendente"
+      ],
+      "description": "NUMNOTA NOT IN (SELECT NUMNOTA FROM TGFFIN WHERE DHBAIXA IS NOT NULL)",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "match": [
+        "parceiro pendente"
+      ],
+      "description": "CODPARC NOT IN (SELECT CODPARC FROM TGFFIN WHERE DHBAIXA IS NOT NULL)",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "match": [
+        "pendente",
+        "pendentes"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "match": [
+        "estoque",
+        "estoques"
+      ],
+      "description": "ATUALESTOQUE > 0",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "match": [
+        "produto",
+        "produtos"
+      ],
+      "description": "CODPROD > 0",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "match": [
+        "aprovacao pendente",
+        "liberacao pendente"
+      ],
+      "description": "STATUSNOTA = 'P'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+    },
+    {
+      "match": [
+        "nota vencida",
+        "boleto vencido"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+    },
+    {
+      "match": [
+        "mercedes",
+        "vw",
+        "ford",
+        "cummins",
+        "mwm"
+      ],
+      "description": "JOIN TGFPRO PR ON I.CODPROD = PR.CODPROD JOIN TGFMAR M ON M.CODIGO = PR.CODMARCA WHERE M.DESCRICAO = 'NOME_MARCA'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "match": [
+        "sim",
+        "nao"
+      ],
+      "description": "AD_CONSIDLISTAFORN = 'S' OR AD_CONSIDLISTAFORN = 'N'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "match": [
+        "titulo",
+        "conta",
+        "boleto"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "match": [
+        "titulos vencidos",
+        "contas vencidas"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAG.md"
+    },
+    {
+      "match": [
+        "estoque do produto"
+      ],
+      "description": "TGFPAG.TGFPAG_ID = TGFPAG.TGFPAG_ID",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAG.md"
+    },
+    {
+      "match": [
+        "nome parceiro",
+        "nome do parceiro"
+      ],
+      "description": "TGFPAR.CODPARC = CODPARC",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "match": [
+        "ativo",
+        "ativos"
+      ],
+      "description": "TGFPAR.ATIVO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "match": [
+        "boleto",
+        "boleto vencido"
+      ],
+      "description": "TGFPAR.EXIGENOMEPARC = 'S' AND TGFFIN.DTVENC < SYSDATE",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "match": [
+        "estoque mínimo",
+        "estoque máximo"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+    },
+    {
+      "match": [
+        "produtos vencidos",
+        "produtos expirados"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+    },
+    {
+      "match": [
+        "titulos vencidos",
+        "contas vencidas"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque vencido"
+      ],
+      "description": "BLOQESTVENC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "pedido pendente"
+      ],
+      "description": "PENDENTE = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "nota fiscal"
+      ],
+      "description": "REFNFE = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "fatura produtos"
+      ],
+      "description": "FATESTCONF = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque maximo"
+      ],
+      "description": "VALESTMAXIMO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "variação valor unitário"
+      ],
+      "description": "VALVARIACVLRUNIT = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "laudo vencido"
+      ],
+      "description": "VALVCTLAUDOEST = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque terceiros"
+      ],
+      "description": "ESTOQUEMPTERCEIRO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "reserva estoque"
+      ],
+      "description": "VALEST = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque sem lote"
+      ],
+      "description": "RESERVASEMLOTE = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque com terceiros"
+      ],
+      "description": "ATUALESTTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque wms terceiros"
+      ],
+      "description": "ATUALESTWMSTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque mp terceiros"
+      ],
+      "description": "ESTOQUEMPTERCEIRO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque mp"
+      ],
+      "description": "ATUALESTMP = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque atualização"
+      ],
+      "description": "ATUALEST = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque atualização mp"
+      ],
+      "description": "ATUALESTMP = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque atualização terceiros"
+      ],
+      "description": "ATUALESTTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque atualização wms terceiros"
+      ],
+      "description": "ATUALESTWMSTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque atualização anterior"
+      ],
+      "description": "AD_ATUALESTANT = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque reserva emprego"
+      ],
+      "description": "AD_RESERVAEMPENHO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque observação nota fiscal"
+      ],
+      "description": "AD_OBS = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque lote contabilização"
+      ],
+      "description": "AD_LOTECTB = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento serviço"
+      ],
+      "description": "AD_AGRUPASERVICO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento valores serviço"
+      ],
+      "description": "AD_AGRUPAVLRSRV = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque geração serviço terceiros"
+      ],
+      "description": "AD_GERASERVTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque reserva estoque emprego"
+      ],
+      "description": "AD_RESERVAEMPENHO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque observação nota fiscal"
+      ],
+      "description": "AD_OBS = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque lote contabilização"
+      ],
+      "description": "AD_LOTECTB = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento serviço"
+      ],
+      "description": "AD_AGRUPASERVICO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento valores serviço"
+      ],
+      "description": "AD_AGRUPAVLRSRV = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque geração serviço terceiros"
+      ],
+      "description": "AD_GERASERVTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque reserva estoque emprego"
+      ],
+      "description": "AD_RESERVAEMPENHO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque observação nota fiscal"
+      ],
+      "description": "AD_OBS = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque lote contabilização"
+      ],
+      "description": "AD_LOTECTB = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento serviço"
+      ],
+      "description": "AD_AGRUPASERVICO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento valores serviço"
+      ],
+      "description": "AD_AGRUPAVLRSRV = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque geração serviço terceiros"
+      ],
+      "description": "AD_GERASERVTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque reserva estoque emprego"
+      ],
+      "description": "AD_RESERVAEMPENHO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque observação nota fiscal"
+      ],
+      "description": "AD_OBS = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque lote contabilização"
+      ],
+      "description": "AD_LOTECTB = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento serviço"
+      ],
+      "description": "AD_AGRUPASERVICO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento valores serviço"
+      ],
+      "description": "AD_AGRUPAVLRSRV = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque geração serviço terceiros"
+      ],
+      "description": "AD_GERASERVTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque reserva estoque emprego"
+      ],
+      "description": "AD_RESERVAEMPENHO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque observação nota fiscal"
+      ],
+      "description": "AD_OBS = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque lote contabilização"
+      ],
+      "description": "AD_LOTECTB = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento serviço"
+      ],
+      "description": "AD_AGRUPASERVICO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento valores serviço"
+      ],
+      "description": "AD_AGRUPAVLRSRV = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque geração serviço terceiros"
+      ],
+      "description": "AD_GERASERVTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque reserva estoque emprego"
+      ],
+      "description": "AD_RESERVAEMPENHO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque observação nota fiscal"
+      ],
+      "description": "AD_OBS = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque lote contabilização"
+      ],
+      "description": "AD_LOTECTB = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento serviço"
+      ],
+      "description": "AD_AGRUPASERVICO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento valores serviço"
+      ],
+      "description": "AD_AGRUPAVLRSRV = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque geração serviço terceiros"
+      ],
+      "description": "AD_GERASERVTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque reserva estoque emprego"
+      ],
+      "description": "AD_RESERVAEMPENHO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque observação nota fiscal"
+      ],
+      "description": "AD_OBS = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque lote contabilização"
+      ],
+      "description": "AD_LOTECTB = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento serviço"
+      ],
+      "description": "AD_AGRUPASERVICO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento valores serviço"
+      ],
+      "description": "AD_AGRUPAVLRSRV = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque geração serviço terceiros"
+      ],
+      "description": "AD_GERASERVTERC = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque reserva estoque emprego"
+      ],
+      "description": "AD_RESERVAEMPENHO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque observação nota fiscal"
+      ],
+      "description": "AD_OBS = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque lote contabilização"
+      ],
+      "description": "AD_LOTECTB = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento serviço"
+      ],
+      "description": "AD_AGRUPASERVICO = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "estoque agrupamento valores serviço"
+      ],
+      "description": "AD_AGRUPAVLRSRV = 'S'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+    },
+    {
+      "match": [
+        "pedido original",
+        "pedido original cancelado"
+      ],
+      "description": "JOIN TGFCAB C ON C.NUNOTA = V.NUNOTA WHERE C.STATUSNOTA = 'C'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "match": [
+        "pedido atendido",
+        "pedido totalmente atendido"
+      ],
+      "description": "QTD_PENDENTE = 0 para todos os itens",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "match": [
+        "variacao de nota",
+        "nota de atendimento"
+      ],
+      "description": "JOIN TGFCAB C ON C.NUNOTA = V.NUNOTA WHERE C.STATUSNOTA <> 'C'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "match": [
+        "item original",
+        "item na nota de atendimento"
+      ],
+      "description": "TGFVAR.SEQUENCIAORIG -> TGFITE.SEQUENCIA",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "match": [
+        "titulos vencidos",
+        "contas vencidas"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+    },
+    {
+      "match": [
+        "estoque do produto"
+      ],
+      "description": "TGFFIN WHERE CODPROD = <produto>",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+    },
+    {
+      "match": [
+        "titulos vencidos",
+        "contas vencidas"
+      ],
+      "description": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "match": [
+        "estoque do produto"
+      ],
+      "description": "SELECT * FROM ESTOQUE WHERE CODPROD = ?",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "match": [
+        "pedidos pendentes da"
+      ],
+      "description": "SELECT * FROM PEDIDOS WHERE CODCLI = ? AND STATUS = 'Pendente'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "match": [
+        "faturas emitidas no mês"
+      ],
+      "description": "SELECT * FROM FATURAS WHERE DT_EMIT = ? AND STATUS = 'Emitido'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "match": [
+        "contas a pagar no mês"
+      ],
+      "description": "SELECT * FROM CONTAS WHERE DT_VENC = ? AND STATUS = 'Pendente'",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "match": [
+        "estoque mínimo do produto"
+      ],
+      "description": "SELECT * FROM ESTOQUE WHERE CODPROD = ? AND QTD < ?",
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    }
+  ],
+  "groq_examples": [
+    {
+      "question": "quais pedidos estao aguardando aprovacao?",
+      "response": {
+        "intent": "pendencia_compras"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "question": "quais compras foram efetivadas?",
+      "response": {
+        "intent": "vendas"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "question": "quais notas foram liberadas?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "question": "quais notas estao pendentes?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "question": "quais notas estao abertas?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "question": "quais pedidos estao aguardando aprovacao?",
+      "response": {
+        "intent": "pendencia_compras"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "question": "quais solicitacoes de compra estao abertas?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "question": "quanto gastamos com fornecedor X este mes?",
+      "response": {
+        "intent": "vendas"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "question": "quais os maiores fornecedores em valor?",
+      "response": {
+        "intent": "gerar_excel"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "question": "quais marcas mais compramos?",
+      "response": {
+        "intent": "gerar_excel"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "question": "quais devolucoes de venda foram feitas no periodo?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "question": "quais devolucoes de compra foram feitas no periodo?",
+      "response": {
+        "intent": "compras"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "question": "qual foi a taxa de devolucao de venda no periodo?",
+      "response": {
+        "intent": "vendas"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "question": "quais transferencias estao aguardando aprovacao?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "question": "quais filiais estao recebendo transferencias?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "question": "quais produtos estao sendo transferidos mais?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "question": "quais transferencias estao pendentes de entrada?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "question": "quais pedidos estao aguardando aprovacao?",
+      "response": {
+        "intent": "pendencia_compras"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "question": "quais vendas foram feitas hoje?",
+      "response": {
+        "intent": "vendas"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "question": "quais produtos estao em estoque?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "question": "quais notas foram emitidas?",
+      "response": {
+        "intent": "vendas"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "question": "quais pedidos estao pendentes de faturamento?",
+      "response": {
+        "intent": "pendencia_compras"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "question": "quais pedidos precisam de aprovacao?",
+      "response": {
+        "intent": "pendencia_compras"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/aprovacao_compras.md"
+    },
+    {
+      "question": "como verificar status das notas pendentes?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/aprovacao_compras.md"
+    },
+    {
+      "question": "quais codigos de um produto?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "question": "como encontrar equivalentes entre marcas?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "question": "quais cotacoes precisam de vinculo?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "question": "como funciona o criterio de avaliacao?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "question": "por que tantas cotacoes sao canceladas?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "question": "como posso configurar os pesos para avaliacao?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "question": "qual o ciclo de vida de uma cotacao?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "question": "qual o custo atual de um produto?",
+      "response": {
+        "intent": "estoque",
+        "fields": {
+          "CODPROD": ":codprod",
+          "CODEMP": ":codemp"
+        }
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "question": "como calcular a margem de lucro?",
+      "response": {
+        "intent": "estoque",
+        "fields": {
+          "CUSCOMICM": "preco de venda"
+        }
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "question": "quais solicitacoes precisam de aprovacao?",
+      "response": {
+        "intent": "pendencia_compras"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/solicitacao_compra.md"
+    },
+    {
+      "question": "como verificar se uma solicitacao foi aprovada?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/solicitacao_compra.md"
+    },
+    {
+      "question": "quais são as marcas de produtos?",
+      "response": {
+        "intent": "estoque",
+        "marcas": [
+          "Cummins",
+          "MWM",
+          "ZF",
+          "Eaton",
+          "Navistar"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "question": "quais são as vendas por marca?",
+      "response": {
+        "intent": "vendas",
+        "vendas": [
+          {
+            "marca": "Cummins",
+            "quantidade": 100
+          },
+          {
+            "marca": "MWM",
+            "quantidade": 50
+          }
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "question": "quanto temos a pagar este mes?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "question": "qual o estoque do produto 133346?",
+      "response": {
+        "intent": "estoque",
+        "produto": "133346"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "question": "quais são os fornecedores?",
+      "response": {
+        "intent": "fornecedor",
+        "fornecedores": [
+          "fornecedor1",
+          "fornecedor2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "question": "quanto temos a pagar este mes?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "question": "qual é o estoque do produto 133346?",
+      "response": {
+        "intent": "estoque",
+        "produto": "133346"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "question": "quais são os pedidos pendentes da MANN?",
+      "response": {
+        "intent": "pendencia_compras",
+        "empresa": "MANN"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "question": "quanto temos a pagar este mes?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+    },
+    {
+      "question": "quais produtos estão em estoque?",
+      "response": {
+        "intent": "estoque",
+        "produtos": [
+          "produto1",
+          "produto2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+    },
+    {
+      "question": "qual é a origem do produto 133346?",
+      "response": {
+        "intent": "estoque",
+        "origem": "origem_do_produto"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+    },
+    {
+      "question": "quanto temos a pagar este mes?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "question": "quais são os pedidos pendentes?",
+      "response": {
+        "intent": "pendencia_compras",
+        "pedidos": [
+          "pedido 1",
+          "pedido 2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "question": "qual é o estoque do produto 133346?",
+      "response": {
+        "intent": "estoque",
+        "produto": "produto 133346"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "question": "quais são as cotacoes abertas?",
+      "response": {
+        "cotacoes": [
+          {
+            "NUMCOTACAO": 1,
+            "SITUACAO": "A"
+          },
+          {
+            "NUMCOTACAO": 2,
+            "SITUACAO": "A"
+          }
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "question": "quais são as cotacoes canceladas?",
+      "response": {
+        "cotacoes": [
+          {
+            "NUMCOTACAO": 1,
+            "SITUACAO": "C"
+          },
+          {
+            "NUMCOTACAO": 2,
+            "SITUACAO": "C"
+          }
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "question": "quais são as cotacoes aprovadas?",
+      "response": {
+        "cotacoes": [
+          {
+            "NUMCOTACAO": 1,
+            "SITUACAO": "P"
+          },
+          {
+            "NUMCOTACAO": 2,
+            "SITUACAO": "P"
+          }
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "question": "quanto temos de estoque de produtos?",
+      "response": {
+        "estoque": {
+          "total": 1000,
+          "reservado": 200,
+          "bloqueado": 50
+        }
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "question": "quais produtos estão vencidos?",
+      "response": {
+        "produtos": [
+          {
+            "nome": "Produto X",
+            "data_vencimento": "2024-02-15"
+          }
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "question": "quais produtos estão bloqueados?",
+      "response": {
+        "produtos": [
+          {
+            "nome": "Produto Y",
+            "bloqueado": true
+          }
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "question": "quanto temos a pagar este mes?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "question": "quais notas estão pendentes?",
+      "response": {
+        "intent": "estoque",
+        "notas": [
+          "nota1",
+          "nota2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "question": "quais parceiros têm notas pendentes?",
+      "response": {
+        "intent": "estoque",
+        "parceiros": [
+          "parceiro1",
+          "parceiro2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "question": "quanto temos a pagar este mes?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "question": "qual é o estoque atual do produto 133346?",
+      "response": {
+        "intent": "estoque",
+        "produto": "133346"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "question": "quais são os pedidos pendentes da MANN?",
+      "response": {
+        "intent": "pendencia_compras",
+        "parceiro": "MANN"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "question": "quais notas estão pendentes de aprovacao?",
+      "response": {
+        "intent": "gerar_excel",
+        "status": "pendente"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+    },
+    {
+      "question": "quais notas foram aprovadas?",
+      "response": {
+        "intent": "gerar_excel",
+        "status": "aprovada"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+    },
+    {
+      "question": "quais notas estão vencidas?",
+      "response": {
+        "intent": "financeiro",
+        "status": "vencido"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+    },
+    {
+      "question": "quais sao as marcas mais vendidas?",
+      "response": {
+        "intent": "estoque",
+        "marcas": [
+          "mercedes",
+          "vw",
+          "ford"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "question": "quem e o comprador responsavel pela marca 'cummins'?",
+      "response": {
+        "intent": "estoque",
+        "comprador": "AD_CODVEND"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "question": "quais sao as contas vencidas?",
+      "response": {
+        "intent": "financeiro",
+        "contas": [
+          "titulo",
+          "conta",
+          "boleto"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "question": "quanto temos a pagar este mes?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAG.md"
+    },
+    {
+      "question": "quais produtos estão em estoque?",
+      "response": {
+        "intent": "estoque",
+        "produtos": [
+          "produto1",
+          "produto2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAG.md"
+    },
+    {
+      "question": "quantos produtos do tipo X estão em estoque?",
+      "response": {
+        "intent": "estoque",
+        "produtos": [
+          "produtoX"
+        ],
+        "quantidade": 10
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAG.md"
+    },
+    {
+      "question": "quem são nossos parceiros?",
+      "response": {
+        "intent": "estoque",
+        "parceiros": [
+          "nome parceiro 1",
+          "nome parceiro 2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "question": "quais são os ativos?",
+      "response": {
+        "intent": "estoque",
+        "ativos": [
+          "ativo 1",
+          "ativo 2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "question": "quais boletos estão vencidos?",
+      "response": {
+        "intent": "financeiro",
+        "boletos": [
+          "boleto 1",
+          "boleto 2"
+        ]
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "question": "quais produtos estão com estoque mínimo?",
+      "response": {
+        "estoque": {
+          "minimo": true
+        }
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+    },
+    {
+      "question": "quais produtos estão com estoque máximo?",
+      "response": {
+        "estoque": {
+          "maximo": true
+        }
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+    },
+    {
+      "question": "quais produtos estão vencidos?",
+      "response": {
+        "financeiro": {
+          "vencido": true
+        }
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+    },
+    {
+      "question": "quanto de pedido 1234 foi atendido?",
+      "response": {
+        "intent": "estoque",
+        "pedido": "1234",
+        "quantidade": "QTDATENDIDA"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "question": "qual o custo do atendimento do pedido 1234?",
+      "response": {
+        "intent": "financeiro",
+        "pedido": "1234",
+        "custo": "CUSATEND"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "question": "quais pedidos estão pendentes?",
+      "response": {
+        "intent": "pendencia_compras",
+        "pedidos": "QTD_PENDENTE"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "question": "quanto temos a pagar este mes?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+    },
+    {
+      "question": "quais são os pedidos pendentes da MANN?",
+      "response": {
+        "intent": "pendencia_compras",
+        "fornecedor": "MANN"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+    },
+    {
+      "question": "qual é o estoque do produto 133346?",
+      "response": {
+        "intent": "estoque",
+        "produto": 133346
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+    },
+    {
+      "question": "quanto temos a pagar este mês?",
+      "response": {
+        "intent": "financeiro",
+        "periodo": "mes_atual"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "question": "quais são os pedidos pendentes da MANN?",
+      "response": {
+        "intent": "pendencia_compras",
+        "cliente": "MANN"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "question": "qual é o estoque do produto 133346?",
+      "response": {
+        "intent": "estoque",
+        "produto": "133346"
+      },
+      "confidence": 0.9,
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    }
+  ],
+  "synonyms": [
+    {
+      "term": "referencia",
+      "field": "REFERENCIA",
+      "meaning": "referencia principal do fabricante",
+      "source": "knowledge/glossario/codigo_fabricante.md"
+    },
+    {
+      "term": "numero fabricante",
+      "field": "AD_NUMFABRICANTE",
+      "meaning": "numero do fabricante",
+      "source": "knowledge/glossario/codigo_fabricante.md"
+    },
+    {
+      "term": "codigo fabricante",
+      "field": "AD_NUMFABRICANTE2",
+      "meaning": "segundo numero do fabricante",
+      "source": "knowledge/glossario/codigo_fabricante.md"
+    },
+    {
+      "term": "numero original",
+      "field": "AD_NUMORIGINAL",
+      "meaning": "numero original da peca (OEM)",
+      "source": "knowledge/glossario/codigo_fabricante.md"
+    },
+    {
+      "term": "ref",
+      "field": "REFFORN",
+      "meaning": "referencia do fornecedor",
+      "source": "knowledge/glossario/codigo_fabricante.md"
+    },
+    {
+      "term": "empenho",
+      "field": "TGFCAB.CODTIPOPER",
+      "meaning": "compra casada 1313",
+      "source": "knowledge/glossario/compra_casada.md"
+    },
+    {
+      "term": "compra vinculada",
+      "field": "TGFCAB.CODTIPOPER",
+      "meaning": "compra casada 1313",
+      "source": "knowledge/glossario/compra_casada.md"
+    },
+    {
+      "term": "pedido casado",
+      "field": "TGFCAB.CODTIPOPER",
+      "meaning": "compra casada 1313",
+      "source": "knowledge/glossario/compra_casada.md"
+    },
+    {
+      "term": "compra de estoque",
+      "field": "TIPO_COMPRA",
+      "meaning": "Estoque",
+      "source": "knowledge/glossario/compra_estoque.md"
+    },
+    {
+      "term": "entrega futura",
+      "field": "TIPO_COMPRA",
+      "meaning": "Estoque",
+      "source": "knowledge/glossario/compra_estoque.md"
+    },
+    {
+      "term": "compra programada",
+      "field": "TIPO_COMPRA",
+      "meaning": "Estoque",
+      "source": "knowledge/glossario/compra_estoque.md"
+    },
+    {
+      "term": "reposicao",
+      "field": "TIPO_COMPRA",
+      "meaning": "Estoque",
+      "source": "knowledge/glossario/compra_estoque.md"
+    },
+    {
+      "term": "empenho",
+      "field": "TGFCAB.CODTIPOPER",
+      "meaning": "compra casada 1313",
+      "source": "knowledge/glossario/empenho.md"
+    },
+    {
+      "term": "compra casada",
+      "field": "TGFCAB.CODTIPOPER",
+      "meaning": "compra casada 1313",
+      "source": "knowledge/glossario/empenho.md"
+    },
+    {
+      "term": "compra vinculada",
+      "field": "TGFCAB.CODTIPOPER",
+      "meaning": "compra casada 1313",
+      "source": "knowledge/glossario/empenho.md"
+    },
+    {
+      "term": "reserva",
+      "field": "TGFCAB.CODTIPOPER",
+      "meaning": "compra casada 1313",
+      "source": "knowledge/glossario/empenho.md"
+    },
+    {
+      "term": "aprovar",
+      "field": "TGFLIB",
+      "meaning": "liberacao de pedido",
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "term": "solicitar",
+      "field": "TGFCAB",
+      "meaning": "solicitacao de compra",
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "term": "cotar",
+      "field": "TGFCOT",
+      "meaning": "cotacao de compra",
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "term": "receber",
+      "field": "TGFCAB",
+      "meaning": "recebimento de mercadoria",
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "term": "estoque",
+      "field": "TGFEST",
+      "meaning": "posicao de estoque",
+      "source": "knowledge/processos/compras/fluxo_compra.md"
+    },
+    {
+      "term": "aprovar",
+      "field": "TGFLIB",
+      "meaning": "liberacao de pedido",
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "term": "solicitar",
+      "field": "TGFITE",
+      "meaning": "requisicao interna",
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "term": "comprar",
+      "field": "TGFCAB",
+      "meaning": "nota de compra",
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "term": "fornecedor",
+      "field": "TGFPAR",
+      "meaning": "parceiro comercial",
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "term": "estoque",
+      "field": "TGFEST",
+      "meaning": "posicao de estoque",
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "term": "vencido",
+      "field": "TGFFIN",
+      "meaning": "titulo a pagar vencido",
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "term": "pagamento",
+      "field": "TGFFIN",
+      "meaning": "titulo a pagar",
+      "source": "knowledge/processos/compras/rotina_comprador.md"
+    },
+    {
+      "term": "devolucao",
+      "field": "TIPMOV",
+      "meaning": "movimento de devolucao",
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "term": "refatura",
+      "field": "CODTIPOPER",
+      "meaning": "tipo de devolucao de refatura",
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "term": "credito",
+      "field": "ATUALFIN",
+      "meaning": "movimento de credito ao cliente",
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "term": "estoque",
+      "field": "TGFEST.ESTOQUE",
+      "meaning": "quantidade de mercadoria em estoque",
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "term": "fornecedor",
+      "field": "TGFPAR.NOMEPARC",
+      "meaning": "nome do fornecedor",
+      "source": "knowledge/processos/estoque/devolucao.md"
+    },
+    {
+      "term": "aprovar",
+      "field": "TGFLIB",
+      "meaning": "liberacao de pedido",
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "term": "saida",
+      "field": "TGFITE",
+      "meaning": "baixa de estoque",
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "term": "entrada",
+      "field": "TGFCAB",
+      "meaning": "entrada de estoque",
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "term": "filial",
+      "field": "TSIEMP",
+      "meaning": "empresa",
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "term": "NFe",
+      "field": "TGFCAB",
+      "meaning": "nota fiscal eletronica",
+      "source": "knowledge/processos/estoque/transferencia.md"
+    },
+    {
+      "term": "aprovar",
+      "field": "TGFLIB",
+      "meaning": "liberacao de pedido",
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "term": "reserva",
+      "field": "TGFEST",
+      "meaning": "estoque reservado",
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "term": "baixa",
+      "field": "TGFEST",
+      "meaning": "estoque baixado",
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "term": "faturamento",
+      "field": "TGFFIN",
+      "meaning": "geracao de titulo a receber",
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "term": "NFe",
+      "field": "TGFCAB",
+      "meaning": "nota fiscal eletronica",
+      "source": "knowledge/processos/vendas/fluxo_venda.md"
+    },
+    {
+      "term": "liberar",
+      "field": "TGFLIB",
+      "meaning": "aprovar pedido",
+      "source": "knowledge/regras/aprovacao_compras.md"
+    },
+    {
+      "term": "aprovar",
+      "field": "TGFLIB",
+      "meaning": "liberar pedido",
+      "source": "knowledge/regras/aprovacao_compras.md"
+    },
+    {
+      "term": "codigo",
+      "field": "NUMAUX",
+      "meaning": "codigo auxiliar",
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "term": "cross-reference",
+      "field": "NUMAUX",
+      "meaning": "codigo equivalente",
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "term": "cotacao",
+      "field": "TGFCOT",
+      "meaning": "solicitacao de preco",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "solicitacao",
+      "field": "TGFCAB",
+      "meaning": "pedido de compra",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "pedido",
+      "field": "TGFCAB",
+      "meaning": "solicitacao de compra",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "vinculo",
+      "field": "NUNOTAORIG",
+      "meaning": "ligacao entre cotacao e solicitacao",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "peso",
+      "field": "PESOPRECO",
+      "meaning": "importancia do preco na avaliacao",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "criterio",
+      "field": "PESOPRECO",
+      "meaning": "fator de avaliacao",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "cancelamento",
+      "field": "SITUACAO",
+      "meaning": "status de cancelamento",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "itens",
+      "field": "TGFCOI",
+      "meaning": "detalhes da cotacao",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "sistema",
+      "field": "DHINIC",
+      "meaning": "data de inicio do sistema",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "ciclo",
+      "field": "SITUACAO",
+      "meaning": "status da cotacao",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "observacao",
+      "field": "TGFCOT",
+      "meaning": "detalhes da cotacao",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "term": "custo",
+      "field": "CUSCOMICM",
+      "meaning": "preco de compra",
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "term": "historico",
+      "field": "DTATUAL",
+      "meaning": "data de registro",
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "term": "regra",
+      "field": "TGFPRO",
+      "meaning": "cadastro de produtos",
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "term": "liberar",
+      "field": "TGFLIB",
+      "meaning": "aprovar pedido",
+      "source": "knowledge/regras/solicitacao_compra.md"
+    },
+    {
+      "term": "solicitacao",
+      "field": "TGFCAB",
+      "meaning": "necessidade de compra",
+      "source": "knowledge/regras/solicitacao_compra.md"
+    },
+    {
+      "term": "nota fiscal",
+      "field": "TGFCAB.NUMNOTA",
+      "meaning": "numero da nota",
+      "source": "knowledge/sankhya/api.md"
+    },
+    {
+      "term": "nota fiscal",
+      "field": "TGFCAB.NUMNOTA",
+      "meaning": "numero da nota",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "term": "marca",
+      "field": "TGFPRO.MARCA",
+      "meaning": "nome da marca",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "term": "produto",
+      "field": "TGFPRO.DESCRPROD",
+      "meaning": "descricao do produto",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "term": "nota fiscal",
+      "field": "TGFCAB.NUMNOTA",
+      "meaning": "numero da nota",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "marca mais vendida",
+      "field": "TGFCAB.MARCA",
+      "meaning": "marca mais vendida",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "fornecedor atrasado",
+      "field": "TGFPAR.NOMEPARC",
+      "meaning": "fornecedor atrasado",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "pedidos pendentes",
+      "field": "TGFCAB.PENDENTE",
+      "meaning": "pedidos pendentes",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "previsao de entrega",
+      "field": "TGFCAB.DTPREVENT",
+      "meaning": "previsao de entrega",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "pontualidade do fornecedor",
+      "field": "TGFPAR.NOMEPARC",
+      "meaning": "pontualidade do fornecedor",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "confiabilidade do fornecedor",
+      "field": "TGFPAR.NOMEPARC",
+      "meaning": "confiabilidade do fornecedor",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "performance do fornecedor",
+      "field": "TGFPAR.NOMEPARC",
+      "meaning": "performance do fornecedor",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "ranking de fornecedores",
+      "field": "TGFPAR.NOMEPARC",
+      "meaning": "ranking de fornecedores",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "top fornecedores",
+      "field": "TGFPAR.NOMEPARC",
+      "meaning": "top fornecedores",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "nota fiscal",
+      "field": "TGFCAB.NUMNOTA",
+      "meaning": "numero da nota",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "term": "pendencia de compra",
+      "field": "TGFCAB.PENDENTE",
+      "meaning": "pendencia de compra",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "term": "pendencia de venda",
+      "field": "TGFCAB.TIPMOV",
+      "meaning": "pendencia de venda",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "term": "pendencia financeira",
+      "field": "TGFFIN.DHBAIXA",
+      "meaning": "pendencia financeira",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "term": "marca",
+      "field": "DESCRICAO",
+      "meaning": "fabricante",
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "term": "peca",
+      "field": "CODIGO",
+      "meaning": "produto",
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "term": "vendas",
+      "field": "QTD_PRODUTOS",
+      "meaning": "quantidade de produtos vendidos",
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "term": "relatorio",
+      "field": "DESCRICAO",
+      "meaning": "resumo de dados",
+      "source": "knowledge/sankhya/tabelas/AD_MARCAS.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "term": "produto",
+      "field": "AD_CADPRODMMA.CODPROD",
+      "meaning": "codigo de produto",
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "term": "fornecedor",
+      "field": "AD_FORNEMPPRO.CODFORNEC",
+      "meaning": "codigo de fornecedor",
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "term": "compra",
+      "field": "AD_SOLICITACAOCOMPRA.CODFORNEC",
+      "meaning": "codigo de compra",
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "term": "venda",
+      "field": "AD_PEDIDOVENDA.CODFORNEC",
+      "meaning": "codigo de venda",
+      "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "term": "conta",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "term": "produto",
+      "field": "CODPROD",
+      "meaning": "código do produto",
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "term": "estoque",
+      "field": "CUSCOMICM",
+      "meaning": "quantidade em estoque",
+      "source": "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+    },
+    {
+      "term": "produto",
+      "field": "CODPROD",
+      "meaning": "código do produto",
+      "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+    },
+    {
+      "term": "marca",
+      "field": "CODIGO",
+      "meaning": "código da marca",
+      "source": "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "term": "conta",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "term": "venda",
+      "field": "CODTIPVENDA",
+      "meaning": "tipo de negociação",
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "term": "compra",
+      "field": "CODTIPOPER",
+      "meaning": "tipo de operação",
+      "source": "knowledge/sankhya/tabelas/TGFCAB.md"
+    },
+    {
+      "term": "cotacao",
+      "field": "NUMCOTACAO",
+      "meaning": "número da cotação",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "preco",
+      "field": "PESOPRECO",
+      "meaning": "preço da cotação",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "fornecedor",
+      "field": "CODUSUREQ",
+      "meaning": "usuário comprador",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "pedido",
+      "field": "NUMNOTAORIG",
+      "meaning": "número do pedido de origem",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "entrega",
+      "field": "PRAZOENTREGA",
+      "meaning": "prazo de entrega",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "garantia",
+      "field": "PESOGARANTIA",
+      "meaning": "garantia da cotação",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "taxa",
+      "field": "PESOTAXAJURO",
+      "meaning": "taxa de juro da cotação",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "juro",
+      "field": "PESOTAXAJURO",
+      "meaning": "juro da cotação",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "valor do boleto",
+      "source": "knowledge/sankhya/tabelas/TGFCOT.md"
+    },
+    {
+      "term": "estoque",
+      "field": "ESTOQUE",
+      "meaning": "quantidade de produtos em estoque",
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "term": "produtos",
+      "field": "CODPROD",
+      "meaning": "códigos de produtos",
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "term": "reservado",
+      "field": "RESERVADO",
+      "meaning": "quantidade de produtos reservados",
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "term": "bloqueado",
+      "field": "WMSBLOQUEADO",
+      "meaning": "quantidade de produtos bloqueados",
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "term": "vencido",
+      "field": "DTVENC",
+      "meaning": "data de vencimento de produtos",
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "valor de boleto",
+      "source": "knowledge/sankhya/tabelas/TGFEST.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "term": "nota de entrada",
+      "field": "TGFFIN.NUMNOTA",
+      "meaning": "nota de entrada",
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "term": "parceiro",
+      "field": "TGFFIN.CODPARC",
+      "meaning": "parceiro",
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "term": "vendedor",
+      "field": "TGFFIN.CODVEND",
+      "meaning": "vendedor",
+      "source": "knowledge/sankhya/tabelas/TGFFIN.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "term": "estoque",
+      "field": "ATUALESTOQUE",
+      "meaning": "quantidade em estoque",
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "term": "produto",
+      "field": "CODPROD",
+      "meaning": "código do produto",
+      "source": "knowledge/sankhya/tabelas/TGFITE.md"
+    },
+    {
+      "term": "aprovacao",
+      "field": "LIBERACOES",
+      "meaning": "tipo de liberacao",
+      "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+    },
+    {
+      "term": "liberacao",
+      "field": "LIBERACOES",
+      "meaning": "tipo de liberacao",
+      "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFLIB.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "term": "comprador",
+      "field": "AD_CODVEND",
+      "meaning": "responsavel pela marca",
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "term": "produto",
+      "field": "TGFPRO.CODPROD",
+      "meaning": "codigo do produto",
+      "source": "knowledge/sankhya/tabelas/TGFMAR.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFPAG.md"
+    },
+    {
+      "term": "conta",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFPAG.md"
+    },
+    {
+      "term": "produto",
+      "field": "TGFPAG.TGFPAG_ID",
+      "meaning": "produto",
+      "source": "knowledge/sankhya/tabelas/TGFPAG.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "term": "ativo",
+      "field": "TGFPAR.ATIVO",
+      "meaning": "parceiro ativo",
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "term": "parceiro",
+      "field": "TGFPAR.CODPARC",
+      "meaning": "cliente ou fornecedor",
+      "source": "knowledge/sankhya/tabelas/TGFPAR.md"
+    },
+    {
+      "term": "estoque mínimo",
+      "field": "ESTMIN",
+      "meaning": "estoque mínimo",
+      "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+    },
+    {
+      "term": "estoque máximo",
+      "field": "ESTMAX",
+      "meaning": "estoque máximo",
+      "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+    },
+    {
+      "term": "produtos vencidos",
+      "field": "DTVENC < SYSDATE AND DHBAIXA IS NULL",
+      "meaning": "produtos vencidos",
+      "source": "knowledge/sankhya/tabelas/TGFPRO.md"
+    },
+    {
+      "term": "pedido original",
+      "field": "TGFVAR.NUNOTAORIG",
+      "meaning": "pedido original",
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "term": "pedido original cancelado",
+      "field": "TGFVAR.NUNOTAORIG",
+      "meaning": "pedido original cancelado",
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "term": "pedido atendido",
+      "field": "TGFVAR.QTDATENDIDA",
+      "meaning": "pedido atendido",
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "term": "pedido totalmente atendido",
+      "field": "TGFVAR.QTDATENDIDA",
+      "meaning": "pedido totalmente atendido",
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "term": "variacao de nota",
+      "field": "TGFVAR.NUNOTA",
+      "meaning": "variacao de nota",
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "term": "nota de atendimento",
+      "field": "TGFVAR.NUNOTA",
+      "meaning": "nota de atendimento",
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "term": "item original",
+      "field": "TGFVAR.SEQUENCIAORIG",
+      "meaning": "item original",
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "term": "item na nota de atendimento",
+      "field": "TGFVAR.SEQUENCIA",
+      "meaning": "item na nota de atendimento",
+      "source": "knowledge/sankhya/tabelas/TGFVAR.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+    },
+    {
+      "term": "comissao",
+      "field": "TGFFIN.COMVENDA",
+      "meaning": "comissão venda",
+      "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+    },
+    {
+      "term": "vendedor",
+      "field": "TGFFIN.CODVEND",
+      "meaning": "código do vendedor",
+      "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+    },
+    {
+      "term": "boleto",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "term": "conta",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "term": "fatura",
+      "field": "TGFFIN.VLRDESDOB",
+      "meaning": "titulo financeiro",
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "term": "pedido",
+      "field": "PEDIDOS.CODCLI",
+      "meaning": "cliente",
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "term": "estoque",
+      "field": "ESTOQUE.QTD",
+      "meaning": "quantidade em estoque",
+      "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    }
+  ],
+  "business_rules": [
+    {
+      "rule": "pendencia sem especificar = pendencia de COMPRA (nao financeira)",
+      "source": "knowledge/regras/aprovacao_compras.md"
+    },
+    {
+      "rule": "STATUSNOTA controla o fluxo das notas",
+      "source": "knowledge/regras/aprovacao_compras.md"
+    },
+    {
+      "rule": "busca flexivel = buscar qualquer codigo",
+      "description": "O sistema deve buscar qualquer codigo informado pelo cliente",
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "rule": "multiplas origens = codigos de fabricantes, distribuidores, etc",
+      "description": "O sistema deve considerar codigos de diferentes origens",
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "rule": "vinculo com marca = saber de qual fabricante eh o codigo",
+      "description": "O sistema deve saber de qual fabricante eh o codigo informado",
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "rule": "sem duplicacao = PK composta evita codigo duplicado por produto",
+      "description": "O sistema deve evitar codigos duplicados por produto",
+      "source": "knowledge/regras/codigos_auxiliares.md"
+    },
+    {
+      "rule": "cotacao sem vinculo = cotacao invalida",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "rule": "criterio unico = preco",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "rule": "alta taxa de cancelamento = 30%",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "rule": "itens nao formalizados = TGFCOI/TGFCOC vazias",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "rule": "sistema novo = DHINIC >= '2026-01-01'",
+      "source": "knowledge/regras/cotacao_compra.md"
+    },
+    {
+      "rule": "historico completo = 5 anos de dados",
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "rule": "por empresa = custo pode variar por filial",
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "rule": "varios tipos = custo pode ser calculado de diferentes maneiras",
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "rule": "nao sobrescreve = cada alteracao eh registrada",
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "rule": "custo de reposicao = indica tendencia de preco",
+      "source": "knowledge/regras/custos_produto.md"
+    },
+    {
+      "rule": "solicitacao sem especificar = solicitacao de COMPRA (nao financeira)",
+      "source": "knowledge/regras/solicitacao_compra.md"
+    },
+    {
+      "rule": "TGFSOL nao utilizada = TGFSOL vazia",
+      "source": "knowledge/regras/solicitacao_compra.md"
+    },
+    {
+      "rule": "NUNCA juntar TGFITE com TGFFIN sem subquery",
+      "source": "knowledge/sankhya/api.md"
+    },
+    {
+      "rule": "NUNCA juntar TGFITE com TGFFIN sem subquery",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "SEMPRE passar por TGFITE para acessar TGFPRO a partir de TGFCAB",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "NUNCA usar LIMIT (usar ROWNUM com subquery)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "NUNCA usar FETCH FIRST (usar ROWNUM com subquery)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "SEMPRE qualificar colunas com alias (C.campo, P.campo)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "SEMPRE incluir todas colunas nao-agregadas no GROUP BY",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "NUNCA colocar ponto-e-virgula no final",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "MARCA esta em TGFPRO, NOMEPARC em TGFPAR, APELIDO em TGFVEN",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "Preferir JOINs diretos em vez de subqueries complexas",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "NUNCA juntar TGFFIN com TGFITE na mesma query (multiplica valores)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "Para pendencias financeiras, filtrar por DHBAIXA IS NULL (nao por DTNEG)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "SEMPRE mostrar top 10+ em rankings (nao FETCH FIRST 1 ROW)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "Para FILTRAR por marca, usar TGFMAR.DESCRICAO (NUNCA TGFPRO.MARCA)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "NUNCA usar nivel CABECALHO (EXISTS + VLRNOTA) quando filtrando por MARCA — usar nivel ITEM",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "DTPREVENT = previsao de entrega (incluir quando pergunta sobre entrega/previsao)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "SEMPRE usar UPPER() ao comparar campos de texto (marca, fornecedor, produto)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "Para relatorios/acompanhamento usar STATUSNOTA <> 'C' (excluir cancelados)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "Pedidos de compra = TIPMOV = 'O'. Notas de compra = TIPMOV = 'C'. Tudo de compra = IN ('C','O')",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "Se menciona MARCA/PRODUTO: query nivel ITEM (FROM TGFITE). Valor = ITE.VLRTOT. Pendencia = TGFVAR (QTD_PEDIDA - QTD_ATENDIDA)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "DTPREVENT eh DATE — usar NVL(TO_CHAR(DTPREVENT,'DD/MM/YYYY'),'Sem previsao'). NUNCA NVL(DTPREVENT,'texto') (erro ORA tipo DATE vs VARCHAR)",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "Pedidos pendentes = PENDENTE='S' (campo do Sankhya). NUNCA usar STATUSNOTA='P' para pendencia",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "STATUSNOTA indica estado da NOTA (P/L/A/C). PENDENTE indica se falta receber itens (S/N). Sao campos DIFERENTES",
+      "source": "knowledge/sankhya/erros_sql.md"
+    },
+    {
+      "rule": "NUNCA juntar TGFITE com TGFFIN sem subquery",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Sempre passar por TGFITE para acessar MARCA",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Usar subquery com ROWNUM para limitar resultados",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Evitar divisao por zero com NULLIF",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Calcular media de dias pendentes apenas para pedidos pendentes",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Usar periodo de 12 meses para avaliar performance",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "NUNCA juntar TGFITE com TGFFIN sem subquery",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "rule": "Quando usar cada tabela: Quer VALOR FINANCEIRO -> TGFFIN (sem TGFITE)",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "rule": "Quer DADOS DE PRODUTO -> TGFITE + TGFPRO (sem TGFFIN)",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "rule": "Quer VALOR DA NOTA -> TGFCAB.VLRNOTA (sem TGFFIN nem TGFITE)",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "rule": "NUNCA usar STATUSNOTA='P' para pendencia",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "rule": "Para FILTRAR por marca, usar TGFMAR.DESCRICAO (NUNCA TGFPRO.MARCA para filtro)",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "rule": "DTPREVENT pode ser NULL - sempre tratar com NVL ou IS NOT NULL",
+      "source": "knowledge/sankhya/relacionamentos.md"
+    }
+  ],
+  "potential_intents": [
+    {
+      "name": "financeiro",
+      "keywords_count": 16,
+      "top_keywords": [
+        "pagar",
+        "vencimento",
+        "custo",
+        "vencidos",
+        "contas"
+      ],
+      "source_files": [
+        "knowledge/sankhya/tabelas/TGFMAR.md",
+        "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md",
+        "knowledge/sankhya/tabelas/TGFCOT.md",
+        "knowledge/sankhya/tabelas/TGFVAR.md",
+        "knowledge/sankhya/tabelas/TGFEST.md",
+        "knowledge/sankhya/tabelas/TSIEMP.md",
+        "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md",
+        "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md",
+        "knowledge/sankhya/tabelas/TGFFIN.md"
+      ],
+      "note": "Considerar criar _handle_financeiro()"
+    }
+  ],
+  "_meta": {
+    "compiled_at": "2026-02-13T13:15:01",
+    "compiler_version": "1.0",
+    "source_files": 38,
+    "processed_files": 38,
+    "groq_model": "llama-3.1-8b-instant",
+    "groq_calls": 38
+  }
+}

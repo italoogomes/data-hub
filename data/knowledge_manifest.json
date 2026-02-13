@@ -1,0 +1,469 @@
+{
+  "version": "1.0",
+  "files": {
+    "knowledge/glossario/codigo_fabricante.md": {
+      "hash": "sha256:692cdd868fc6eb22",
+      "size_lines": 22,
+      "doc_type": "glossario",
+      "processed_at": "2026-02-13T13:05:15",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 1,
+        "groq_examples": 0,
+        "synonyms": 5
+      }
+    },
+    "knowledge/glossario/compra_casada.md": {
+      "hash": "sha256:a497c0fc7b09fc89",
+      "size_lines": 16,
+      "doc_type": "glossario",
+      "processed_at": "2026-02-13T13:05:16",
+      "generated": {
+        "keywords": 3,
+        "filter_rules": 6,
+        "groq_examples": 0,
+        "synonyms": 3
+      }
+    },
+    "knowledge/glossario/compra_estoque.md": {
+      "hash": "sha256:c56dd8d96a52b90e",
+      "size_lines": 15,
+      "doc_type": "glossario",
+      "processed_at": "2026-02-13T13:05:16",
+      "generated": {
+        "keywords": 4,
+        "filter_rules": 2,
+        "groq_examples": 0,
+        "synonyms": 4
+      }
+    },
+    "knowledge/glossario/comprador.md": {
+      "hash": "sha256:f734e25821a082b5",
+      "size_lines": 17,
+      "doc_type": "glossario",
+      "processed_at": "2026-02-13T13:05:19",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 53,
+        "groq_examples": 0,
+        "synonyms": 0
+      }
+    },
+    "knowledge/glossario/empenho.md": {
+      "hash": "sha256:fcad88518ac105f6",
+      "size_lines": 18,
+      "doc_type": "glossario",
+      "processed_at": "2026-02-13T13:05:19",
+      "generated": {
+        "keywords": 4,
+        "filter_rules": 4,
+        "groq_examples": 0,
+        "synonyms": 4
+      }
+    },
+    "knowledge/glossario/sinonimos.md": {
+      "hash": "sha256:526085d94e79e132",
+      "size_lines": 312,
+      "doc_type": "glossario",
+      "processed_at": "2026-02-13T13:05:41",
+      "generated": {
+        "keywords": 60,
+        "filter_rules": 22,
+        "groq_examples": 0,
+        "synonyms": 0
+      }
+    },
+    "knowledge/processos/compras/fluxo_compra.md": {
+      "hash": "sha256:bb0a5d9d897cf7a4",
+      "size_lines": 704,
+      "doc_type": "processo",
+      "processed_at": "2026-02-13T13:06:09",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 5,
+        "groq_examples": 5,
+        "synonyms": 5
+      }
+    },
+    "knowledge/processos/compras/rotina_comprador.md": {
+      "hash": "sha256:477aa7e8e304eef0",
+      "size_lines": 132,
+      "doc_type": "processo",
+      "processed_at": "2026-02-13T13:06:26",
+      "generated": {
+        "keywords": 16,
+        "filter_rules": 5,
+        "groq_examples": 5,
+        "synonyms": 7
+      }
+    },
+    "knowledge/processos/estoque/devolucao.md": {
+      "hash": "sha256:7b637d6c792ced6b",
+      "size_lines": 273,
+      "doc_type": "processo",
+      "processed_at": "2026-02-13T13:06:53",
+      "generated": {
+        "keywords": 5,
+        "filter_rules": 3,
+        "groq_examples": 3,
+        "synonyms": 5
+      }
+    },
+    "knowledge/processos/estoque/transferencia.md": {
+      "hash": "sha256:3d43a1d491217e67",
+      "size_lines": 313,
+      "doc_type": "processo",
+      "processed_at": "2026-02-13T13:07:16",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 2,
+        "groq_examples": 4,
+        "synonyms": 5
+      }
+    },
+    "knowledge/processos/vendas/fluxo_venda.md": {
+      "hash": "sha256:6d6ad530418ffe27",
+      "size_lines": 255,
+      "doc_type": "processo",
+      "processed_at": "2026-02-13T13:07:44",
+      "generated": {
+        "keywords": 5,
+        "filter_rules": 3,
+        "groq_examples": 5,
+        "synonyms": 5
+      }
+    },
+    "knowledge/regras/aprovacao_compras.md": {
+      "hash": "sha256:8b14e18c9480b185",
+      "size_lines": 135,
+      "doc_type": "regra",
+      "processed_at": "2026-02-13T13:08:01",
+      "generated": {
+        "keywords": 3,
+        "filter_rules": 2,
+        "groq_examples": 2,
+        "synonyms": 2
+      }
+    },
+    "knowledge/regras/codigos_auxiliares.md": {
+      "hash": "sha256:b0792e74e9e8ed80",
+      "size_lines": 211,
+      "doc_type": "regra",
+      "processed_at": "2026-02-13T13:08:24",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 1,
+        "groq_examples": 2,
+        "synonyms": 2
+      }
+    },
+    "knowledge/regras/cotacao_compra.md": {
+      "hash": "sha256:e6772808bcba0573",
+      "size_lines": 196,
+      "doc_type": "regra",
+      "processed_at": "2026-02-13T13:08:46",
+      "generated": {
+        "keywords": 11,
+        "filter_rules": 5,
+        "groq_examples": 5,
+        "synonyms": 11
+      }
+    },
+    "knowledge/regras/custos_produto.md": {
+      "hash": "sha256:ca93958e8caed2c3",
+      "size_lines": 216,
+      "doc_type": "regra",
+      "processed_at": "2026-02-13T13:09:10",
+      "generated": {
+        "keywords": 3,
+        "filter_rules": 5,
+        "groq_examples": 2,
+        "synonyms": 3
+      }
+    },
+    "knowledge/regras/solicitacao_compra.md": {
+      "hash": "sha256:3c893d16313479cf",
+      "size_lines": 178,
+      "doc_type": "regra",
+      "processed_at": "2026-02-13T13:09:30",
+      "generated": {
+        "keywords": 3,
+        "filter_rules": 2,
+        "groq_examples": 2,
+        "synonyms": 2
+      }
+    },
+    "knowledge/sankhya/api.md": {
+      "hash": "sha256:f53ba55329b212fe",
+      "size_lines": 215,
+      "doc_type": "referencia",
+      "processed_at": "2026-02-13T13:09:47",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 0,
+        "groq_examples": 0,
+        "synonyms": 1
+      }
+    },
+    "knowledge/sankhya/erros_sql.md": {
+      "hash": "sha256:b938d18f57b5f1ee",
+      "size_lines": 543,
+      "doc_type": "referencia",
+      "processed_at": "2026-02-13T13:10:07",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 0,
+        "groq_examples": 0,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/exemplos_sql.md": {
+      "hash": "sha256:7ceb5679aa9bbc80",
+      "size_lines": 873,
+      "doc_type": "referencia",
+      "processed_at": "2026-02-13T13:10:26",
+      "generated": {
+        "keywords": 9,
+        "filter_rules": 0,
+        "groq_examples": 0,
+        "synonyms": 10
+      }
+    },
+    "knowledge/sankhya/relacionamentos.md": {
+      "hash": "sha256:256617dda1a0b6a8",
+      "size_lines": 299,
+      "doc_type": "referencia",
+      "processed_at": "2026-02-13T13:10:45",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 0,
+        "groq_examples": 0,
+        "synonyms": 4
+      }
+    },
+    "knowledge/sankhya/tabelas/AD_MARCAS.md": {
+      "hash": "sha256:1e20a8090c9afbad",
+      "size_lines": 78,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:10:57",
+      "generated": {
+        "keywords": 9,
+        "filter_rules": 3,
+        "groq_examples": 2,
+        "synonyms": 4
+      }
+    },
+    "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md": {
+      "hash": "sha256:521af300d8588f4b",
+      "size_lines": 194,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:11:24",
+      "generated": {
+        "keywords": 13,
+        "filter_rules": 5,
+        "groq_examples": 3,
+        "synonyms": 5
+      }
+    },
+    "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md": {
+      "hash": "sha256:eeee96b239517b29",
+      "size_lines": 24,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:11:33",
+      "generated": {
+        "keywords": 7,
+        "filter_rules": 3,
+        "groq_examples": 3,
+        "synonyms": 4
+      }
+    },
+    "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md": {
+      "hash": "sha256:f34d2fe7b3bb1823",
+      "size_lines": 19,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:11:42",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 2,
+        "groq_examples": 3,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFCAB.md": {
+      "hash": "sha256:fc61758d6be39a31",
+      "size_lines": 1297,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:12:02",
+      "generated": {
+        "keywords": 10,
+        "filter_rules": 2,
+        "groq_examples": 3,
+        "synonyms": 4
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFCOT.md": {
+      "hash": "sha256:f0530d68f8cd62b5",
+      "size_lines": 53,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:12:15",
+      "generated": {
+        "keywords": 10,
+        "filter_rules": 4,
+        "groq_examples": 3,
+        "synonyms": 9
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFEST.md": {
+      "hash": "sha256:28cd95a7bfae4558",
+      "size_lines": 52,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:12:25",
+      "generated": {
+        "keywords": 11,
+        "filter_rules": 3,
+        "groq_examples": 3,
+        "synonyms": 6
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFFIN.md": {
+      "hash": "sha256:b7fb4df64253d538",
+      "size_lines": 445,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:12:39",
+      "generated": {
+        "keywords": 6,
+        "filter_rules": 3,
+        "groq_examples": 3,
+        "synonyms": 4
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFITE.md": {
+      "hash": "sha256:b7fb3a9e38e84b8a",
+      "size_lines": 251,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:12:52",
+      "generated": {
+        "keywords": 9,
+        "filter_rules": 3,
+        "groq_examples": 3,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFLIB.md": {
+      "hash": "sha256:a2a6a3b4c5d23119",
+      "size_lines": 124,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:13:07",
+      "generated": {
+        "keywords": 9,
+        "filter_rules": 2,
+        "groq_examples": 3,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFMAR.md": {
+      "hash": "sha256:2d596efd8ed2b5cf",
+      "size_lines": 36,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:13:19",
+      "generated": {
+        "keywords": 9,
+        "filter_rules": 3,
+        "groq_examples": 3,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFPAG.md": {
+      "hash": "sha256:53657da8585975d8",
+      "size_lines": 9,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:13:26",
+      "generated": {
+        "keywords": 7,
+        "filter_rules": 2,
+        "groq_examples": 3,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFPAR.md": {
+      "hash": "sha256:484e57cd470ecb28",
+      "size_lines": 296,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:13:40",
+      "generated": {
+        "keywords": 8,
+        "filter_rules": 3,
+        "groq_examples": 3,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFPRO.md": {
+      "hash": "sha256:72067471aab60be9",
+      "size_lines": 411,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:13:57",
+      "generated": {
+        "keywords": 7,
+        "filter_rules": 2,
+        "groq_examples": 3,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFTOP.md": {
+      "hash": "sha256:00920e4c6cd37c44",
+      "size_lines": 386,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:14:14",
+      "generated": {
+        "keywords": 8,
+        "filter_rules": 67,
+        "groq_examples": 0,
+        "synonyms": 0
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFVAR.md": {
+      "hash": "sha256:d79038d46ca851fb",
+      "size_lines": 56,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:14:29",
+      "generated": {
+        "keywords": 7,
+        "filter_rules": 4,
+        "groq_examples": 3,
+        "synonyms": 8
+      }
+    },
+    "knowledge/sankhya/tabelas/TGFVEN.md": {
+      "hash": "sha256:30582f0d2ba01f76",
+      "size_lines": 55,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:14:42",
+      "generated": {
+        "keywords": 8,
+        "filter_rules": 2,
+        "groq_examples": 3,
+        "synonyms": 3
+      }
+    },
+    "knowledge/sankhya/tabelas/TSIEMP.md": {
+      "hash": "sha256:3f19afc9043a6a5d",
+      "size_lines": 85,
+      "doc_type": "tabela",
+      "processed_at": "2026-02-13T13:15:01",
+      "generated": {
+        "keywords": 9,
+        "filter_rules": 6,
+        "groq_examples": 3,
+        "synonyms": 5
+      }
+    }
+  },
+  "stats": {
+    "total_files": 38,
+    "total_keywords": 327,
+    "total_filter_rules": 240,
+    "total_groq_examples": 85,
+    "total_synonyms": 154
+  },
+  "last_full_compile": "2026-02-13T13:15:01"
+}

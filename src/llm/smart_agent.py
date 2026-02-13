@@ -17,6 +17,7 @@ import os
 import json
 import time
 import asyncio
+import httpx
 import requests as req_sync
 from pathlib import Path
 from datetime import datetime
@@ -32,6 +33,7 @@ from src.llm.knowledge_base import KnowledgeBase, score_knowledge
 from src.llm.alias_resolver import AliasResolver
 from src.llm.query_logger import QueryLogger, generate_auto_tags
 from src.llm.result_validator import ResultValidator, build_result_data_summary
+from src.llm.knowledge_compiler import COMPILED_PATH
 
 # Config
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
@@ -39,14 +41,163 @@ LLM_CLASSIFIER_MODEL = os.getenv("LLM_CLASSIFIER_MODEL", os.getenv("LLM_MODEL", 
 USE_LLM_CLASSIFIER = os.getenv("USE_LLM_CLASSIFIER", "true").lower() in ("true", "1", "yes")
 LLM_CLASSIFIER_TIMEOUT = int(os.getenv("LLM_CLASSIFIER_TIMEOUT", "60"))
 USE_LLM_NARRATOR = os.getenv("USE_LLM_NARRATOR", "true").lower() in ("true", "1", "yes")
-LLM_NARRATOR_TIMEOUT = int(os.getenv("LLM_NARRATOR_TIMEOUT", "60"))
-LLM_NARRATOR_MODEL = os.getenv("LLM_NARRATOR_MODEL", os.getenv("LLM_MODEL", "qwen3:4b"))
 
-# Groq API (classifier principal - rapido e gratis)
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+# Groq API
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 GROQ_TIMEOUT = int(os.getenv("GROQ_TIMEOUT", "10"))
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+
+
+# ============================================================
+# GROQ KEY POOL - Rotacao round-robin com cooldown automatico
+# ============================================================
+
+class GroqKeyPool:
+    """Pool de chaves Groq com rotacao round-robin e cooldown automatico."""
+
+    def __init__(self, keys: list, name: str = "default"):
+        self._keys = [k.strip() for k in keys if k.strip()]
+        self._name = name
+        self._index = 0
+        self._cooldown = {}   # {key: timestamp_libera}
+        self._usage = {k: 0 for k in self._keys}
+        self._daily_usage = {k: 0 for k in self._keys}
+        self._last_reset = time.time()
+        self._errors = {k: 0 for k in self._keys}
+        if self._keys:
+            print(f"[GROQ:{name}] Pool inicializado com {len(self._keys)} chave(s)")
+        else:
+            print(f"[GROQ:{name}] Pool VAZIO - sem chaves configuradas")
+
+    @property
+    def available(self) -> bool:
+        return len(self._keys) > 0
+
+    def get_key(self) -> str | None:
+        """Retorna proxima chave disponivel. Round-robin, pula chaves em cooldown."""
+        if not self._keys:
+            return None
+        self._maybe_reset_daily()
+        now = time.time()
+        for _ in range(len(self._keys)):
+            key = self._keys[self._index % len(self._keys)]
+            self._index += 1
+            if self._cooldown.get(key, 0) > now:
+                continue
+            self._usage[key] += 1
+            self._daily_usage[key] += 1
+            return key
+        # Todas em cooldown - retornar a que libera mais cedo
+        earliest = min(self._cooldown, key=self._cooldown.get)
+        print(f"[GROQ:{self._name}] Todas as chaves em cooldown. Usando ...{earliest[-6:]}")
+        return earliest
+
+    def mark_rate_limited(self, key: str, retry_after: int = 60):
+        """Marca chave como rate-limited com cooldown."""
+        self._cooldown[key] = time.time() + retry_after
+        self._errors[key] = self._errors.get(key, 0) + 1
+        print(f"[GROQ:{self._name}] ...{key[-6:]} rate-limited, cooldown {retry_after}s")
+
+    def mark_error(self, key: str):
+        """Marca erro generico (nao rate limit)."""
+        self._errors[key] = self._errors.get(key, 0) + 1
+
+    def _maybe_reset_daily(self):
+        """Reseta contadores diarios a meia-noite."""
+        now = time.time()
+        if now - self._last_reset > 86400:
+            self._daily_usage = {k: 0 for k in self._keys}
+            self._cooldown = {}
+            self._last_reset = now
+            print(f"[GROQ:{self._name}] Contadores diarios resetados")
+
+    def stats(self) -> dict:
+        return {
+            "pool": self._name,
+            "keys": len(self._keys),
+            "usage_total": {f"...{k[-6:]}": v for k, v in self._usage.items()},
+            "usage_today": {f"...{k[-6:]}": v for k, v in self._daily_usage.items()},
+            "errors": {f"...{k[-6:]}": v for k, v in self._errors.items() if v > 0},
+            "in_cooldown": sum(1 for t in self._cooldown.values() if t > time.time()),
+        }
+
+
+def _make_pool(env_var: str, name: str) -> GroqKeyPool:
+    """Cria pool a partir de variavel de ambiente (virgula-separada)."""
+    raw = os.getenv(env_var, "")
+    keys = [k.strip() for k in raw.split(",") if k.strip()]
+    return GroqKeyPool(keys, name)
+
+
+# Pools globais
+pool_classify = _make_pool("GROQ_POOL_CLASSIFY", "classify")
+pool_narrate  = _make_pool("GROQ_POOL_NARRATE", "narrate")
+pool_train    = _make_pool("GROQ_POOL_TRAIN", "train")
+
+# Fallback: se pools novos nao existem, usar chave unica antiga
+if not pool_classify.available:
+    _legacy = os.getenv("GROQ_API_KEY", "")
+    if _legacy:
+        pool_classify = GroqKeyPool([_legacy], "classify-legacy")
+        pool_narrate  = GroqKeyPool([_legacy], "narrate-legacy")
+        pool_train    = GroqKeyPool([_legacy], "train-legacy")
+        print("[GROQ] Usando chave legado GROQ_API_KEY para todos os pools")
+
+
+async def _groq_request(pool: GroqKeyPool, messages: list, temperature: float = 0.0,
+                         max_tokens: int = 400, timeout: int = None) -> dict | None:
+    """Faz request ao Groq usando chave do pool, com retry automatico."""
+    key = pool.get_key()
+    if not key:
+        return None
+
+    _timeout = timeout or GROQ_TIMEOUT
+
+    try:
+        async with httpx.AsyncClient(timeout=_timeout) as client:
+            r = await client.post(
+                GROQ_API_URL,
+                headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                json={
+                    "model": GROQ_MODEL,
+                    "messages": messages,
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                }
+            )
+
+            if r.status_code == 429:
+                retry_after = int(r.headers.get("retry-after", "60"))
+                pool.mark_rate_limited(key, retry_after)
+                # Tentar com outra chave
+                fallback_key = pool.get_key()
+                if fallback_key and fallback_key != key:
+                    print(f"[GROQ:{pool._name}] Retry com chave alternativa")
+                    r = await client.post(
+                        GROQ_API_URL,
+                        headers={"Authorization": f"Bearer {fallback_key}", "Content-Type": "application/json"},
+                        json={"model": GROQ_MODEL, "messages": messages,
+                              "temperature": temperature, "max_tokens": max_tokens}
+                    )
+                    if r.status_code == 429:
+                        pool.mark_rate_limited(fallback_key, int(r.headers.get("retry-after", "60")))
+                        return None
+                else:
+                    return None
+
+            r.raise_for_status()
+            data = r.json()
+            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+            return {"content": content, "usage": data.get("usage", {})}
+
+    except httpx.TimeoutException:
+        print(f"[GROQ:{pool._name}] Timeout ({_timeout}s)")
+        pool.mark_error(key)
+        return None
+    except Exception as e:
+        print(f"[GROQ:{pool._name}] Erro: {e}")
+        pool.mark_error(key)
+        return None
 
 
 # ============================================================
@@ -162,14 +313,24 @@ def tokenize(text: str) -> list:
 
 
 def score_intent(tokens: list) -> dict:
-    """Calcula score de cada intent baseado nos tokens."""
+    """Calcula score de cada intent baseado nos tokens (manual + compilado)."""
     scores = {}
+    # Manual (prioridade)
     for intent_id, keywords in INTENT_SCORES.items():
         s = 0
         for token in tokens:
             if token in keywords:
                 s += keywords[token]
         scores[intent_id] = s
+    # Compilado (complementar)
+    for intent_id, keywords in _COMPILED_SCORES.items():
+        if intent_id not in scores:
+            scores[intent_id] = 0
+        for token in tokens:
+            if token in keywords:
+                # So soma se nao foi contado no manual
+                if intent_id not in INTENT_SCORES or token not in INTENT_SCORES[intent_id]:
+                    scores[intent_id] += keywords[token]
     return scores
 
 
@@ -212,6 +373,23 @@ Analise a pergunta do usuario e retorne APENAS um JSON (sem markdown, sem explic
 - top: numero de resultados desejados ou null (ex: 1 para "qual o...", 5 para "top 5")
 - tipo_compra: "casada"|"estoque" ou null (tipo de compra mencionado - casada=empenho/vinculada, estoque=reposicao/entrega futura)
 - aplicacao: veiculo/motor/maquina mencionado para busca por aplicacao ou null (ex: "SCANIA R450", "MERCEDES ACTROS", "MOTOR DC13")
+- extra_columns: lista de colunas extras que o usuario quer ver no relatorio, ou null
+  Colunas possiveis: "EMPRESA", "TIPO_COMPRA", "COMPRADOR", "PREVISAO_ENTREGA", "CONFIRMADO",
+  "FORNECEDOR", "UNIDADE", "QTD_PEDIDA", "QTD_ATENDIDA", "VLR_UNITARIO", "DIAS_ABERTO",
+  "NUM_FABRICANTE", "NUM_ORIGINAL", "REFERENCIA", "APLICACAO"
+  Detecte quando o usuario pede para ADICIONAR/VER campos com frases como:
+  "contendo X", "com o campo X", "incluindo X", "mostrando X",
+  "precisa ter X", "quero ver X tambem", "adiciona X"
+  Mapeamentos importantes:
+  "codigo fabricante"/"numero fabricante"/"ref fabricante"/"fabricante" = "NUM_FABRICANTE"
+  "numero original"/"original" = "NUM_ORIGINAL"
+  "referencia"/"ref interna" = "REFERENCIA"
+  "previsao"/"previsao de entrega"/"quando chega" = "PREVISAO_ENTREGA"
+  "tipo de compra"/"casada ou estoque" = "TIPO_COMPRA"
+  "dias"/"dias aberto"/"dias pendente" = "DIAS_ABERTO"
+  "comprador"/"quem compra" = "COMPRADOR"
+  "empresa"/"filial" = "EMPRESA"
+  Se o usuario NAO pediu colunas extras, retorne null.
 
 # FILTRO - como interpretar pedidos de filtragem
 O campo "filtro" permite filtrar os dados retornados. Formato: {"campo": "NOME_DO_CAMPO", "operador": "tipo", "valor": "X"}
@@ -235,6 +413,9 @@ Operadores:
 - QTD_PENDENTE: quantidade de pecas que falta receber
 - FORNECEDOR, CODPROD, PRODUTO, MARCA, QTD_PEDIDA, VLR_UNITARIO, EMPRESA, COMPRADOR
 - TIPO_COMPRA: tipo do pedido de compra ("Casada" = empenho/vinculada a venda, "Estoque" = reposicao geral)
+- NUM_FABRICANTE: codigo que o fabricante da a peca (AD_NUMFABRICANTE)
+- NUM_ORIGINAL: numero original da peca (AD_NUMORIGINAL)
+- REFERENCIA: referencia interna do cadastro (PRO.REFERENCIA)
 
 IMPORTANTE - Diferencie corretamente:
 - "data de entrega" / "previsao de entrega" / "quando vai chegar" = PREVISAO_ENTREGA (NAO e DT_PEDIDO!)
@@ -247,73 +428,94 @@ Campos para vendas: NUNOTA, CLIENTE, PRODUTO, QTD, VLR_TOTAL, DT_VENDA
 
 # EXEMPLOS
 Pergunta: "o que falta chegar da mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "qual pedido esta sem previsao de entrega da tome?"
-{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":1,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "pedidos atrasados da Donaldson"
-{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "qual pedido da sabo tem a maior previsao de entrega?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"PREVISAO_ENTREGA_DESC","top":1,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"PREVISAO_ENTREGA_DESC","top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "qual pedido da mann foi feito mais recentemente?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"DT_PEDIDO_DESC","top":1,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"DT_PEDIDO_DESC","top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "qual o pedido mais caro da Mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "quais pedidos estao confirmados?"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"CONFIRMADO","operador":"igual","valor":"S"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"CONFIRMADO","operador":"igual","valor":"S"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "qual item com maior quantidade pendente da Tome?"
-{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":"QTD_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":"QTD_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "tem algum pedido acima de 50 mil reais?"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"VLR_PENDENTE","operador":"maior","valor":"50000"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"VLR_PENDENTE","operador":"maior","valor":"50000"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "vendas de hoje"
-{"intent":"vendas","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":"hoje","view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"vendas","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":"hoje","view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "como funciona a compra casada?"
-{"intent":"conhecimento","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"conhecimento","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "quais pedidos casados da sabo?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Casada"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Casada"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"extra_columns":null}
 
 Pergunta: "quem compra a marca mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "quem fornece a marca sabo?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "pedidos de empenho atrasados"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"extra_columns":null}
 
 Pergunta: "compras de estoque da eaton"
-{"intent":"pendencia_compras","marca":"EATON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Estoque"},"ordenar":null,"top":null,"tipo_compra":"estoque","aplicacao":null}
+{"intent":"pendencia_compras","marca":"EATON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Estoque"},"ordenar":null,"top":null,"tipo_compra":"estoque","aplicacao":null,"extra_columns":null}
+
+Pergunta: "pendencias da Nakata por Ribeirao Preto"
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+
+Pergunta: "estoque em Uberlandia"
+{"intent":"estoque","marca":null,"fornecedor":null,"empresa":"UBERL","comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+
+Pergunta: "vendas de hoje em Itumbiara"
+{"intent":"vendas","marca":null,"fornecedor":null,"empresa":"ITUMBI","comprador":null,"periodo":"hoje","view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "HU711/51"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "tudo sobre o produto 133346"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "similares do produto 133346"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "quem tem o filtro WK 950/21"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
 
 Pergunta: "pecas para scania r450"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA R450"}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA R450","extra_columns":null}
 
 Pergunta: "qual filtro serve no mercedes actros"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MERCEDES ACTROS"}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MERCEDES ACTROS","extra_columns":null}
 
 Pergunta: "filtros mann para motor dc13"
-{"intent":"produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MOTOR DC13"}
+{"intent":"produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MOTOR DC13","extra_columns":null}
+
+Pergunta: "pendencias da nakata por ribeirao contendo codigo do fabricante"
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":["NUM_FABRICANTE"]}
+
+Pergunta: "itens pendentes da mann mostrando empresa e previsao"
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":["EMPRESA","PREVISAO_ENTREGA"]}
+
+Pergunta: "pendencias da sabo com comprador e tipo de compra"
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":["COMPRADOR","TIPO_COMPRA"]}
+
+Pergunta: "me traga as pendencias da nakata incluindo referencia do fabricante e dias em aberto"
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":["NUM_FABRICANTE","DIAS_ABERTO"]}
 
 Agora classifique:
 Pergunta: "{question}"
@@ -321,75 +523,49 @@ Pergunta: "{question}"
 
 
 async def groq_classify(question: str) -> Optional[dict]:
-    """Chama Groq API para classificar/interpretar a pergunta. Rapido (~0.5s)."""
-    if not GROQ_API_KEY:
+    """Classifica pergunta via Groq usando pool_classify."""
+    if not pool_classify.available:
         return None
 
     prompt = LLM_CLASSIFIER_PROMPT.replace("{question}", question.replace('"', '\\"'))
 
-    def _call():
-        return req_sync.post(
-            GROQ_API_URL,
-            headers={
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": GROQ_MODEL,
-                "messages": [
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": 0,
-                "max_tokens": 200,
-                "top_p": 0.1,
-            },
-            timeout=GROQ_TIMEOUT,
-        )
+    result = await _groq_request(
+        pool=pool_classify,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.0,
+        max_tokens=400,
+    )
+
+    if not result:
+        return None
+
+    content = result["content"].strip()
+
+    # Limpar thinking leak e markdown
+    if content.startswith("```"):
+        content = content.split("\n", 1)[-1].rsplit("```", 1)[0]
+    content = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+
+    # Extrair JSON da resposta
+    json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)?\}', content)
+    if not json_match:
+        print(f"[GROQ:classify] JSON nao encontrado: {content[:150]}")
+        return None
 
     try:
-        t0 = time.time()
-        resp = await asyncio.to_thread(_call)
-        elapsed = time.time() - t0
-
-        if resp.status_code == 429:
-            print(f"[GROQ] Rate limit atingido ({elapsed:.1f}s) - fallback para Ollama")
-            return None
-
-        if resp.status_code != 200:
-            print(f"[GROQ] Erro HTTP {resp.status_code} ({elapsed:.1f}s): {resp.text[:200]}")
-            return None
-
-        data = resp.json()
-        raw = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
-
-        # Extrair JSON da resposta
-        json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)?\}', raw)
-        if not json_match:
-            print(f"[GROQ] JSON nao encontrado ({elapsed:.1f}s): {raw[:150]}")
-            return None
-
-        result = json.loads(json_match.group())
-        print(f"[GROQ] OK ({elapsed:.1f}s): {result}")
-
-        # Normalizar entidades para MAIUSCULO
-        for key in ["marca", "fornecedor", "empresa", "comprador", "aplicacao"]:
-            if result.get(key):
-                result[key] = result[key].upper().strip()
-
-        return result
-
-    except req_sync.exceptions.Timeout:
-        print(f"[GROQ] Timeout ({GROQ_TIMEOUT}s)")
+        parsed = json.loads(json_match.group())
+    except json.JSONDecodeError:
+        print(f"[GROQ:classify] JSON invalido: {content[:100]}")
         return None
-    except req_sync.exceptions.ConnectionError:
-        print(f"[GROQ] Sem conexao com api.groq.com")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"[GROQ] JSON invalido: {e}")
-        return None
-    except Exception as e:
-        print(f"[GROQ] Erro: {type(e).__name__}: {e}")
-        return None
+
+    print(f"[GROQ:classify] {parsed.get('intent')} | extra_cols={parsed.get('extra_columns')}")
+
+    # Normalizar entidades para MAIUSCULO
+    for key in ["marca", "fornecedor", "empresa", "comprador", "aplicacao"]:
+        if parsed.get(key):
+            parsed[key] = parsed[key].upper().strip()
+
+    return parsed
 
 
 async def ollama_classify(question: str) -> Optional[dict]:
@@ -425,7 +601,7 @@ async def ollama_classify(question: str) -> Optional[dict]:
         raw = "{" + raw  # Prefixo assistant era "{"
 
         # Limpar thinking leak
-        raw = clean_thinking_leak(raw) if callable(clean_thinking_leak) else raw
+        raw = re.sub(r'<think>.*?</think>', '', raw, flags=re.DOTALL).strip()
 
         # Extrair JSON
         json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)?\}', raw)
@@ -462,7 +638,7 @@ async def llm_classify(question: str) -> Optional[dict]:
         return None
 
     # Tentar Groq primeiro (rapido, ~0.5s)
-    if GROQ_API_KEY:
+    if pool_classify.available:
         result = await groq_classify(question)
         if result:
             return result
@@ -494,37 +670,9 @@ REGRAS:
 10. Se nao tiver nada relevante pra analisar, seja breve"""
 
 
-def clean_thinking_leak(text: str) -> str:
-    """Remove 'thinking in english' que vaza do qwen3 quando think:false nao funciona."""
-    if not text:
-        return text
-
-    # Limpar tags <think>
-    text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
-
-    # Detectar onde comeca o thinking em ingles
-    # Patterns comuns: "Hmm,", "Okay,", "Let me", "The user", "I need", "First,", "Wait,"
-    leak_patterns = [
-        r'\n\s*(Hmm|Okay|Let me|The user|I need|I should|First,|Wait,|Now,|So,|Alright)',
-        r'\n\s*(Hmm|Okay|Let me|The user|I need|I should|First,|Wait,)',
-    ]
-    for pattern in leak_patterns:
-        match = re.search(pattern, text)
-        if match:
-            # Cortar tudo a partir do thinking
-            text = text[:match.start()].strip()
-            break
-
-    # Se sobrou muito pouco, retorna vazio
-    if len(text) < 15:
-        return ""
-
-    return text.strip()
-
-
 async def llm_narrate(question: str, data_summary: str, fallback_response: str) -> str:
-    """Pede pra LLM explicar os dados de forma natural. Retorna fallback se falhar."""
-    if not USE_LLM_NARRATOR:
+    """Pede pro Groq (pool_narrate) explicar os dados de forma natural."""
+    if not USE_LLM_NARRATOR or not pool_narrate.available:
         return fallback_response
 
     user_msg = f"""Pergunta do usuario: "{question}"
@@ -534,55 +682,30 @@ Dados retornados do banco:
 
 Explique esses dados de forma natural e analise o que chama atencao."""
 
-    # Prefixo assistant forca resposta em portugues
-    assistant_prefix = "Analisando os dados: "
+    result = await _groq_request(
+        pool=pool_narrate,
+        messages=[
+            {"role": "system", "content": NARRATOR_SYSTEM},
+            {"role": "user", "content": user_msg},
+        ],
+        temperature=0.6,
+        max_tokens=400,
+    )
 
-    def _call():
-        return req_sync.post(
-            f"{OLLAMA_URL}/api/chat",
-            json={
-                "model": LLM_NARRATOR_MODEL,
-                "messages": [
-                    {"role": "system", "content": NARRATOR_SYSTEM},
-                    {"role": "user", "content": user_msg},
-                    {"role": "assistant", "content": assistant_prefix},
-                ],
-                "stream": False,
-                "options": {"temperature": 0.6, "num_predict": 400, "top_p": 0.85},
-            },
-            timeout=LLM_NARRATOR_TIMEOUT,
-        )
-
-    try:
-        t0 = time.time()
-        resp = await asyncio.to_thread(_call)
-        elapsed = time.time() - t0
-
-        if resp.status_code != 200:
-            print(f"[NARRATOR] Erro HTTP {resp.status_code} ({elapsed:.1f}s)")
-            return fallback_response
-
-        data = resp.json()
-        text = data.get("message", {}).get("content", "").strip()
-        text = clean_thinking_leak(text)
-
-        # Juntar prefixo + continuacao
-        if text:
-            text = assistant_prefix + text
-
-        if not text or len(text) < 30:
-            print(f"[NARRATOR] Resposta vazia ({elapsed:.1f}s)")
-            return fallback_response
-
-        print(f"[NARRATOR] OK ({elapsed:.1f}s, {len(text)} chars)")
-        return text
-
-    except req_sync.exceptions.Timeout:
-        print(f"[NARRATOR] Timeout ({LLM_NARRATOR_TIMEOUT}s)")
+    if not result or not result.get("content"):
+        print(f"[NARRATOR] Groq falhou, usando fallback")
         return fallback_response
-    except Exception as e:
-        print(f"[NARRATOR] Erro: {type(e).__name__}: {e}")
+
+    text = result["content"].strip()
+
+    # Limpeza minima (Groq nao vaza thinking como Qwen3, mas prevenir)
+    text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
+
+    if not text or len(text) < 30:
         return fallback_response
+
+    print(f"[NARRATOR] Groq OK ({len(text)} chars)")
+    return text
 
 
 def build_pendencia_summary(kpis_data: list, detail_data: list, params: dict) -> str:
@@ -739,7 +862,8 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
                      "ESTA", "ESTAO", "ESSE", "ESSA", "ISSO", "AQUI", "ONDE",
                      "QUEM", "RESPONSAVEL", "FORNECEDORES", "COMPRADORES",
                      "CASADA", "CASADAS", "CASADO", "CASADOS", "EMPENHO",
-                     "FUTURA", "REPOSICAO"}
+                     "FUTURA", "REPOSICAO",
+                     "FILIAL", "UNIDADE", "LOJA"}
             first_word = candidate.split()[0] if candidate else ""
             if first_word in noise:
                 # Buscar ultimo DA/DO (provavelmente antes do nome real)
@@ -791,23 +915,71 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
             params["fornecedor"] = candidate_forn
 
     # ---- EMPRESA ----
-    m = re.search(r'(?:EMPRESA|FILIAL|UNIDADE|LOJA)\s+([A-Z][A-Z\s\-]{2,30}?)(?:\s*[?,!.]|\s*$)', q_upper)
-    if m:
-        params["empresa"] = m.group(1).strip()
+    _CIDADES_EMPRESA = {
+        "ARACATUBA": "ARACAT", "ARAÇATUBA": "ARACAT", "ARACAT": "ARACAT",
+        "RIBEIRAO PRETO": "RIBEIR", "RIBEIRÃO PRETO": "RIBEIR",
+        "RIBEIRAO": "RIBEIR", "RIBEIRÃO": "RIBEIR", "RIBEIR": "RIBEIR",
+        "UBERLANDIA": "UBERL", "UBERLÂNDIA": "UBERL", "UBERL": "UBERL",
+        "ITUMBIARA": "ITUMBI", "ITUMBI": "ITUMBI",
+        "RIO VERDE": "RIO VERDE",
+        "GOIANIA": "GOIAN", "GOIÂNIA": "GOIAN", "GOIAN": "GOIAN",
+        "SAO JOSE": "SAO JOSE", "SÃO JOSÉ": "SAO JOSE",
+    }
+    _CIDADES_SET = {c.split()[0] for c in _CIDADES_EMPRESA.keys()}  # {"ARACATUBA","RIBEIRAO",...}
+    q_upper_norm = normalize(question).upper()
 
-    if "empresa" not in params and known_empresas:
-        for emp in known_empresas:
-            if emp in q_upper and len(emp) >= 3:
-                params["empresa"] = emp
+    def _resolve_cidade(name):
+        """Resolve nome/prefixo para prefixo padrao de empresa."""
+        for cidade, prefixo in _CIDADES_EMPRESA.items():
+            if cidade in name or name in cidade:
+                return prefixo
+        return name
+
+    # 1. Prefixo explicito: "empresa X", "filial X", "filial de X"
+    m = re.search(r'(?:EMPRESA|FILIAL|UNIDADE|LOJA)\s+(?:DE\s+|DA\s+|DO\s+)?([A-Z][A-ZÀ-Ú\s\-]{2,30}?)(?:\s*[?,!.]|\s*$)', q_upper)
+    if m:
+        params["empresa"] = _resolve_cidade(m.group(1).strip())
+
+    # 2. Preposicao + cidade: "por Ribeirão", "em Uberlândia"
+    if "empresa" not in params:
+        m_prep = re.search(r'\b(?:POR|EM|PARA|PRA)\s+([A-Z][A-ZÀ-Ú\s]{2,25})', q_upper)
+        if m_prep:
+            candidate_city = m_prep.group(1).strip()
+            resolved = _resolve_cidade(candidate_city)
+            if resolved != candidate_city:
+                params["empresa"] = resolved
+
+    # 3. Cidade solta (sem preposicao) no texto
+    if "empresa" not in params:
+        for cidade, prefixo in _CIDADES_EMPRESA.items():
+            if cidade in q_upper or cidade in q_upper_norm:
+                params["empresa"] = prefixo
                 break
 
-    # Cidades conhecidas como filiais
-    cidades = {"ARACATUBA": "ARACAT", "RIBEIRAO": "RIBEIR", "UBERLANDIA": "UBERL",
-               "ITUMBIARA": "ITUMBI", "RIO VERDE": "RIO VERDE"}
-    if "empresa" not in params:
-        for k, v in cidades.items():
-            if k in q_upper or k in normalize(question).upper():
-                params["empresa"] = v
+    # 4. Match com empresas conhecidas do banco
+    if "empresa" not in params and known_empresas:
+        # 4a. Com preposicao
+        m_prep2 = re.search(r'\b(?:POR|EM|PARA|PRA)\s+([A-Z][A-Z\s\-]{2,30})', q_upper)
+        if m_prep2:
+            candidate_emp = m_prep2.group(1).strip()
+            for emp in known_empresas:
+                if candidate_emp in emp or emp in candidate_emp:
+                    params["empresa"] = emp
+                    break
+        # 4b. Match direto
+        if "empresa" not in params:
+            for emp in known_empresas:
+                if emp in q_upper and len(emp) >= 3:
+                    params["empresa"] = emp
+                    break
+
+    # Limpar marca se pegou cidade por engano (ex: "da Nakata Ribeirao" → marca=NAKATA RIBEIRAO)
+    if params.get("marca") and params.get("empresa"):
+        marca = params["marca"]
+        # Remover sufixo de cidade do nome da marca
+        for cidade_word in _CIDADES_SET:
+            if marca.endswith(" " + cidade_word) or marca.endswith(" " + cidade_word + " PRETO"):
+                params["marca"] = marca[:marca.rfind(" " + cidade_word)].strip()
                 break
 
     # ---- COMPRADOR ----
@@ -907,6 +1079,18 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
     return params
 
 
+# Mapa de prefixo empresa -> nome legivel para exibicao
+EMPRESA_DISPLAY = {
+    "ARACAT": "Aracatuba",
+    "RIBEIR": "Ribeirao Preto",
+    "UBERL": "Uberlandia",
+    "ITUMBI": "Itumbiara",
+    "RIO VERDE": "Rio Verde",
+    "GOIAN": "Goiania",
+    "SAO JOSE": "Sao Jose do Rio Preto",
+}
+
+
 # ============================================================
 # SQL TEMPLATES
 # ============================================================
@@ -937,25 +1121,36 @@ WHERE_PENDENCIA = """CAB.CODTIPOPER IN (1301, 1313)
       AND (ITE.QTDNEG - NVL(V_AGG.TOTAL_ATENDIDO, 0)) > 0"""
 
 
+def _safe_sql(value: str) -> str:
+    """Sanitiza valor para uso em SQL: remove chars perigosos, escapa aspas."""
+    if not value:
+        return ""
+    s = str(value).strip()
+    # Remover chars perigosos de SQL injection
+    s = re.sub(r'[;\-\-\/\*\\\x00]', '', s)
+    # Escapar aspas simples (Oracle-style)
+    s = s.replace("'", "''")
+    return s
+
+
 def _build_where_extra(params, user_context=None):
     w = ""
     if params.get("marca"):
-        w += f" AND UPPER(MAR.DESCRICAO) LIKE UPPER('%{params['marca']}%')"
+        w += f" AND UPPER(MAR.DESCRICAO) LIKE UPPER('%{_safe_sql(params['marca'])}%')"
     if params.get("fornecedor"):
-        w += f" AND UPPER(PAR.NOMEPARC) LIKE UPPER('%{params['fornecedor']}%')"
+        w += f" AND UPPER(PAR.NOMEPARC) LIKE UPPER('%{_safe_sql(params['fornecedor'])}%')"
     if params.get("empresa"):
-        w += f" AND UPPER(EMP.NOMEFANTASIA) LIKE UPPER('%{params['empresa']}%')"
+        w += f" AND UPPER(EMP.NOMEFANTASIA) LIKE UPPER('%{_safe_sql(params['empresa'])}%')"
     if params.get("comprador"):
-        w += f" AND UPPER(VEN.APELIDO) LIKE UPPER('%{params['comprador']}%')"
+        w += f" AND UPPER(VEN.APELIDO) LIKE UPPER('%{_safe_sql(params['comprador'])}%')"
     if params.get("nunota"):
-        w += f" AND CAB.NUNOTA = {params['nunota']}"
+        w += f" AND CAB.NUNOTA = {int(params['nunota'])}"
     if params.get("codprod"):
-        w += f" AND PRO.CODPROD = {params['codprod']}"
+        w += f" AND PRO.CODPROD = {int(params['codprod'])}"
     if params.get("produto_nome") and not params.get("codprod"):
-        w += f" AND UPPER(PRO.DESCRPROD) LIKE UPPER('%{params['produto_nome']}%')"
+        w += f" AND UPPER(PRO.DESCRPROD) LIKE UPPER('%{_safe_sql(params['produto_nome'])}%')"
     if params.get("aplicacao"):
-        safe_app = params["aplicacao"].replace("'", "''")
-        w += f" AND UPPER(PRO.CARACTERISTICAS) LIKE UPPER('%{safe_app}%')"
+        w += f" AND UPPER(PRO.CARACTERISTICAS) LIKE UPPER('%{_safe_sql(params['aplicacao'])}%')"
     # Tipo de compra (casada/estoque) via CODTIPOPER (mais eficiente que filtrar pos-query)
     tc = (params.get("tipo_compra") or "").upper()
     if tc in ("CASADA", "EMPENHO", "VINCULADA"):
@@ -1001,6 +1196,7 @@ def sql_pendencia_compras(params, user_context=None):
             PRO.DESCRPROD AS PRODUTO,
             NVL(MAR.DESCRICAO, '') AS MARCA,
             NVL(PRO.CARACTERISTICAS, '') AS APLICACAO,
+            NVL(PRO.AD_NUMFABRICANTE, '') AS NUM_FABRICANTE,
             ITE.CODVOL AS UNIDADE,
             ITE.QTDNEG AS QTD_PEDIDA,
             NVL(V_AGG.TOTAL_ATENDIDO, 0) AS QTD_ATENDIDA,
@@ -1023,7 +1219,9 @@ def sql_pendencia_compras(params, user_context=None):
     filtro_desc = []
     if params.get("marca"): filtro_desc.append(f"marca **{params['marca']}**")
     if params.get("fornecedor"): filtro_desc.append(f"fornecedor **{params['fornecedor']}**")
-    if params.get("empresa"): filtro_desc.append(f"empresa **{params['empresa']}**")
+    if params.get("empresa"):
+        emp_display = EMPRESA_DISPLAY.get(params['empresa'].upper(), params['empresa'])
+        filtro_desc.append(f"empresa **{emp_display}**")
     if params.get("comprador"): filtro_desc.append(f"comprador **{params['comprador']}**")
     if params.get("nunota"): filtro_desc.append(f"pedido **{params['nunota']}**")
     if params.get("codprod"): filtro_desc.append(f"produto **{params['codprod']}**")
@@ -1104,7 +1302,7 @@ async def resolve_manufacturer_code(code_input: str, executor) -> dict:
     Returns:
         {"found": bool, "products": [...], "code_searched": str}
     """
-    safe_code = code_input.replace("'", "''").strip()
+    safe_code = _safe_sql(code_input)
     clean = _sanitize_code(safe_code)
 
     sql = f"""SELECT DISTINCT PRO.CODPROD, PRO.DESCRPROD AS PRODUTO,
@@ -1217,7 +1415,7 @@ async def buscar_similares(codprod: int, executor) -> dict:
 
 async def buscar_similares_por_codigo(code_input: str, executor) -> dict:
     """Dado um codigo auxiliar, encontra o produto e lista todos os similares."""
-    safe_code = code_input.replace("'", "''").strip()
+    safe_code = _safe_sql(code_input)
     clean = _sanitize_code(safe_code)
 
     sql = f"""SELECT DISTINCT AUX.CODPROD
@@ -1566,7 +1764,7 @@ def format_fornecedor_marca(detail_data: list, marca: str) -> str:
     return response
 
 
-def format_pendencia_response(kpis_data, detail_data, description, params, view_mode="pedidos"):
+def format_pendencia_response(kpis_data, detail_data, description, params, view_mode="pedidos", extra_columns=None):
     if not kpis_data:
         filtro = params.get("marca") or params.get("fornecedor") or params.get("empresa") or ""
         return f"Nao encontrei pedidos pendentes{' para ' + filtro if filtro else ''}. Verifique se o nome esta correto."
@@ -1588,39 +1786,104 @@ def format_pendencia_response(kpis_data, detail_data, description, params, view_
 
     if detail_data:
         if view_mode == "itens":
+            # Colunas base
             has_aplic = any(item.get("APLICACAO") for item in detail_data[:12] if isinstance(item, dict))
+            base_cols = ["PEDIDO", "CODPROD", "PRODUTO"]
+            base_cols.append("APLICACAO" if has_aplic else "MARCA")
+
+            # Inserir extras ANTES das colunas numericas
+            if extra_columns:
+                for ec in extra_columns:
+                    if ec not in base_cols:
+                        base_cols.append(ec)
+
+            base_cols.extend(["QTD_PENDENTE", "VLR_PENDENTE", "STATUS_ENTREGA"])
+            visible_cols = base_cols
+
+            # Mensagem de colunas extras
+            if extra_columns:
+                added_labels = [COLUMN_LABELS.get(c, c) for c in extra_columns]
+                lines.append(f"\u2705 Coluna{'s' if len(added_labels)>1 else ''} extra{'s' if len(added_labels)>1 else ''}: **{', '.join(added_labels)}**\n")
+
+            # Header
+            headers = [COLUMN_LABELS.get(c, c) for c in visible_cols]
             lines.append("**Itens pendentes:**\n")
-            if has_aplic:
-                lines.append("| Pedido | CodProd | Produto | Aplicacao | Qtd Pend. | Valor | Status |")
-                lines.append("|--------|---------|---------|-----------|-----------|-------|--------|")
-            else:
-                lines.append("| Pedido | CodProd | Produto | Marca | Qtd Pend. | Valor | Status |")
-                lines.append("|--------|---------|---------|-------|-----------|-------|--------|")
+            lines.append("| " + " | ".join(headers) + " |")
+            lines.append("|" + "|".join(["---" for _ in visible_cols]) + "|")
+
+            # Rows
             for item in detail_data[:12]:
-                if isinstance(item, dict):
-                    if has_aplic:
-                        aplic = _trunc(item.get('APLICACAO',''), 30)
-                        lines.append(f"| {item.get('PEDIDO','?')} | {item.get('CODPROD','?')} | {str(item.get('PRODUTO',''))[:30]} | {aplic} | {item.get('QTD_PENDENTE',0)} | {fmt_brl(item.get('VLR_PENDENTE',0))} | {item.get('STATUS_ENTREGA','?')} |")
-                    else:
-                        lines.append(f"| {item.get('PEDIDO','?')} | {item.get('CODPROD','?')} | {str(item.get('PRODUTO',''))[:30]} | {str(item.get('MARCA',''))[:15]} | {item.get('QTD_PENDENTE',0)} | {fmt_brl(item.get('VLR_PENDENTE',0))} | {item.get('STATUS_ENTREGA','?')} |")
+                if not isinstance(item, dict):
+                    continue
+                cells = []
+                for c in visible_cols:
+                    val = item.get(c, "")
+                    if val is None: val = ""
+                    val = str(val)
+                    max_w = COLUMN_MAX_WIDTH.get(c, 40)
+                    if len(val) > max_w:
+                        val = val[:max_w-1] + "\u2026"
+                    if "VLR" in c:
+                        try: val = fmt_brl(float(val))
+                        except: pass
+                    elif c in ("QTD_PENDENTE", "QTD_PEDIDA", "QTD_ATENDIDA", "DIAS_ABERTO"):
+                        try: val = str(int(float(val or 0)))
+                        except: pass
+                    cells.append(val)
+                lines.append("| " + " | ".join(cells) + " |")
+
             if len(detail_data) > 12:
                 lines.append(f"\n*...e mais {len(detail_data) - 12} itens.*\n")
         else:
             pedidos = {}
             for item in detail_data:
-                if not isinstance(item, dict):
-                    continue
+                if not isinstance(item, dict): continue
                 ped = item.get("PEDIDO", "?")
                 if ped not in pedidos:
-                    pedidos[ped] = {"pedido": ped, "fornecedor": str(item.get("FORNECEDOR",""))[:30], "dt_pedido": item.get("DT_PEDIDO",""), "status": item.get("STATUS_ENTREGA","?"), "itens": 0, "valor": 0.0}
-                pedidos[ped]["itens"] += 1
-                pedidos[ped]["valor"] += float(item.get("VLR_PENDENTE", 0) or 0)
+                    pedidos[ped] = {
+                        "PEDIDO": ped,
+                        "FORNECEDOR": str(item.get("FORNECEDOR",""))[:30],
+                        "DT_PEDIDO": item.get("DT_PEDIDO",""),
+                        "STATUS_ENTREGA": item.get("STATUS_ENTREGA","?"),
+                        "_itens": 0, "_valor": 0.0
+                    }
+                    if extra_columns:
+                        for ec in extra_columns:
+                            pedidos[ped][ec] = str(item.get(ec, "") or "")
+                pedidos[ped]["_itens"] += 1
+                pedidos[ped]["_valor"] += float(item.get("VLR_PENDENTE", 0) or 0)
+
+            # Colunas base
+            base_cols = ["PEDIDO", "FORNECEDOR", "DT_PEDIDO"]
+            if extra_columns:
+                for ec in extra_columns:
+                    if ec not in base_cols:
+                        base_cols.append(ec)
+            base_cols.extend(["_itens", "_valor", "STATUS_ENTREGA"])
+
+            label_override = {"_itens": "Itens", "_valor": "Valor Pendente"}
+            headers = [label_override.get(c, COLUMN_LABELS.get(c, c)) for c in base_cols]
+
+            if extra_columns:
+                added_labels = [COLUMN_LABELS.get(c, c) for c in extra_columns]
+                lines.append(f"\u2705 Coluna{'s' if len(added_labels)>1 else ''} extra{'s' if len(added_labels)>1 else ''}: **{', '.join(added_labels)}**\n")
 
             lines.append("**Pedidos:**\n")
-            lines.append("| Pedido | Fornecedor | Data | Itens | Valor Pendente | Status |")
-            lines.append("|--------|------------|------|-------|----------------|--------|")
+            lines.append("| " + " | ".join(headers) + " |")
+            lines.append("|" + "|".join(["---" for _ in base_cols]) + "|")
+
             for pd in list(pedidos.values())[:10]:
-                lines.append(f"| {pd['pedido']} | {pd['fornecedor']} | {pd['dt_pedido']} | {pd['itens']} | {fmt_brl(pd['valor'])} | {pd['status']} |")
+                cells = []
+                for c in base_cols:
+                    if c == "_valor": cells.append(fmt_brl(pd["_valor"]))
+                    elif c == "_itens": cells.append(str(pd["_itens"]))
+                    else:
+                        val = str(pd.get(c, ""))
+                        max_w = COLUMN_MAX_WIDTH.get(c, 40)
+                        if len(val) > max_w: val = val[:max_w-1] + "\u2026"
+                        cells.append(val)
+                lines.append("| " + " | ".join(cells) + " |")
+
             if len(pedidos) > 10:
                 lines.append(f"\n*...e mais {len(pedidos) - 10} pedidos.*\n")
 
@@ -1809,6 +2072,136 @@ FILTER_RULES = [
 ]
 
 
+# ============================================================
+# COMPILED KNOWLEDGE (auto-gerado pelo Knowledge Compiler)
+# Merge com manual: manual SEMPRE ganha, compilado complementa
+# ============================================================
+
+_COMPILED_SCORES = {}   # {intent: {word: weight}}
+_COMPILED_RULES = []    # [{match: [...], filter/sort/top: ...}]
+_COMPILED_EXAMPLES = [] # Groq examples extras
+_COMPILED_SYNONYMS = [] # Sinonimos extras
+_COMPILED_LOADED = False
+
+
+def _load_compiled_knowledge():
+    """Carrega compiled_knowledge.json e monta dicts de merge."""
+    global _COMPILED_SCORES, _COMPILED_RULES, _COMPILED_EXAMPLES, _COMPILED_SYNONYMS, _COMPILED_LOADED
+    if _COMPILED_LOADED:
+        return
+    _COMPILED_LOADED = True
+
+    if not COMPILED_PATH.exists():
+        return
+
+    try:
+        with open(COMPILED_PATH, "r", encoding="utf-8") as f:
+            compiled = json.load(f)
+    except Exception as e:
+        print(f"[SMART] Erro ao carregar compiled_knowledge: {e}")
+        return
+
+    # 1. Keywords -> _COMPILED_SCORES (formato: {intent: {word: weight}})
+    for intent, keywords in compiled.get("intent_keywords", {}).items():
+        if intent == "unknown":
+            continue
+        if intent not in _COMPILED_SCORES:
+            _COMPILED_SCORES[intent] = {}
+        for kw in keywords:
+            word = kw.get("word", "").lower().strip()
+            weight = kw.get("weight", 3)
+            if word and len(word) >= 2:
+                # Se ja existe no manual, NAO sobrescrever
+                if intent in INTENT_SCORES and word in INTENT_SCORES[intent]:
+                    continue
+                _COMPILED_SCORES[intent][word] = weight
+
+    # 2. Filter rules -> _COMPILED_RULES
+    for rule in compiled.get("filter_rules", []):
+        matches = rule.get("match", [])
+        if not matches:
+            continue
+        # Verificar se ja existe no manual
+        manual_matches = set()
+        for mr in FILTER_RULES:
+            for m in mr.get("match", []):
+                manual_matches.add(m.lower())
+        if all(m.lower() in manual_matches for m in matches):
+            continue
+        _COMPILED_RULES.append(rule)
+
+    # 3. Groq examples
+    _COMPILED_EXAMPLES.extend(compiled.get("groq_examples", []))
+
+    # 4. Synonyms
+    _COMPILED_SYNONYMS.extend(compiled.get("synonyms", []))
+
+    total_kw = sum(len(v) for v in _COMPILED_SCORES.values())
+    print(f"[SMART] Compiled knowledge: +{total_kw} keywords em {len(_COMPILED_SCORES)} intents, "
+          f"+{len(_COMPILED_RULES)} filter rules, +{len(_COMPILED_EXAMPLES)} examples")
+
+    # Intents potenciais
+    for pi in compiled.get("potential_intents", []):
+        print(f"[SMART] ** Intent potencial: {pi['name']} ({pi['keywords_count']} keywords) - {pi.get('note', '')}")
+
+
+# ============================================================
+# COLUNAS DINAMICAS - Personalizacao de relatorios via Groq
+# ============================================================
+
+# Campos que JA existem no SQL detail (nao precisa modificar query)
+EXISTING_SQL_COLUMNS = {
+    "EMPRESA", "PEDIDO", "TIPO_COMPRA", "COMPRADOR", "DT_PEDIDO",
+    "PREVISAO_ENTREGA", "CONFIRMADO", "FORNECEDOR", "CODPROD", "PRODUTO",
+    "MARCA", "APLICACAO", "UNIDADE", "QTD_PEDIDA", "QTD_ATENDIDA",
+    "QTD_PENDENTE", "VLR_UNITARIO", "VLR_PENDENTE", "DIAS_ABERTO", "STATUS_ENTREGA",
+    "NUM_FABRICANTE",
+}
+
+# Campos EXTRAS que precisam ser adicionados ao SQL
+EXTRA_SQL_FIELDS = {
+    "NUM_ORIGINAL":    "NVL(PRO.AD_NUMORIGINAL, '') AS NUM_ORIGINAL",
+    "REFERENCIA":      "NVL(PRO.REFERENCIA, '') AS REFERENCIA",
+    "REF_FORNECEDOR":  "NVL(PRO.REFFORN, '') AS REF_FORNECEDOR",
+    "COMPLEMENTO":     "NVL(PRO.COMPLDESC, '') AS COMPLEMENTO",
+    "NCM":             "NVL(PRO.NCM, '') AS NCM",
+}
+
+# Normalizacao (Groq pode retornar variacoes)
+COLUMN_NORMALIZE = {
+    "PREVISAO": "PREVISAO_ENTREGA", "PREVISAO_ENTREGA": "PREVISAO_ENTREGA",
+    "DIAS": "DIAS_ABERTO", "DIAS_ABERTO": "DIAS_ABERTO",
+    "FABRICANTE": "NUM_FABRICANTE", "NUM_FABRICANTE": "NUM_FABRICANTE",
+    "NUMERO_FABRICANTE": "NUM_FABRICANTE", "CODIGO_FABRICANTE": "NUM_FABRICANTE",
+    "ORIGINAL": "NUM_ORIGINAL", "NUM_ORIGINAL": "NUM_ORIGINAL",
+    "REFERENCIA": "REFERENCIA", "EMPRESA": "EMPRESA",
+    "TIPO_COMPRA": "TIPO_COMPRA", "COMPRADOR": "COMPRADOR",
+    "FORNECEDOR": "FORNECEDOR", "CONFIRMADO": "CONFIRMADO",
+    "UNIDADE": "UNIDADE", "QTD_PEDIDA": "QTD_PEDIDA",
+    "QTD_ATENDIDA": "QTD_ATENDIDA", "VLR_UNITARIO": "VLR_UNITARIO",
+    "APLICACAO": "APLICACAO",
+}
+
+# Labels amigaveis para headers de tabela
+COLUMN_LABELS = {
+    "PEDIDO": "Pedido", "CODPROD": "CodProd", "PRODUTO": "Produto",
+    "MARCA": "Marca", "QTD_PENDENTE": "Qtd Pend.", "VLR_PENDENTE": "Valor",
+    "STATUS_ENTREGA": "Status", "FORNECEDOR": "Fornecedor", "DT_PEDIDO": "Data",
+    "PREVISAO_ENTREGA": "Previsao", "EMPRESA": "Empresa", "TIPO_COMPRA": "Tipo",
+    "COMPRADOR": "Comprador", "CONFIRMADO": "Confirmado", "APLICACAO": "Aplicacao",
+    "UNIDADE": "Unid.", "QTD_PEDIDA": "Qtd Pedida", "QTD_ATENDIDA": "Qtd Atend.",
+    "VLR_UNITARIO": "Vlr Unit.", "DIAS_ABERTO": "Dias",
+    "NUM_FABRICANTE": "Cod. Fabricante", "NUM_ORIGINAL": "Nro. Original",
+    "REFERENCIA": "Referencia", "REF_FORNECEDOR": "Ref. Forn.",
+    "COMPLEMENTO": "Complemento", "NCM": "NCM",
+}
+
+COLUMN_MAX_WIDTH = {
+    "PRODUTO": 30, "FORNECEDOR": 25, "EMPRESA": 20, "APLICACAO": 25,
+    "COMPLEMENTO": 25, "NUM_FABRICANTE": 18, "REFERENCIA": 18, "COMPRADOR": 15,
+}
+
+
 def _is_complex_query(q_norm: str, tokens: list, pattern_filters: dict) -> bool:
     """Detecta se a query tem complexidade alem de intent+entidade simples.
     Se sim, vale chamar Groq pra interpretar mesmo quando scoring resolveu o intent."""
@@ -1945,10 +2338,12 @@ def detect_followup(tokens: list, question_norm: str) -> bool:
 
 
 def detect_filter_request(question_norm: str, tokens: list) -> dict:
-    """Detecta se o usuario quer filtrar/ordenar dados anteriores. FILTER_RULES por prioridade."""
+    """Detecta se o usuario quer filtrar/ordenar dados anteriores. FILTER_RULES + compiladas."""
     result = {}
 
-    for rule in FILTER_RULES:
+    # Manual primeiro, depois compiladas
+    all_rules = list(FILTER_RULES) + list(_COMPILED_RULES)
+    for rule in all_rules:
         matched = any(m in question_norm for m in rule["match"])
         if not matched:
             continue
@@ -2051,6 +2446,72 @@ def apply_filters(data: list, filters: dict) -> list:
     return result
 
 
+# ============================================================
+# DAILY TRAINING (scheduler de madrugada)
+# ============================================================
+
+TRAINING_HOUR = int(os.getenv("TRAINING_HOUR", "3"))
+
+async def daily_training(force: bool = False) -> dict:
+    """Executa compilacao + review de aliases via pool_train.
+    Chamado automaticamente pelo scheduler ou manualmente via CLI/endpoint."""
+    from src.llm.knowledge_compiler import KnowledgeCompiler
+
+    stats = {"compiler": {}, "aliases_reviewed": 0, "error": None}
+    print(f"[TRAIN] Iniciando treinamento {'(forcado)' if force else '(scheduled)'} ...")
+
+    # 1. Knowledge Compiler
+    try:
+        compiler = KnowledgeCompiler(groq_api_key=pool_train.get_key() if pool_train.available else None)
+        result = await compiler.compile(full=force, dry_run=False, verbose=True)
+        stats["compiler"] = result
+
+        # Recarregar no SmartAgent
+        if result.get("processed", 0) > 0:
+            global _COMPILED_LOADED
+            _COMPILED_LOADED = False
+            _load_compiled_knowledge()
+            print(f"[TRAIN] Knowledge recarregado ({result['processed']} docs)")
+    except Exception as e:
+        stats["compiler"] = {"error": str(e)}
+        print(f"[TRAIN] Compiler falhou: {e}")
+
+    # 2. Alias review (aprovar sugestoes de alta confianca)
+    try:
+        from src.llm.alias_resolver import AliasResolver
+        ar = AliasResolver()
+        suggestions = ar.get_suggestions("pending")
+        auto_approved = 0
+        for s in suggestions:
+            if s.get("confidence", 0) >= 0.85 and s.get("count", 0) >= 3:
+                ar.approve_suggestion(s["apelido"], nome_real=s.get("nome_real"), codprod=s.get("codprod"))
+                auto_approved += 1
+                print(f"[TRAIN] Auto-aprovado alias: {s['apelido']} -> {s.get('nome_real', s.get('codprod'))}")
+        stats["aliases_reviewed"] = auto_approved
+    except Exception as e:
+        print(f"[TRAIN] Alias review falhou: {e}")
+
+    print(f"[TRAIN] Concluido: compiler={stats['compiler'].get('processed', 0)} docs, aliases={stats['aliases_reviewed']}")
+    return stats
+
+
+async def _training_scheduler():
+    """Loop infinito que roda daily_training() no horario configurado."""
+    while True:
+        now = datetime.now()
+        # Calcular proximo horario
+        target = now.replace(hour=TRAINING_HOUR, minute=0, second=0, microsecond=0)
+        if now >= target:
+            target = target.replace(day=target.day + 1)
+        wait_seconds = (target - now).total_seconds()
+        print(f"[TRAIN] Proximo treino em {wait_seconds/3600:.1f}h ({target.strftime('%d/%m %H:%M')})")
+        await asyncio.sleep(wait_seconds)
+        try:
+            await daily_training()
+        except Exception as e:
+            print(f"[TRAIN] Erro no scheduler: {e}")
+
+
 class ConversationContext:
     """Contexto de conversa de um usuario. Guarda parametros e dados anteriores."""
 
@@ -2062,6 +2523,7 @@ class ConversationContext:
         self.last_question = ""     # ultima pergunta
         self.last_view_mode = "pedidos"
         self.turn_count = 0         # quantas perguntas ja fez
+        self._extra_columns = []    # colunas extras pedidas pelo usuario
 
     def merge_params(self, new_params: dict) -> dict:
         """Mescla parametros novos com contexto anterior.
@@ -2084,6 +2546,8 @@ class ConversationContext:
 
     def update(self, intent: str, params: dict, result: dict, question: str, view_mode: str = "pedidos"):
         """Atualiza contexto apos uma resposta bem-sucedida."""
+        if intent != self.intent:
+            self._extra_columns = []  # Limpa ao mudar de intent
         self.intent = intent
         # Atualiza params (nao apaga os antigos, so sobrescreve os que vieram)
         for k, v in params.items():
@@ -2127,6 +2591,8 @@ class SmartAgent:
         self.result_validator = ResultValidator()
         # Contexto POR USUARIO
         self._user_contexts = {}  # {user_id: ConversationContext}
+        # Carregar knowledge compilado (auto-gerado)
+        _load_compiled_knowledge()
 
     def _get_context(self, user_id: str) -> 'ConversationContext':
         """Retorna (ou cria) contexto do usuario."""
@@ -2189,10 +2655,12 @@ class SmartAgent:
 
         # Finalizar log e salvar
         try:
-            # Extrair detail_data temporario (nao vai pro usuario)
             _detail_data = result.pop("_detail_data", None) if result else None
             self._finalize_log(_log, result, _detail_data)
             self.query_logger.save(_log)
+            # Recolocar _detail_data para o endpoint montar table_data (toggle frontend)
+            if _detail_data and result:
+                result["_detail_data"] = _detail_data
         except Exception:
             pass
 
@@ -2416,7 +2884,7 @@ class SmartAgent:
 
             is_complex = _is_complex_query(q_norm, tokens, pattern_filters)
 
-            if is_complex and best_intent in ("pendencia_compras", "estoque", "vendas") and GROQ_API_KEY:
+            if is_complex and best_intent in ("pendencia_compras", "estoque", "vendas") and pool_classify.available:
                 # Query complexa: usar Groq pra interpretar filtros (scoring ja resolveu intent)
                 print(f"[SMART] Layer 1+ (Groq filtro): query complexa, consultando Groq...")
                 llm_result = await groq_classify(question)
@@ -2428,15 +2896,23 @@ class SmartAgent:
                         if llm_result.get(key) and not params.get(key):
                             params[key] = llm_result[key]
                         elif llm_result.get(key) and params.get(key):
-                            # Se LLM extraiu diferente e parece mais correto (esta nas known_marcas)
                             llm_val = llm_result[key].upper()
                             cur_val = params[key].upper()
                             if key == "marca" and self._known_marcas:
-                                # Preferir valor que esta no banco
                                 if llm_val in self._known_marcas and cur_val not in self._known_marcas:
                                     print(f"[SMART] LLM corrigiu {key}: {cur_val} -> {llm_val}")
                                     params[key] = llm_val
                                     if _log: _log["processing"]["groq_corrected"] = True
+                    # Extrair e normalizar extra_columns
+                    extra_columns = []
+                    raw_extra = llm_result.get("extra_columns") or []
+                    for col in raw_extra:
+                        norm = COLUMN_NORMALIZE.get(col.upper().replace(" ", "_"), col.upper())
+                        if norm not in extra_columns:
+                            extra_columns.append(norm)
+                    if extra_columns:
+                        print(f"[SMART] Extra columns: {extra_columns}")
+                        if _log: _log["processing"]["extra_columns"] = extra_columns
                     view_mode = llm_result.get("view") or detect_view_mode(tokens)
                     if _log:
                         _log["processing"]["view_mode"] = view_mode
@@ -2445,7 +2921,7 @@ class SmartAgent:
                         print(f"[SMART] LLM filters: {llm_filters}")
                         if _log: _log["processing"].update(filters_source="llm", filters_applied={k: str(v) for k, v in llm_filters.items()})
                     if best_intent == "pendencia_compras":
-                        return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx, llm_filters=llm_filters)
+                        return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx, llm_filters=llm_filters, extra_columns=extra_columns)
                     elif best_intent == "estoque":
                         return await self._handle_estoque(question, user_context, t0, params, ctx)
                     elif best_intent == "vendas":
@@ -2476,8 +2952,8 @@ class SmartAgent:
                 print(f"[SMART] LLM classificou: {intent} | filtro={llm_result.get('filtro')} | ordenar={llm_result.get('ordenar')} | top={llm_result.get('top')}")
 
                 if _log:
-                    _layer = "groq" if GROQ_API_KEY else "ollama"
-                    _log["processing"].update(layer=_layer, intent=intent, groq_raw=dict(llm_result) if GROQ_API_KEY else None)
+                    _layer = "groq" if pool_classify.available else "ollama"
+                    _log["processing"].update(layer=_layer, intent=intent, groq_raw=dict(llm_result) if pool_classify.available else None)
 
                 # Se LLM classificou como conhecimento
                 if intent == "conhecimento":
@@ -2490,6 +2966,17 @@ class SmartAgent:
                 for key in ["marca", "fornecedor", "empresa", "comprador", "periodo", "aplicacao"]:
                     if llm_result.get(key) and not params.get(key):
                         params[key] = llm_result[key]
+
+                # Extrair e normalizar extra_columns
+                extra_columns = []
+                raw_extra = llm_result.get("extra_columns") or []
+                for col in raw_extra:
+                    norm = COLUMN_NORMALIZE.get(col.upper().replace(" ", "_"), col.upper())
+                    if norm not in extra_columns:
+                        extra_columns.append(norm)
+                if extra_columns:
+                    print(f"[SMART] Extra columns (L2): {extra_columns}")
+                    if _log: _log["processing"]["extra_columns"] = extra_columns
 
                 view_mode = llm_result.get("view") or detect_view_mode(tokens)
 
@@ -2506,10 +2993,8 @@ class SmartAgent:
                         params["tipo_compra"] = "Casada"
                     elif tc in ("estoque", "futura", "reposicao"):
                         params["tipo_compra"] = "Estoque"
-                # LLM filters tambem podem ter TIPO_COMPRA
                 if llm_filters.get("TIPO_COMPRA") and not params.get("tipo_compra"):
                     params["tipo_compra"] = llm_filters["TIPO_COMPRA"]
-                # Intent override se LLM retornou tipo_compra mas intent errado
                 if params.get("tipo_compra") and intent != "pendencia_compras":
                     print(f"[SMART] Intent override (LLM): {intent} -> pendencia_compras (tipo_compra={params['tipo_compra']})")
                     intent = "pendencia_compras"
@@ -2520,7 +3005,7 @@ class SmartAgent:
                     _log["processing"]["entities"] = {k: v for k, v in params.items() if v and k != "periodo"}
 
                 if intent == "pendencia_compras":
-                    return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx, llm_filters=llm_filters)
+                    return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx, llm_filters=llm_filters, extra_columns=extra_columns)
                 elif intent == "estoque":
                     return await self._handle_estoque(question, user_context, t0, params, ctx)
                 elif intent == "vendas":
@@ -2668,7 +3153,7 @@ class SmartAgent:
                     "QTD_ITENS": len(filtered),
                     "VLR_PENDENTE": sum(float(r.get("VLR_PENDENTE", 0) or 0) for r in filtered if isinstance(r, dict)),
                 }]
-                response = format_pendencia_response(kpis_data, filtered, f"{desc} ({filter_label})", ctx.params, view_mode)
+                response = format_pendencia_response(kpis_data, filtered, f"{desc} ({filter_label})", ctx.params, view_mode, extra_columns=ctx._extra_columns if ctx else [])
         elif prev_intent == "estoque":
             response = format_estoque_response(filtered, ctx.params)
         elif prev_intent == "vendas":
@@ -2719,16 +3204,34 @@ class SmartAgent:
         return {"response": r, "tipo": "info", "query_executed": None, "query_results": None}
 
     # ---- PENDENCIA ----
-    async def _handle_pendencia_compras(self, question, user_context, t0, params=None, view_mode="pedidos", ctx=None, llm_filters=None):
+    async def _handle_pendencia_compras(self, question, user_context, t0, params=None, view_mode="pedidos", ctx=None, llm_filters=None, extra_columns=None):
         if params is None:
             params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
         # Merge com contexto se disponivel
         if ctx and not (params.get("marca") or params.get("fornecedor") or params.get("comprador")):
             params = ctx.merge_params(params)
             print(f"[CTX] Params merged: {params}")
-        print(f"[SMART] Pendencia params: {params} | view: {view_mode} | llm_filters: {llm_filters}")
+
+        # Herdar extra_columns do contexto se nao veio nesta pergunta
+        if not extra_columns and ctx and hasattr(ctx, '_extra_columns') and ctx._extra_columns:
+            extra_columns = ctx._extra_columns
+            print(f"[CTX] Extra columns herdadas: {extra_columns}")
+
+        extra_cols_normalized = extra_columns or []
+        print(f"[SMART] Pendencia params: {params} | view: {view_mode} | llm_filters: {llm_filters} | extra_cols: {extra_cols_normalized}")
 
         sql_kpis, sql_detail, description = sql_pendencia_compras(params, user_context)
+
+        # Verificar se precisa adicionar campos ao SQL
+        needs_sql_extra = [c for c in extra_cols_normalized if c in EXTRA_SQL_FIELDS]
+        if needs_sql_extra:
+            extra_select = ", ".join(EXTRA_SQL_FIELDS[c] for c in needs_sql_extra)
+            sql_detail = sql_detail.replace(
+                f"\n        {JOINS_PENDENCIA}",
+                f",\n            {extra_select}\n        {JOINS_PENDENCIA}"
+            )
+            print(f"[SMART] SQL com campos extras: {needs_sql_extra}")
+
         kpis_result = await self.executor.execute(sql_kpis)
         if not kpis_result.get("success"):
             return {"response": f"Erro ao consultar: {kpis_result.get('error','?')}", "tipo": "consulta_banco", "query_executed": sql_kpis[:200], "query_results": 0}
@@ -2740,7 +3243,7 @@ class SmartAgent:
 
         qtd = int((kpis_data[0] if kpis_data else {}).get("QTD_PEDIDOS", 0) or 0)
         detail_data = []
-        detail_columns = ["EMPRESA","PEDIDO","TIPO_COMPRA","COMPRADOR","DT_PEDIDO","PREVISAO_ENTREGA","CONFIRMADO","FORNECEDOR","CODPROD","PRODUTO","MARCA","UNIDADE","QTD_PEDIDA","QTD_ATENDIDA","QTD_PENDENTE","VLR_UNITARIO","VLR_PENDENTE","DIAS_ABERTO","STATUS_ENTREGA"]
+        detail_columns = ["EMPRESA","PEDIDO","TIPO_COMPRA","COMPRADOR","DT_PEDIDO","PREVISAO_ENTREGA","CONFIRMADO","FORNECEDOR","CODPROD","PRODUTO","MARCA","APLICACAO","NUM_FABRICANTE","UNIDADE","QTD_PEDIDA","QTD_ATENDIDA","QTD_PENDENTE","VLR_UNITARIO","VLR_PENDENTE","DIAS_ABERTO","STATUS_ENTREGA"] + needs_sql_extra
 
         if qtd > 0:
             dr = await self.executor.execute(sql_detail)
@@ -2756,6 +3259,8 @@ class SmartAgent:
         result_data = {"detail_data": detail_data, "columns": detail_columns, "description": description, "params": params, "intent": "pendencia_compras"}
         if ctx:
             ctx.update("pendencia_compras", params, result_data, question, view_mode)
+            if extra_cols_normalized:
+                ctx._extra_columns = extra_cols_normalized
             print(f"[CTX] Atualizado: {ctx}")
 
         # ========== VIEWS AGREGADAS (quem compra/fornece marca X?) ==========
@@ -2888,7 +3393,7 @@ class SmartAgent:
                     }]
                     detail_data = filtered
                     desc_filtered = f"{description} ({filter_label})" if filter_label else description
-                    fallback_response = format_pendencia_response(kpis_data, detail_data, desc_filtered, params, "itens")
+                    fallback_response = format_pendencia_response(kpis_data, detail_data, desc_filtered, params, "itens", extra_columns=extra_cols_normalized)
                     elapsed = int((time.time() - t0) * 1000)
                     return {"response": fallback_response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": len(filtered), "time_ms": elapsed, "_detail_data": filtered}
             else:
@@ -2914,7 +3419,7 @@ class SmartAgent:
                 elapsed = int((time.time() - t0) * 1000)
                 return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": 0, "time_ms": elapsed, "_detail_data": detail_data}
 
-        fallback_response = format_pendencia_response(kpis_data, detail_data, description, params, view_mode)
+        fallback_response = format_pendencia_response(kpis_data, detail_data, description, params, view_mode, extra_columns=extra_cols_normalized)
 
         # Narrator: LLM explica os dados naturalmente
         if USE_LLM_NARRATOR and qtd > 0:
@@ -2938,7 +3443,15 @@ class SmartAgent:
             response = fallback_response
 
         elapsed = int((time.time() - t0) * 1000)
-        return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": qtd, "time_ms": elapsed, "_detail_data": detail_data}
+        return {
+            "response": response,
+            "tipo": "consulta_banco",
+            "query_executed": sql_kpis[:200] + "...",
+            "query_results": qtd,
+            "time_ms": elapsed,
+            "_detail_data": detail_data,
+            "_visible_columns": extra_cols_normalized,
+        }
 
     # ---- ESTOQUE ----
     async def _handle_estoque(self, question, user_context, t0, params=None, ctx=None):
@@ -3152,11 +3665,10 @@ class SmartAgent:
         if not aplicacao:
             return {"response": "Para buscar por aplicacao, informe o veiculo ou motor.\nEx: *\"pecas para scania r450\"* ou *\"filtros para motor dc13\"*", "tipo": "info", "query_executed": None, "query_results": None}
 
-        safe_app = aplicacao.replace("'", "''")
+        safe_app = _safe_sql(aplicacao)
         marca_filter = ""
         if params.get("marca"):
-            safe_marca = params['marca'].replace("'", "''")
-            marca_filter = f" AND UPPER(MAR.DESCRICAO) LIKE UPPER('%{safe_marca}%')"
+            marca_filter = f" AND UPPER(MAR.DESCRICAO) LIKE UPPER('%{_safe_sql(params['marca'])}%')"
 
         sql = f"""SELECT DISTINCT PRO.CODPROD, PRO.DESCRPROD AS PRODUTO,
             NVL(MAR.DESCRICAO,'') AS MARCA,

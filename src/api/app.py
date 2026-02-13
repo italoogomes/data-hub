@@ -261,6 +261,33 @@ async def startup():
         print(f"[!] LLM Agent nao inicializou: {e}")
         print(f"[!] Smart Agent continua funcionando normalmente.")
 
+    # Knowledge Compiler - compilacao incremental em background
+    try:
+        from src.llm.knowledge_compiler import KnowledgeCompiler
+        compiler = KnowledgeCompiler()
+        stats = await compiler.compile(full=False, dry_run=False, verbose=False)
+        if stats.get("processed", 0) > 0:
+            print(f"[OK] Knowledge Compiler: {stats['processed']} docs processados ({stats.get('groq_calls', 0)} Groq calls)")
+            # Recarregar no SmartAgent
+            from src.llm.smart_agent import _load_compiled_knowledge, _COMPILED_LOADED
+            import src.llm.smart_agent as _sa
+            _sa._COMPILED_LOADED = False  # forcar recarga
+            _load_compiled_knowledge()
+        else:
+            print(f"[OK] Knowledge Compiler: up-to-date ({stats.get('total_files', 0)} docs)")
+    except Exception as e:
+        print(f"[!] Knowledge Compiler falhou (nao critico): {e}")
+
+    # Training scheduler (roda de madrugada)
+    try:
+        from src.llm.smart_agent import _training_scheduler
+        import asyncio
+        asyncio.create_task(_training_scheduler())
+        from src.llm.smart_agent import TRAINING_HOUR
+        print(f"[OK] Training scheduler ativo (todo dia as {TRAINING_HOUR}h)")
+    except Exception as e:
+        print(f"[!] Training scheduler falhou: {e}")
+
     print(f"[OK] MMarra Data Hub API pronta!")
     print(f"[i] Acesse: http://localhost:8000")
 
@@ -286,6 +313,7 @@ class ChatResponse(BaseModel):
     download_url: Optional[str] = None
     time_ms: int = 0
     message_id: Optional[str] = None
+    table_data: Optional[dict] = None  # {columns, rows, visible_columns} para toggle frontend
 
 class FeedbackRequest(BaseModel):
     message_id: str
@@ -472,6 +500,19 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
         smart_result = await smart_agent.ask(question, user_context=user_context)
         if smart_result:
             elapsed = int((time.time() - start) * 1000)
+
+            # Extrair table_data para toggle de colunas no frontend
+            _td = None
+            _detail = smart_result.pop("_detail_data", None)
+            _vis_cols = smart_result.pop("_visible_columns", None)
+            if _detail and isinstance(_detail, list) and len(_detail) > 0:
+                _all_cols = list(_detail[0].keys()) if isinstance(_detail[0], dict) else []
+                _td = {
+                    "columns": _all_cols,
+                    "rows": _detail[:200],  # limitar payload
+                    "visible_columns": _vis_cols or [],
+                }
+
             return ChatResponse(
                 response=smart_result.get("response", "Sem resposta"),
                 sources=[],
@@ -482,6 +523,7 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
                 download_url=smart_result.get("download_url"),
                 time_ms=elapsed,
                 message_id=smart_result.get("message_id"),
+                table_data=_td,
             )
     except Exception as e:
         print(f"[SMART] Erro: {e}")
@@ -600,6 +642,31 @@ async def manage_aliases(req: AliasRequest, authorization: Optional[str] = Heade
 
     else:
         raise HTTPException(status_code=400, detail="Action invalida. Use: add, approve, reject, remove")
+
+
+@app.get("/api/admin/pools")
+async def admin_pools(authorization: Optional[str] = Header(None)):
+    """Status dos pools Groq (admin only)."""
+    session = get_current_user(authorization)
+    if session.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores")
+    from src.llm.smart_agent import pool_classify, pool_narrate, pool_train
+    return {
+        "classify": pool_classify.stats(),
+        "narrate": pool_narrate.stats(),
+        "train": pool_train.stats(),
+    }
+
+
+@app.post("/api/admin/train")
+async def admin_train(authorization: Optional[str] = Header(None)):
+    """Dispara treinamento manual (admin only)."""
+    session = get_current_user(authorization)
+    if session.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores")
+    from src.llm.smart_agent import daily_training
+    stats = await daily_training(force=True)
+    return stats
 
 
 @app.post("/api/clear")
