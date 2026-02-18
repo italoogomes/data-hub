@@ -1,11 +1,29 @@
 # 📜 Historico de Sessoes - Data Hub
 
-**Arquivo:** Historico completo de sessoes anteriores (1-25).
+**Arquivo:** Historico completo de sessoes anteriores (1-32).
 **Para estado atual:** Ver `PROGRESSO_ATUAL.md`
 
 ---
 
 ## SESSOES ANTERIORES
+
+### 2026-02-13 (sessao 32) - Groq 3 Pools + Colunas Extras + Toggle + Training + Limpeza
+
+**12 fases implementadas:**
+1. **GroqKeyPool** + `_groq_request` + 3 pools (classify, narrate, train) com round-robin e cooldown
+2. **extra_columns** no prompt do Groq (~25 exemplos + 4 novos com NUM_FABRICANTE, REFERENCIA)
+3. **Narrador** migrado de Ollama para Groq (pool_narrate)
+4. **Backend** - propagar extra_columns (EXISTING_SQL_COLUMNS, EXTRA_SQL_FIELDS, COLUMN_NORMALIZE)
+5. **Formatter** dinamico com colunas extras (views itens/pedidos)
+6. **Frontend toggle** de colunas (chips, renderColumnToggles, rerenderTable)
+7. **Training scheduler** (daily_training, /api/admin/pools, /api/admin/train, train.py CLI)
+8. **Limpeza** de codigo antigo (DEFAULT_COLUMNS, detect_column_request, COLUMN_ALIASES)
+9. **_safe_sql()** em todos os pontos de interpolacao SQL
+10. **requirements.txt** - openpyxl adicionado
+11. **Testes pytest** - 5 classes, 24 testes (entities, scoring, safe_sql, columns, pool)
+12. **.env** - GROQ_POOL_CLASSIFY/NARRATE/TRAIN + TRAINING_HOUR
+
+---
 
 ### 2026-02-09 (sessao 25) - Servidor 8080, Logo Transparente e ITE.PENDENTE
 
@@ -347,5 +365,5 @@ WHERE ITE.PENDENTE = 'S'  -- CRITICO!
 
 ---
 
-*Este arquivo contem o historico de sessoes 1-25.*
+*Este arquivo contem o historico de sessoes 1-32.*
 *Para estado atual, ver `PROGRESSO_ATUAL.md`.*

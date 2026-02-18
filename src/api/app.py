@@ -288,6 +288,27 @@ async def startup():
     except Exception as e:
         print(f"[!] Training scheduler falhou: {e}")
 
+    # Elasticsearch: verificar e sincronizar se indice vazio
+    try:
+        from src.elastic.search import ElasticSearchEngine
+        from src.elastic.sync import ElasticSync
+        _es_search = ElasticSearchEngine()
+        health = await _es_search.health()
+        if health.get("status") != "offline":
+            print(f"[OK] Elasticsearch: {health.get('status')}")
+            products_count = health.get("indices", {}).get("idx_produtos", {}).get("docs", "0")
+            partners_count = health.get("indices", {}).get("idx_parceiros", {}).get("docs", "0")
+            if int(products_count or 0) == 0:
+                print("[ELASTIC] Indice vazio — iniciando full sync em background...")
+                _es_sync = ElasticSync(smart_agent.executor)
+                asyncio.create_task(_es_sync.full_sync())
+            else:
+                print(f"[OK] Elastic: {products_count} produtos, {partners_count} parceiros indexados")
+        else:
+            print(f"[!] Elasticsearch offline: {health.get('error', '?')}")
+    except Exception as e:
+        print(f"[!] Elasticsearch nao disponivel (nao critico): {e}")
+
     print(f"[OK] MMarra Data Hub API pronta!")
     print(f"[i] Acesse: http://localhost:8000")
 
@@ -667,6 +688,32 @@ async def admin_train(authorization: Optional[str] = Header(None)):
     from src.llm.smart_agent import daily_training
     stats = await daily_training(force=True)
     return stats
+
+
+@app.get("/api/admin/elastic/health")
+async def elastic_health(authorization: Optional[str] = Header(None)):
+    """Status do Elasticsearch (admin only)."""
+    session = get_current_user(authorization)
+    if session.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores")
+    from src.elastic.search import ElasticSearchEngine
+    es = ElasticSearchEngine()
+    return await es.health()
+
+
+@app.post("/api/admin/elastic/sync")
+async def elastic_sync_endpoint(full: bool = False, authorization: Optional[str] = Header(None)):
+    """Sincroniza Elasticsearch (admin only). ?full=true para sync completo."""
+    session = get_current_user(authorization)
+    if session.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito a administradores")
+    from src.elastic.sync import ElasticSync
+    es_sync = ElasticSync(smart_agent.executor)
+    if full:
+        result = await es_sync.full_sync()
+    else:
+        result = await es_sync.incremental_sync()
+    return result
 
 
 @app.post("/api/clear")

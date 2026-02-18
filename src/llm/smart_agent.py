@@ -271,6 +271,25 @@ INTENT_SCORES = {
         "ajuda": 10, "help": 10, "menu": 8, "comandos": 8, "opcoes": 8,
         "funciona": 5, "consegue": 5, "funcoes": 6,
     },
+    "busca_produto": {
+        "busca": 8, "buscar": 8, "procura": 8, "procurar": 8,
+        "encontra": 8, "encontrar": 8, "acha": 7, "achar": 7,
+        "existe": 6, "tem": 4,
+        "produto": 3, "peca": 3, "pecas": 3, "filtro": 3,
+        "catalogo": 6,
+    },
+    "busca_cliente": {
+        "cliente": 8, "clientes": 8,
+        "dados": 5, "contato": 5, "telefone": 5, "cnpj": 8, "cpf": 7,
+        "endereco": 4, "email": 4,
+        "busca": 3, "procura": 3, "encontra": 3,
+    },
+    "busca_fornecedor": {
+        "fornecedor": 8, "fornecedores": 8,
+        "contato": 5, "telefone": 5, "dados": 5,
+        "cnpj": 6, "email": 4,
+        "busca": 3, "procura": 3,
+    },
 }
 
 # Thresholds por intent
@@ -281,6 +300,9 @@ INTENT_THRESHOLDS = {
     "gerar_excel": 8,
     "saudacao": 8,
     "ajuda": 8,
+    "busca_produto": 10,
+    "busca_cliente": 10,
+    "busca_fornecedor": 10,
 }
 
 # Palavras de confirmacao (para follow-up/excel)
@@ -355,6 +377,9 @@ Analise a pergunta do usuario e retorne APENAS um JSON (sem markdown, sem explic
 - estoque: quantidade em estoque, saldo, estoque critico, disponibilidade
 - vendas: vendas, faturamento, notas fiscais de venda, receita
 - produto: busca por produto especifico, codigo fabricante (HU711/51, WK950/21), similares, cross-reference, visao 360
+- busca_produto: usuario quer ENCONTRAR/PROCURAR um produto por nome, codigo, referencia, aplicacao. Palavras-chave: "tem", "busca", "procura", "encontra", "acha", "existe", "onde tem". Diferente de pendencia (pedidos) e estoque (saldo).
+- busca_cliente: usuario quer encontrar um CLIENTE por nome, CNPJ, cidade. Ex: "dados do cliente auto pecas", "clientes de uberlandia"
+- busca_fornecedor: usuario quer encontrar um FORNECEDOR por nome, contato. Ex: "contato do fornecedor nakata", "telefone da mann filter"
 - conhecimento: como funcionam processos, regras, politicas, explicacoes do ERP
 - saudacao: oi, bom dia, ola
 - ajuda: o que voce faz, como funciona, help
@@ -373,6 +398,7 @@ Analise a pergunta do usuario e retorne APENAS um JSON (sem markdown, sem explic
 - top: numero de resultados desejados ou null (ex: 1 para "qual o...", 5 para "top 5")
 - tipo_compra: "casada"|"estoque" ou null (tipo de compra mencionado - casada=empenho/vinculada, estoque=reposicao/entrega futura)
 - aplicacao: veiculo/motor/maquina mencionado para busca por aplicacao ou null (ex: "SCANIA R450", "MERCEDES ACTROS", "MOTOR DC13")
+- texto_busca: texto livre que o usuario quer buscar (nome do produto, nome do cliente, etc.) ou null. Usado com busca_produto/busca_cliente/busca_fornecedor.
 - extra_columns: lista de colunas extras que o usuario quer ver no relatorio, ou null
   Colunas possiveis: "EMPRESA", "TIPO_COMPRA", "COMPRADOR", "PREVISAO_ENTREGA", "CONFIRMADO",
   "FORNECEDOR", "UNIDADE", "QTD_PEDIDA", "QTD_ATENDIDA", "VLR_UNITARIO", "DIAS_ABERTO",
@@ -426,108 +452,202 @@ IMPORTANTE - Diferencie corretamente:
 Campos para estoque: CODPROD, PRODUTO, MARCA, ESTOQUE_TOTAL, ESTOQUE_MINIMO, CUSTO_MEDIO
 Campos para vendas: NUNOTA, CLIENTE, PRODUTO, QTD, VLR_TOTAL, DT_VENDA
 
+# CONTEXTO DE CONVERSA
+Se houver contexto da conversa anterior (adicionado ao final do prompt), use-o para interpretar a pergunta corretamente.
+Exemplos de referencias ao contexto:
+- "me passa os atrasados" = filtrar STATUS_ENTREGA="ATRASADO" dos dados anteriores
+- "e os de estoque?" = manter marca/empresa anterior, filtrar TIPO_COMPRA="Estoque"
+- "agora por itens" = mesma consulta anterior mas view="itens"
+- "os 41 atrasados" = 41 e a QUANTIDADE de itens atrasados mencionada antes, filtrar STATUS_ENTREGA="ATRASADO"
+- "qual o mais caro?" = referencia aos dados anteriores, ordenar VLR_PENDENTE_DESC + top 1
+IMPORTANTE: Quando o usuario menciona um NUMERO que coincide com dados da conversa anterior
+(ex: "41 atrasados" quando havia exatamente 41 itens com STATUS=ATRASADO), trate como
+filtro de STATUS, NAO como filtro de DIAS_ABERTO ou outro campo numerico.
+
 # EXEMPLOS
 Pergunta: "o que falta chegar da mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "qual pedido esta sem previsao de entrega da tome?"
-{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "pedidos atrasados da Donaldson"
-{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "qual pedido da sabo tem a maior previsao de entrega?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"PREVISAO_ENTREGA_DESC","top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"PREVISAO_ENTREGA_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "qual pedido da mann foi feito mais recentemente?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"DT_PEDIDO_DESC","top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"DT_PEDIDO_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "qual o pedido mais caro da Mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "quais pedidos estao confirmados?"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"CONFIRMADO","operador":"igual","valor":"S"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"CONFIRMADO","operador":"igual","valor":"S"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "qual item com maior quantidade pendente da Tome?"
-{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":"QTD_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":"QTD_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "tem algum pedido acima de 50 mil reais?"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"VLR_PENDENTE","operador":"maior","valor":"50000"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"VLR_PENDENTE","operador":"maior","valor":"50000"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "vendas de hoje"
-{"intent":"vendas","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":"hoje","view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"vendas","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":"hoje","view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "como funciona a compra casada?"
-{"intent":"conhecimento","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"conhecimento","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "quais pedidos casados da sabo?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Casada"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Casada"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "quem compra a marca mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "quem fornece a marca sabo?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "pedidos de empenho atrasados"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "compras de estoque da eaton"
-{"intent":"pendencia_compras","marca":"EATON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Estoque"},"ordenar":null,"top":null,"tipo_compra":"estoque","aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"EATON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Estoque"},"ordenar":null,"top":null,"tipo_compra":"estoque","aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "pendencias da Nakata por Ribeirao Preto"
-{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "estoque em Uberlandia"
-{"intent":"estoque","marca":null,"fornecedor":null,"empresa":"UBERL","comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"estoque","marca":null,"fornecedor":null,"empresa":"UBERL","comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "vendas de hoje em Itumbiara"
-{"intent":"vendas","marca":null,"fornecedor":null,"empresa":"ITUMBI","comprador":null,"periodo":"hoje","view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"vendas","marca":null,"fornecedor":null,"empresa":"ITUMBI","comprador":null,"periodo":"hoje","view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "HU711/51"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "tudo sobre o produto 133346"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "similares do produto 133346"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "quem tem o filtro WK 950/21"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Pergunta: "pecas para scania r450"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA R450","extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA R450","texto_busca":null,"extra_columns":null}
 
 Pergunta: "qual filtro serve no mercedes actros"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MERCEDES ACTROS","extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MERCEDES ACTROS","texto_busca":null,"extra_columns":null}
 
 Pergunta: "filtros mann para motor dc13"
-{"intent":"produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MOTOR DC13","extra_columns":null}
+{"intent":"produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MOTOR DC13","texto_busca":null,"extra_columns":null}
 
 Pergunta: "pendencias da nakata por ribeirao contendo codigo do fabricante"
-{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":["NUM_FABRICANTE"]}
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":["NUM_FABRICANTE"]}
 
 Pergunta: "itens pendentes da mann mostrando empresa e previsao"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":["EMPRESA","PREVISAO_ENTREGA"]}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":["EMPRESA","PREVISAO_ENTREGA"]}
 
 Pergunta: "pendencias da sabo com comprador e tipo de compra"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":["COMPRADOR","TIPO_COMPRA"]}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":["COMPRADOR","TIPO_COMPRA"]}
 
 Pergunta: "me traga as pendencias da nakata incluindo referencia do fabricante e dias em aberto"
-{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"extra_columns":["NUM_FABRICANTE","DIAS_ABERTO"]}
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":["NUM_FABRICANTE","DIAS_ABERTO"]}
+
+Pergunta: "tem filtro de ar da mann pra scania?"
+{"intent":"busca_produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA","texto_busca":"filtro de ar","extra_columns":null}
+
+Pergunta: "busca o RS5362"
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"RS5362","extra_columns":null}
+
+Pergunta: "procura pecas pra volvo fh"
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"VOLVO FH","texto_busca":"pecas","extra_columns":null}
+
+Pergunta: "dados do cliente auto pecas ribeirao preto"
+{"intent":"busca_cliente","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"auto pecas ribeirao preto","extra_columns":null}
+
+Pergunta: "qual o cnpj da empresa transportadora sul"
+{"intent":"busca_cliente","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"transportadora sul","extra_columns":null}
+
+Pergunta: "telefone do fornecedor nakata"
+{"intent":"busca_fornecedor","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"nakata","extra_columns":null}
+
+Pergunta: "contato da mann filter"
+{"intent":"busca_fornecedor","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"mann filter","extra_columns":null}
+
+# EXEMPLOS COM CONTEXTO (quando ha conversa anterior anexada ao final)
+
+Contexto: pendencia_compras, marca=DONALDSON, 116 itens (ATRASADO: 41, NO PRAZO: 55, PROXIMO: 20)
+Pergunta: "me passa os 41 atrasados"
+{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+
+Contexto: pendencia_compras, marca=NAKATA, empresa=RIBEIR, 13 itens
+Pergunta: "e os atrasados?"
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+
+Contexto: pendencia_compras, marca=MANN, 85 itens, media 22 dias
+Pergunta: "qual o pedido mais caro?"
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+
+Contexto: pendencia_compras, marca=SABO, 50 itens (ATRASADO: 15, SEM PREVISAO: 8)
+Pergunta: "quais estao sem previsao?"
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
 
 Agora classifique:
 Pergunta: "{question}"
 """
 
 
-async def groq_classify(question: str) -> Optional[dict]:
+def _build_context_hint(ctx) -> str:
+    """Monta resumo curto do contexto da conversa para o classificador LLM.
+    Retorna string vazia se nao ha contexto relevante."""
+    if not ctx or not ctx.intent or ctx.turn_count == 0:
+        return ""
+
+    parts = []
+    parts.append(f"Consulta anterior: {ctx.intent}")
+
+    # Parametros ativos
+    active_params = {k: v for k, v in ctx.params.items() if v}
+    if active_params:
+        param_str = ", ".join(f"{k}={v}" for k, v in active_params.items())
+        parts.append(f"Filtros ativos: {param_str}")
+
+    # Resumo dos resultados anteriores (contagens, nao dados brutos)
+    if ctx.last_result and ctx.last_result.get("detail_data"):
+        data = ctx.last_result["detail_data"]
+        total_itens = len(data)
+        status_count = {}
+        for item in data:
+            if isinstance(item, dict):
+                st = item.get("STATUS_ENTREGA", "?")
+                status_count[st] = status_count.get(st, 0) + 1
+        if status_count:
+            status_str = ", ".join(f"{k}: {v}" for k, v in sorted(status_count.items(), key=lambda x: -x[1]))
+            parts.append(f"Resultado anterior: {total_itens} itens ({status_str})")
+        else:
+            parts.append(f"Resultado anterior: {total_itens} itens")
+
+    # Descricao do resultado
+    if ctx.last_result and ctx.last_result.get("description"):
+        parts.append(f"Descricao: {ctx.last_result['description']}")
+
+    # Pergunta anterior
+    if ctx.last_question:
+        parts.append(f"Pergunta anterior: \"{ctx.last_question}\"")
+
+    return "\n".join(parts)
+
+
+async def groq_classify(question: str, context_hint: str = "") -> Optional[dict]:
     """Classifica pergunta via Groq usando pool_classify."""
     if not pool_classify.available:
         return None
 
     prompt = LLM_CLASSIFIER_PROMPT.replace("{question}", question.replace('"', '\\"'))
+    if context_hint:
+        prompt += f"\n\n# CONTEXTO DA CONVERSA ANTERIOR (use para interpretar referencias):\n{context_hint}"
 
     result = await _groq_request(
         pool=pool_classify,
@@ -568,9 +688,11 @@ async def groq_classify(question: str) -> Optional[dict]:
     return parsed
 
 
-async def ollama_classify(question: str) -> Optional[dict]:
+async def ollama_classify(question: str, context_hint: str = "") -> Optional[dict]:
     """Fallback: Ollama local para classificar. Mais lento mas funciona offline."""
     prompt = LLM_CLASSIFIER_PROMPT.replace("{question}", question.replace('"', '\\"'))
+    if context_hint:
+        prompt += f"\n\n# CONTEXTO DA CONVERSA ANTERIOR (use para interpretar referencias):\n{context_hint}"
 
     def _call():
         return req_sync.post(
@@ -632,20 +754,20 @@ async def ollama_classify(question: str) -> Optional[dict]:
         return None
 
 
-async def llm_classify(question: str) -> Optional[dict]:
+async def llm_classify(question: str, context_hint: str = "") -> Optional[dict]:
     """Classificador inteligente: Groq (rapido) -> Ollama (fallback) -> None."""
     if not USE_LLM_CLASSIFIER:
         return None
 
     # Tentar Groq primeiro (rapido, ~0.5s)
     if pool_classify.available:
-        result = await groq_classify(question)
+        result = await groq_classify(question, context_hint)
         if result:
             return result
         print("[LLM-CLS] Groq falhou, tentando Ollama...")
 
     # Fallback: Ollama local
-    result = await ollama_classify(question)
+    result = await ollama_classify(question, context_hint)
     return result
 
 
@@ -2491,6 +2613,23 @@ async def daily_training(force: bool = False) -> dict:
     except Exception as e:
         print(f"[TRAIN] Alias review falhou: {e}")
 
+    # 3. Elasticsearch sync incremental
+    try:
+        from src.elastic.search import ElasticSearchEngine
+        from src.elastic.sync import ElasticSync
+        es_search = ElasticSearchEngine()
+        health = await es_search.health()
+        if health.get("status") != "offline":
+            from src.llm.query_executor import SafeQueryExecutor
+            es_sync = ElasticSync(SafeQueryExecutor())
+            sync_result = await es_sync.incremental_sync()
+            stats["elastic_sync"] = sync_result
+            print(f"[TRAIN] Elastic sync: {sync_result}")
+        else:
+            print(f"[TRAIN] Elastic offline, sync ignorado")
+    except Exception as e:
+        print(f"[TRAIN] Elastic sync falhou: {e}")
+
     print(f"[TRAIN] Concluido: compiler={stats['compiler'].get('processed', 0)} docs, aliases={stats['aliases_reviewed']}")
     return stats
 
@@ -2589,6 +2728,12 @@ class SmartAgent:
         self.alias_resolver = AliasResolver()  # Apelidos de produto
         self.query_logger = QueryLogger()
         self.result_validator = ResultValidator()
+        # Elasticsearch (busca fuzzy)
+        try:
+            from src.elastic.search import ElasticSearchEngine
+            self.elastic = ElasticSearchEngine()
+        except Exception:
+            self.elastic = None
         # Contexto POR USUARIO
         self._user_contexts = {}  # {user_id: ConversationContext}
         # Carregar knowledge compilado (auto-gerado)
@@ -2751,6 +2896,7 @@ class SmartAgent:
         q_norm = normalize(question)
         user_id = (user_context or {}).get("user", "__default__")
         ctx = self._get_context(user_id)
+        context_hint = _build_context_hint(ctx)
 
         # Score de cada intent
         scores = score_intent(tokens)
@@ -2887,7 +3033,7 @@ class SmartAgent:
             if is_complex and best_intent in ("pendencia_compras", "estoque", "vendas") and pool_classify.available:
                 # Query complexa: usar Groq pra interpretar filtros (scoring ja resolveu intent)
                 print(f"[SMART] Layer 1+ (Groq filtro): query complexa, consultando Groq...")
-                llm_result = await groq_classify(question)
+                llm_result = await groq_classify(question, context_hint)
                 if llm_result:
                     if _log: _log["processing"].update(layer="scoring+groq", groq_raw=dict(llm_result))
                     llm_filters = _llm_to_filters(llm_result, question)
@@ -2945,7 +3091,7 @@ class SmartAgent:
         # ========== LAYER 2: LLM CLASSIFIER (Groq ~0.5s / Ollama ~10s) ==========
         if USE_LLM_CLASSIFIER:
             print(f"[SMART] Layer 2 (LLM): score ambiguo ({best_score}), consultando LLM...")
-            llm_result = await llm_classify(question)
+            llm_result = await llm_classify(question, context_hint)
 
             if llm_result and llm_result.get("intent") not in (None, "desconhecido", ""):
                 intent = llm_result["intent"]
@@ -3021,6 +3167,15 @@ class SmartAgent:
                         return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
                     else:
                         return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
+                elif intent == "busca_produto":
+                    params["texto_busca"] = llm_result.get("texto_busca")
+                    return await self._handle_busca_produto(question, user_context, t0, params, ctx)
+                elif intent == "busca_cliente":
+                    params["texto_busca"] = llm_result.get("texto_busca")
+                    return await self._handle_busca_parceiro(question, user_context, t0, params, tipo="C", ctx=ctx)
+                elif intent == "busca_fornecedor":
+                    params["texto_busca"] = llm_result.get("texto_busca")
+                    return await self._handle_busca_parceiro(question, user_context, t0, params, tipo="F", ctx=ctx)
                 elif intent == "saudacao":
                     return self._handle_saudacao(user_context)
                 elif intent == "ajuda":
@@ -3068,6 +3223,12 @@ class SmartAgent:
                 return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
             else:
                 return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
+        elif intent == "busca_produto":
+            return await self._handle_busca_produto(question, user_context, t0, params, ctx)
+        elif intent == "busca_cliente":
+            return await self._handle_busca_parceiro(question, user_context, t0, params, tipo="C", ctx=ctx)
+        elif intent == "busca_fornecedor":
+            return await self._handle_busca_parceiro(question, user_context, t0, params, tipo="F", ctx=ctx)
         elif intent == "saudacao":
             return self._handle_saudacao(user_context)
         elif intent == "ajuda":
@@ -3590,7 +3751,26 @@ class SmartAgent:
 
         print(f"[SMART] Busca fabricante: '{cod_fab}'")
 
-        # Busca em TGFPRO (campos de referencia)
+        # Tentar Elastic primeiro (mais rapido, fuzzy)
+        if self.elastic:
+            elastic_results = await self.elastic.search_products(codigo=cod_fab, limit=10)
+            if elastic_results:
+                products = [{"codprod": r.get("codprod"), "produto": r.get("descricao",""),
+                             "marca": r.get("marca",""), "referencia": r.get("referencia",""),
+                             "aplicacao": r.get("aplicacao",""),
+                             "campo_match": "elastic"} for r in elastic_results]
+                resolved = {"found": True, "products": products, "code_searched": cod_fab}
+                print(f"[SMART] Elastic encontrou {len(products)} produtos para '{cod_fab}'")
+                response = format_busca_fabricante(resolved)
+
+                if len(products) == 1 and ctx:
+                    result_data = {"detail_data": products, "columns": ["codprod", "produto", "marca", "referencia"], "description": f"produto {cod_fab}", "params": params, "intent": "busca_fabricante"}
+                    ctx.update("busca_fabricante", params, result_data, question)
+
+                elapsed = int((time.time() - t0) * 1000)
+                return {"response": response, "tipo": "consulta_banco", "query_executed": f"elastic: {cod_fab}", "query_results": len(products), "time_ms": elapsed}
+
+        # Fallback SQL: Busca em TGFPRO (campos de referencia)
         resolved = await resolve_manufacturer_code(cod_fab, self.executor)
 
         # Se nao encontrou em TGFPRO, tenta em AD_TGFPROAUXMMA (auxiliares)
@@ -3665,6 +3845,34 @@ class SmartAgent:
         if not aplicacao:
             return {"response": "Para buscar por aplicacao, informe o veiculo ou motor.\nEx: *\"pecas para scania r450\"* ou *\"filtros para motor dc13\"*", "tipo": "info", "query_executed": None, "query_results": None}
 
+        # Tentar Elastic primeiro
+        if self.elastic:
+            elastic_results = await self.elastic.search_products(
+                aplicacao=aplicacao, marca=params.get("marca"), limit=20
+            )
+            if elastic_results:
+                data = [{"CODPROD": r.get("codprod"), "PRODUTO": r.get("descricao",""),
+                         "MARCA": r.get("marca",""), "APLICACAO": r.get("aplicacao",""),
+                         "REFERENCIA": r.get("referencia","")} for r in elastic_results]
+                lines = [f"\U0001f50d Encontrei **{len(data)} produto(s)** para aplicacao **{aplicacao}**"]
+                if params.get("marca"):
+                    lines[0] += f" (marca {params['marca']})"
+                lines[0] += ":\n"
+                lines.append("| CodProd | Produto | Marca | Aplicacao | Ref. |")
+                lines.append("|---------|---------|-------|-----------|------|")
+                for r in data:
+                    lines.append(f"| {r.get('CODPROD','')} | {_trunc(str(r.get('PRODUTO','')), 30)} | {_trunc(str(r.get('MARCA','')), 15)} | {_trunc(str(r.get('APLICACAO','')), 35)} | {_trunc(str(r.get('REFERENCIA','') or ''), 15)} |")
+                if len(data) >= 20:
+                    lines.append("\n*Mostrando os 20 primeiros. Refine com marca ou nome da peca.*")
+                lines.append(f"\nPara detalhes: *\"tudo sobre o produto {data[0].get('CODPROD','')}\"*")
+                response = "\n".join(lines)
+                elapsed = int((time.time() - t0) * 1000)
+                if ctx:
+                    result_data = {"detail_data": data, "columns": ["CODPROD","PRODUTO","MARCA","APLICACAO","REFERENCIA"], "description": "aplicacao", "params": params, "intent": "produto"}
+                    ctx.update("produto", params, result_data, question)
+                return {"response": response, "tipo": "consulta_banco", "query_executed": "elastic:aplicacao", "query_results": len(data), "time_ms": elapsed, "_detail_data": data}
+
+        # Fallback SQL
         safe_app = _safe_sql(aplicacao)
         marca_filter = ""
         if params.get("marca"):
@@ -3717,6 +3925,166 @@ class SmartAgent:
             ctx.update("produto", params, result_data, question)
 
         return {"response": response, "tipo": "consulta_banco", "query_executed": sql[:200] + "...", "query_results": len(data), "time_ms": elapsed, "_detail_data": data}
+
+    # ---- BUSCA PRODUTO VIA ELASTICSEARCH ----
+    async def _handle_busca_produto(self, question, user_context, t0, params=None, ctx=None):
+        """Busca produto no Elasticsearch com fuzzy matching."""
+        if params is None:
+            params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
+
+        text = params.get("texto_busca") or params.get("produto_nome")
+        codigo = params.get("codigo_fabricante")
+        marca = params.get("marca")
+        aplicacao = params.get("aplicacao")
+
+        # Se nao extraiu texto dos params, extrair da pergunta original
+        if not text and not codigo:
+            import re as _re
+            clean = _re.sub(
+                r'\b(busca|buscar|procura|procurar|encontra|encontrar|pesquisa|pesquisar|'
+                r'tem|existe|acha|achar|me|mostra|mostrar|quero|ver|o|a|os|as|um|uma|'
+                r'do|da|dos|das|de|pra|para|no|na|nos|nas|pelo|pela|que|com|e|ou)\b',
+                '', question.lower()
+            ).strip()
+            clean = _re.sub(r'\s+', ' ', clean).strip()
+            if clean:
+                text = clean
+            # Se marca foi extraida mas text nao, usar marca como text tambem
+            if not text and marca:
+                text = marca
+            if not text and aplicacao:
+                text = aplicacao
+
+        if not text and not codigo:
+            return {"response": "O que voce esta procurando? Me diz o nome, codigo ou aplicacao do produto.", "tipo": "info", "query_executed": None, "query_results": None}
+
+        if not self.elastic:
+            # Fallback: sem Elastic, redirecionar para handlers existentes
+            if codigo:
+                return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
+            if aplicacao:
+                return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
+            return {"response": "Busca de produto indisponivel no momento (Elasticsearch offline).", "tipo": "info"}
+
+        print(f"[SMART] Busca Elastic: text='{text}' codigo='{codigo}' marca='{marca}' aplicacao='{aplicacao}'")
+        results = await self.elastic.search_products(
+            text=text, codigo=codigo, marca=marca, aplicacao=aplicacao, limit=15
+        )
+
+        # Se nao encontrou com todos os filtros, tentar mais amplo
+        if not results and marca:
+            results = await self.elastic.search_products(
+                text=text or codigo, aplicacao=aplicacao, limit=15
+            )
+        if not results and aplicacao:
+            results = await self.elastic.search_products(
+                text=text or codigo, marca=marca, limit=15
+            )
+        if not results:
+            # Fallback SQL
+            if codigo:
+                return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
+            return {"response": f"Nenhum produto encontrado para '{text or codigo}'.\n\nTente variando o nome ou busque por codigo.", "tipo": "consulta_banco", "query_executed": "elastic:search_products", "query_results": 0, "time_ms": int((time.time() - t0) * 1000)}
+
+        # Formatar resposta
+        lines = [f"\U0001f50d Encontrei **{len(results)} produto(s)**"]
+        if marca:
+            lines[0] += f" da marca **{marca}**"
+        if aplicacao:
+            lines[0] += f" para **{aplicacao}**"
+        lines[0] += ":\n"
+
+        lines.append("| CodProd | Produto | Marca | Referencia | Aplicacao |")
+        lines.append("|---------|---------|-------|-----------|-----------|")
+        for p in results:
+            ref = str(p.get('referencia', '') or p.get('num_fabricante', '') or '')
+            lines.append(f"| {p.get('codprod','')} | {_trunc(str(p.get('descricao','')), 30)} | "
+                         f"{_trunc(str(p.get('marca','')), 15)} | {_trunc(ref, 15)} | "
+                         f"{_trunc(str(p.get('aplicacao','')), 25)} |")
+        if len(results) >= 15:
+            lines.append("\n*Mostrando os 15 primeiros. Refine a busca com mais detalhes.*")
+        if results:
+            lines.append(f"\nPara detalhes: *\"tudo sobre o produto {results[0].get('codprod','')}\"*")
+
+        response = "\n".join(lines)
+
+        # Narrar se habilitado
+        if USE_LLM_NARRATOR and len(results) > 0:
+            summary = f"Busca por '{text or codigo}'. {len(results)} resultados."
+            if marca:
+                summary += f" Marca: {marca}."
+            if aplicacao:
+                summary += f" Aplicacao: {aplicacao}."
+            narration = await llm_narrate(question, summary, "")
+            if narration:
+                response = narration + "\n\n" + response
+
+        elapsed = int((time.time() - t0) * 1000)
+
+        if ctx:
+            result_data = {"detail_data": results, "columns": list(results[0].keys()) if results else [],
+                           "description": f"busca '{text or codigo}'", "params": params, "intent": "busca_produto"}
+            ctx.update("busca_produto", params, result_data, question)
+
+        return {"response": response, "tipo": "consulta_banco",
+                "query_executed": "elastic:search_products", "query_results": len(results),
+                "time_ms": elapsed, "_detail_data": results}
+
+    # ---- BUSCA PARCEIRO (CLIENTE/FORNECEDOR) VIA ELASTICSEARCH ----
+    async def _handle_busca_parceiro(self, question, user_context, t0, params=None, tipo="C", ctx=None):
+        """Busca cliente ou fornecedor no Elasticsearch com fuzzy matching."""
+        if params is None:
+            params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
+
+        text = params.get("texto_busca") or params.get("fornecedor") or params.get("empresa")
+        cnpj = params.get("cnpj")
+        cidade = params.get("cidade")
+
+        tipo_nome = "cliente" if tipo == "C" else "fornecedor"
+
+        if not text and not cnpj:
+            return {"response": f"Qual {tipo_nome} voce esta procurando? Me diz o nome, CNPJ ou cidade.", "tipo": "info", "query_executed": None, "query_results": None}
+
+        if not self.elastic:
+            return {"response": f"Busca de {tipo_nome} indisponivel no momento (Elasticsearch offline).", "tipo": "info"}
+
+        print(f"[SMART] Busca Elastic {tipo_nome}: text='{text}' cnpj='{cnpj}' cidade='{cidade}'")
+        results = await self.elastic.search_partners(
+            text=text, cnpj=cnpj, tipo=tipo, cidade=cidade, limit=10
+        )
+
+        if not results:
+            return {"response": f"Nenhum {tipo_nome} encontrado para '{text or cnpj}'.\n\nVerifique o nome ou tente CNPJ parcial.",
+                    "tipo": "consulta_banco", "query_executed": "elastic:search_partners",
+                    "query_results": 0, "time_ms": int((time.time() - t0) * 1000)}
+
+        lines = [f"\U0001f50d Encontrei **{len(results)} {tipo_nome}(s)**:\n"]
+        lines.append("| Codigo | Nome | Fantasia | Cidade/UF | Telefone |")
+        lines.append("|--------|------|----------|-----------|----------|")
+        for p in results:
+            cidade_uf = f"{p.get('cidade','')}/{p.get('uf','')}" if p.get('uf') else p.get('cidade', '')
+            lines.append(f"| {p.get('codparc','')} | {_trunc(str(p.get('nome','')), 30)} | "
+                         f"{_trunc(str(p.get('fantasia','')), 20)} | {_trunc(cidade_uf, 20)} | {p.get('telefone','')} |")
+
+        # Narrar se habilitado
+        response = "\n".join(lines)
+        if USE_LLM_NARRATOR and len(results) > 0:
+            summary = f"Busca de {tipo_nome} por '{text or cnpj}'. {len(results)} resultados."
+            narration = await llm_narrate(question, summary, "")
+            if narration:
+                response = narration + "\n\n" + response
+
+        elapsed = int((time.time() - t0) * 1000)
+
+        if ctx:
+            result_data = {"detail_data": results, "columns": list(results[0].keys()) if results else [],
+                           "description": f"busca {tipo_nome} '{text or cnpj}'", "params": params,
+                           "intent": f"busca_{tipo_nome}"}
+            ctx.update(f"busca_{tipo_nome}", params, result_data, question)
+
+        return {"response": response, "tipo": "consulta_banco",
+                "query_executed": "elastic:search_partners",
+                "query_results": len(results), "time_ms": elapsed, "_detail_data": results}
 
     # ---- PRODUTO 360 (visao completa) ----
     async def _handle_produto_360(self, question, user_context, t0, params=None, ctx=None):
