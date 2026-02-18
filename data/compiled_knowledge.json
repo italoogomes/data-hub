@@ -558,6 +558,66 @@
         "weight": 5,
         "confidence": 0.9,
         "source": "knowledge/sankhya/tabelas/TGFVEN.md"
+      },
+      {
+        "word": "conferencia",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+      },
+      {
+        "word": "status",
+        "weight": 3,
+        "confidence": 0.8,
+        "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+      },
+      {
+        "word": "liberacao",
+        "weight": 2,
+        "confidence": 0.8,
+        "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+      },
+      {
+        "word": "separacao",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+      },
+      {
+        "word": "visibilidade",
+        "weight": 3,
+        "confidence": 0.85,
+        "source": "knowledge/regras/rbac_vendas.md"
+      },
+      {
+        "word": "aguardando",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "atrasado",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "entregue",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "parcial",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "sem estoque",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
       }
     ],
     "pendencia_compras": [
@@ -790,6 +850,120 @@
         "weight": 5,
         "confidence": 0.9,
         "source": "knowledge/sankhya/tabelas/TGFTOP.md"
+      },
+      {
+        "word": "margem",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "lucratividade",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "comissao",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "comissoes",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "devolucao",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "devolvido",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "devolveu",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "venda liquida",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "liquido",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "faturamento liquido",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "comparar",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "comparativo",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "evolucao",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "ticket medio",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "tiquete medio",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "top vendedores",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "regras",
+        "weight": 4,
+        "confidence": 0.85,
+        "source": "knowledge/regras/rbac_vendas.md"
+      },
+      {
+        "word": "marca",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
+      },
+      {
+        "word": "produto",
+        "weight": 2,
+        "confidence": 0.75,
+        "source": "knowledge/sankhya/exemplos_sql.md"
       }
     ],
     "gerar_excel": [
@@ -882,6 +1056,12 @@
         "weight": 2,
         "confidence": 0.9,
         "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+      },
+      {
+        "word": "filtragem",
+        "weight": 2,
+        "confidence": 0.85,
+        "source": "knowledge/regras/rbac_vendas.md"
       }
     ],
     "saudacao": [
@@ -890,9 +1070,22 @@
         "weight": 1,
         "confidence": 0.8,
         "source": "knowledge/processos/compras/rotina_comprador.md"
+      },
+      {
+        "word": "perfil",
+        "weight": 5,
+        "confidence": 0.85,
+        "source": "knowledge/regras/rbac_vendas.md"
       }
     ],
-    "ajuda": [],
+    "ajuda": [
+      {
+        "word": "acesso",
+        "weight": 1,
+        "confidence": 0.85,
+        "source": "knowledge/regras/rbac_vendas.md"
+      }
+    ],
     "compras": [
       {
         "word": "fornecedor",
@@ -997,6 +1190,60 @@
         "weight": 5,
         "confidence": 0.9,
         "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+      },
+      {
+        "word": "pagamento",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "financeiro",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "movimento bancario",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "faturamento",
+        "weight": 6,
+        "confidence": 0.95,
+        "source": "knowledge/glossario/sinonimos.md"
+      },
+      {
+        "word": "contas a pagar",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+      },
+      {
+        "word": "contas a receber",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+      },
+      {
+        "word": "titulos vencidos",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+      },
+      {
+        "word": "fluxo de caixa",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+      },
+      {
+        "word": "resumo financeiro",
+        "weight": 5,
+        "confidence": 0.8,
+        "source": "knowledge/processos/financeiro/resumo_financeiro.md"
       }
     ],
     "produto": [
@@ -1061,6 +1308,26 @@
         "weight": 4,
         "confidence": 0.9,
         "source": "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md"
+      }
+    ],
+    "rastreio_pedido": [
+      {
+        "word": "estoque",
+        "weight": 3,
+        "confidence": 0.8,
+        "source": "knowledge/processos/vendas/rastreio_pedido.md"
+      },
+      {
+        "word": "compra",
+        "weight": 2,
+        "confidence": 0.8,
+        "source": "knowledge/processos/vendas/rastreio_pedido.md"
+      },
+      {
+        "word": "fornecedor",
+        "weight": 1,
+        "confidence": 0.8,
+        "source": "knowledge/processos/vendas/rastreio_pedido.md"
       }
     ]
   },
@@ -2917,6 +3184,358 @@
       "description": "SELECT * FROM ESTOQUE WHERE CODPROD = ? AND QTD < ?",
       "confidence": 0.9,
       "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "match": [
+        "pedido de compra"
+      ],
+      "description": "CODTIPOPER IN (1301, 1313)",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "pendencia de compra"
+      ],
+      "description": "CODTIPOPER IN (1301, 1313)",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "reserva de estoque"
+      ],
+      "description": "CODTIPOPER = 1313",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "transferencia com empenho"
+      ],
+      "description": "CODTIPOPER IN (1057, 1964)",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "devolucao de venda"
+      ],
+      "description": "TIPMOV='D'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "devolucao de compra"
+      ],
+      "description": "TIPMOV='E'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "contas a pagar"
+      ],
+      "description": "RECDESP = -1 AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "contas a receber"
+      ],
+      "description": "RECDESP = 1 AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "vencido"
+      ],
+      "description": "DTVENC < TRUNC(SYSDATE) AND DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "pago"
+      ],
+      "description": "DHBAIXA IS NOT NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "em aberto"
+      ],
+      "description": "DHBAIXA IS NULL",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "fluxo de caixa"
+      ],
+      "description": "GROUP BY DTVENC, SUM VLRDESDOB",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "margem"
+      ],
+      "description": "AD_MARGEM da TGFCAB",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "lucratividade"
+      ],
+      "description": "AD_MARGEM da TGFCAB",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "comissao"
+      ],
+      "description": "AD_VLRCOMINT, AD_ALIQCOMINT",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "comissoes"
+      ],
+      "description": "AD_VLRCOMINT, AD_ALIQCOMINT",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "devolucao"
+      ],
+      "description": "TIPMOV='D'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "devolvido"
+      ],
+      "description": "TIPMOV='D'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "devolveu"
+      ],
+      "description": "TIPMOV='D'",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "venda liquida"
+      ],
+      "description": "TIPMOV V - TIPMOV D",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "liquido"
+      ],
+      "description": "TIPMOV V - TIPMOV D",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "faturamento liquido"
+      ],
+      "description": "TIPMOV V - TIPMOV D",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "comparar"
+      ],
+      "description": "UNION ALL com filtros de data",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "comparativo"
+      ],
+      "description": "UNION ALL com filtros de data",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "evolucao"
+      ],
+      "description": "UNION ALL com filtros de data",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "ticket medio"
+      ],
+      "description": "AVG(VLRNOTA)",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "tiquete medio"
+      ],
+      "description": "AVG(VLRNOTA)",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "ranking"
+      ],
+      "description": "ORDER BY SUM(VLRNOTA) DESC",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "top vendedores"
+      ],
+      "description": "ORDER BY SUM(VLRNOTA) DESC",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "melhores"
+      ],
+      "description": "ORDER BY SUM(VLRNOTA) DESC",
+      "confidence": 0.95,
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "match": [
+        "pedidos aprovados"
+      ],
+      "description": "RECDESP = 'APROVADO'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "match": [
+        "empresa especificada"
+      ],
+      "description": "CODEMP = '{empresa}'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "match": [
+        "periodo especificado"
+      ],
+      "description": "DHBAIXA BETWEEN '{data_inicial}' AND '{data_final}'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "match": [
+        "pedidos aprovados"
+      ],
+      "description": "STATUSCONFERENCIA = 'F'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "match": [
+        "pedidos em andamento"
+      ],
+      "description": "STATUSCONFERENCIA = 'A'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "match": [
+        "pedidos com divergencia"
+      ],
+      "description": "STATUSCONFERENCIA = 'D' ou SITUACAOWMS = 12",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "match": [
+        "pedido pendente"
+      ],
+      "description": "PENDENTE='S'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "match": [
+        "pedido aprovado"
+      ],
+      "description": "STATUSNOTA='APROVADO'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "match": [
+        "item disponivel"
+      ],
+      "description": "DISPONIVEL='S'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "match": [
+        "item sem estoque"
+      ],
+      "description": "DISPONIVEL='N'",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "match": [
+        "compra entregue"
+      ],
+      "description": "TGFVAR.QTDATENDIDA >= QTDNEG",
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "match": [
+        "CODVEND = :codvend"
+      ],
+      "description": "Perfil do vendedor",
+      "confidence": 0.85,
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "match": [
+        "CODVEND IN (:team_codvends)"
+      ],
+      "description": "Perfil do gerente",
+      "confidence": 0.85,
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "match": [
+        "ADMIN_USERS no .env"
+      ],
+      "description": "Perfil do administrador",
+      "confidence": 0.85,
+      "source": "knowledge/regras/rbac_vendas.md"
     }
   ],
   "groq_examples": [
@@ -3749,6 +4368,126 @@
       },
       "confidence": 0.9,
       "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "question": "quais contas a pagar estao vencidas?",
+      "response": {
+        "intent": "financeiro"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "question": "quais contas a receber estao em aberto?",
+      "response": {
+        "intent": "financeiro"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "question": "qual o fluxo de caixa por dia?",
+      "response": {
+        "intent": "financeiro"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "question": "qual o resumo financeiro atual?",
+      "response": {
+        "intent": "financeiro"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "question": "quais pedidos estao aguardando aprovacao?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "question": "quais pedidos estao em andamento?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "question": "quais pedidos tem divergencia?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "question": "quais pedidos foram liberados para conferencia?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "question": "quais pedidos estao aguardando aprovacao?",
+      "response": {
+        "intent": "rastreio_pedido"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "question": "qual o status do meu pedido 5000?",
+      "response": {
+        "intent": "rastreio_pedido"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "question": "a peça X do pedido já foi comprada?",
+      "response": {
+        "intent": "rastreio_pedido"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "question": "já chegou a peça do pedido 5000?",
+      "response": {
+        "intent": "rastreio_pedido"
+      },
+      "confidence": 0.8,
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "question": "Quais regras de visibilidade existem?",
+      "response": {
+        "intent": "estoque"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "question": "Como aplicar as regras de visibilidade no SQL?",
+      "response": {
+        "intent": "gerar_excel"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "question": "Como identificar o perfil do usuário?",
+      "response": {
+        "intent": "ajuda"
+      },
+      "confidence": 0.85,
+      "source": "knowledge/regras/rbac_vendas.md"
     }
   ],
   "synonyms": [
@@ -4675,6 +5414,228 @@
       "field": "ESTOQUE.QTD",
       "meaning": "quantidade em estoque",
       "source": "knowledge/sankhya/tabelas/TSIEMP.md"
+    },
+    {
+      "term": "compra",
+      "field": "TIPMOV",
+      "meaning": "Nota fiscal de compra",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "nota de compra",
+      "field": "TIPMOV",
+      "meaning": "Nota fiscal de compra",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "NF entrada",
+      "field": "TIPMOV",
+      "meaning": "Nota fiscal de compra",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "venda",
+      "field": "TIPMOV",
+      "meaning": "Nota fiscal de venda",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "nota de venda",
+      "field": "TIPMOV",
+      "meaning": "Nota fiscal de venda",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "NF saida",
+      "field": "TIPMOV",
+      "meaning": "Nota fiscal de venda",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "pedido de compra",
+      "field": "TIPMOV",
+      "meaning": "Pedido de compra",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "pedido de venda",
+      "field": "TIPMOV",
+      "meaning": "Pedido de venda",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "solicitacao",
+      "field": "TIPMOV",
+      "meaning": "Pedido de Requisicao",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "requisicao de compra",
+      "field": "TIPMOV",
+      "meaning": "Pedido de Requisicao",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "devolucao de venda",
+      "field": "TIPMOV",
+      "meaning": "Devolucao de venda",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "devolucao de compra",
+      "field": "TIPMOV",
+      "meaning": "Devolucao de compra",
+      "source": "knowledge/glossario/sinonimos.md"
+    },
+    {
+      "term": "aprovar",
+      "field": "RECDESP",
+      "meaning": "liberacao de pedido",
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "term": "receber",
+      "field": "RECDESP",
+      "meaning": "receita",
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "term": "pagar",
+      "field": "RECDESP",
+      "meaning": "despesa",
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "term": "vencido",
+      "field": "DTVENC",
+      "meaning": "data de vencimento",
+      "source": "knowledge/processos/financeiro/resumo_financeiro.md"
+    },
+    {
+      "term": "aprovar",
+      "field": "STATUSCONFERENCIA",
+      "meaning": "liberacao de pedido",
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "term": "separar",
+      "field": "SITUACAOWMS",
+      "meaning": "separacao de mercadoria",
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "term": "conferir",
+      "field": "STATUSCONFERENCIA",
+      "meaning": "conferencia de pedido",
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "term": "divergente",
+      "field": "STATUSCONFERENCIA",
+      "meaning": "pedido com divergencia",
+      "source": "knowledge/processos/vendas/conferencia_vendedor.md"
+    },
+    {
+      "term": "aprovar",
+      "field": "TGFLIB",
+      "meaning": "liberacao de pedido",
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "term": "estoque",
+      "field": "TGFEST",
+      "meaning": "quantidade disponivel",
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "term": "compra",
+      "field": "TGFVAR",
+      "meaning": "entregas parciais",
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "term": "fornecedor",
+      "field": "TGFPAR",
+      "meaning": "cliente ou fornecedor",
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "term": "pedido",
+      "field": "TGFCAB",
+      "meaning": "cabecalho do pedido",
+      "source": "knowledge/processos/vendas/rastreio_pedido.md"
+    },
+    {
+      "term": "perfil",
+      "field": "CODVEND",
+      "meaning": "identificação do usuário",
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "term": "visibilidade",
+      "field": "regras de visibilidade",
+      "meaning": "acesso a dados",
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "term": "regras",
+      "field": "regras de negocio",
+      "meaning": "condições de acesso",
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "term": "filtragem",
+      "field": "filtro de dados",
+      "meaning": "seleção de dados",
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "term": "acesso",
+      "field": "acesso a dados",
+      "meaning": "permissão de visualização",
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "term": "nota fiscal",
+      "field": "TGFCAB.NUMNOTA",
+      "meaning": "numero da nota",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "estoque proprio padrao",
+      "field": "TGFEST.CODLOCAL",
+      "meaning": "estoque proprio",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "fornecedor",
+      "field": "TGFPAR.NOMEPARC",
+      "meaning": "nome do fornecedor",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "pedido de compra",
+      "field": "TGFCAB.TIPMOV",
+      "meaning": "tipo de movimento",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "entrega parcial",
+      "field": "TGFVAR.QTDATENDIDA",
+      "meaning": "quantidade entregue",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "status de conferencia",
+      "field": "TGFCAB.STATUSCONFERENCIA",
+      "meaning": "status de conferencia",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "term": "status de entrega",
+      "field": "TGFCAB.SITUACAOWMS",
+      "meaning": "status de entrega",
+      "source": "knowledge/sankhya/exemplos_sql.md"
     }
   ],
   "business_rules": [
@@ -4897,12 +5858,68 @@
     {
       "rule": "DTPREVENT pode ser NULL - sempre tratar com NVL ou IS NOT NULL",
       "source": "knowledge/sankhya/relacionamentos.md"
+    },
+    {
+      "rule": "Perfil do usuário é definido por ADMIN_USERS, CODVEND e team_codvends",
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "rule": "Regras de visibilidade são aplicadas com base no perfil do usuário",
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "rule": "Filtragem de dados é feita com base nas regras de visibilidade",
+      "source": "knowledge/regras/rbac_vendas.md"
+    },
+    {
+      "rule": "NUNCA juntar TGFITE com TGFFIN sem subquery",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Para acessar MARCA, sempre passar por TGFITE (C -> I -> PR)",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Usar subquery com ROWNUM para limitar",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Para cada item do pedido, cruzar com TGFEST para saber se tem estoque",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "CODLOCAL=0 e TIPO='P' e CODPARC=0 = estoque proprio padrao",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "STATUS_ESTOQUE classifica em DISPONIVEL, PARCIAL ou SEM ESTOQUE",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Pode adicionar filtro CODEMP no TGFEST",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "Dado um CODPROD, buscar pedidos de compra pendentes que contem esse produto",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "TGFVAR rastreia entregas parciais",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "STATUS_COMPRA classifica: ENTREGUE, ENTREGA PARCIAL, ATRASADO, AGUARDANDO ou SEM PREVISAO",
+      "source": "knowledge/sankhya/exemplos_sql.md"
+    },
+    {
+      "rule": "NOTA_ENTRADA mostra se ja gerou nota de entrada e qual o status de conferencia (WMS)",
+      "source": "knowledge/sankhya/exemplos_sql.md"
     }
   ],
   "potential_intents": [
     {
       "name": "financeiro",
-      "keywords_count": 16,
+      "keywords_count": 25,
       "top_keywords": [
         "pagar",
         "vencimento",
@@ -4911,25 +5928,27 @@
         "contas"
       ],
       "source_files": [
-        "knowledge/sankhya/tabelas/TGFMAR.md",
-        "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md",
         "knowledge/sankhya/tabelas/TGFCOT.md",
-        "knowledge/sankhya/tabelas/TGFVAR.md",
-        "knowledge/sankhya/tabelas/TGFEST.md",
-        "knowledge/sankhya/tabelas/TSIEMP.md",
+        "knowledge/processos/financeiro/resumo_financeiro.md",
         "knowledge/sankhya/tabelas/AD_TGFCUSMMA.md",
+        "knowledge/sankhya/tabelas/TGFEST.md",
+        "knowledge/glossario/sinonimos.md",
+        "knowledge/sankhya/tabelas/TSIEMP.md",
+        "knowledge/sankhya/tabelas/TGFVAR.md",
+        "knowledge/sankhya/tabelas/AD_TABELAS_CUSTOMIZADAS.md",
         "knowledge/sankhya/tabelas/AD_TGFPROAUXMMA.md",
-        "knowledge/sankhya/tabelas/TGFFIN.md"
+        "knowledge/sankhya/tabelas/TGFFIN.md",
+        "knowledge/sankhya/tabelas/TGFMAR.md"
       ],
       "note": "Considerar criar _handle_financeiro()"
     }
   ],
   "_meta": {
-    "compiled_at": "2026-02-13T13:15:01",
+    "compiled_at": "2026-02-18T15:32:01",
     "compiler_version": "1.0",
-    "source_files": 38,
-    "processed_files": 38,
+    "source_files": 42,
+    "processed_files": 6,
     "groq_model": "llama-3.1-8b-instant",
-    "groq_calls": 38
+    "groq_calls": 6
   }
 }

@@ -44,6 +44,7 @@ USE_LLM_NARRATOR = os.getenv("USE_LLM_NARRATOR", "true").lower() in ("true", "1"
 
 # Groq API
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+GROQ_MODEL_CLASSIFY = os.getenv("GROQ_MODEL_CLASSIFY", "llama-3.3-70b-versatile")  # Modelo forte pra classificacao ambigua
 GROQ_TIMEOUT = int(os.getenv("GROQ_TIMEOUT", "10"))
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -143,15 +144,18 @@ if not pool_classify.available:
         pool_train    = GroqKeyPool([_legacy], "train-legacy")
         print("[GROQ] Usando chave legado GROQ_API_KEY para todos os pools")
 
+print(f"[GROQ] Modelos: classify={GROQ_MODEL_CLASSIFY} | geral={GROQ_MODEL}")
+
 
 async def _groq_request(pool: GroqKeyPool, messages: list, temperature: float = 0.0,
-                         max_tokens: int = 400, timeout: int = None) -> dict | None:
+                         max_tokens: int = 400, timeout: int = None, model: str = None) -> dict | None:
     """Faz request ao Groq usando chave do pool, com retry automatico."""
     key = pool.get_key()
     if not key:
         return None
 
     _timeout = timeout or GROQ_TIMEOUT
+    _model = model or GROQ_MODEL
 
     try:
         async with httpx.AsyncClient(timeout=_timeout) as client:
@@ -159,7 +163,7 @@ async def _groq_request(pool: GroqKeyPool, messages: list, temperature: float = 
                 GROQ_API_URL,
                 headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
                 json={
-                    "model": GROQ_MODEL,
+                    "model": _model,
                     "messages": messages,
                     "temperature": temperature,
                     "max_tokens": max_tokens,
@@ -176,7 +180,7 @@ async def _groq_request(pool: GroqKeyPool, messages: list, temperature: float = 
                     r = await client.post(
                         GROQ_API_URL,
                         headers={"Authorization": f"Bearer {fallback_key}", "Content-Type": "application/json"},
-                        json={"model": GROQ_MODEL, "messages": messages,
+                        json={"model": _model, "messages": messages,
                               "temperature": temperature, "max_tokens": max_tokens}
                     )
                     if r.status_code == 429:
@@ -275,8 +279,17 @@ INTENT_SCORES = {
         "busca": 8, "buscar": 8, "procura": 8, "procurar": 8,
         "encontra": 8, "encontrar": 8, "acha": 7, "achar": 7,
         "existe": 6, "tem": 4,
-        "produto": 3, "peca": 3, "pecas": 3, "filtro": 3,
+        "produto": 3, "produtos": 3, "peca": 3, "pecas": 3, "filtro": 3, "filtros": 3,
         "catalogo": 6,
+        # Verbos de solicitacao
+        "traga": 5, "traz": 5, "lista": 4, "listar": 4, "preciso": 4,
+        "contem": 4, "descricao": 3,
+        # Tipos de produto comuns
+        "correia": 3, "correias": 3, "disco": 3, "discos": 3,
+        "pastilha": 3, "pastilhas": 3, "abracadeira": 3, "rolamento": 3,
+        # Contexto de busca
+        "cadastrado": 4, "cadastrada": 4, "cadastrados": 4, "cadastradas": 4,
+        "codigo": 4, "referencia": 4,
     },
     "busca_cliente": {
         "cliente": 8, "clientes": 8,
@@ -290,6 +303,23 @@ INTENT_SCORES = {
         "cnpj": 6, "email": 4,
         "busca": 3, "procura": 3,
     },
+    "rastreio_pedido": {
+        # Rastreio direto (pedido + numero)
+        "rastrear": 10, "rastreio": 10, "rastreamento": 10,
+        "status": 6, "acompanhar": 6,
+        # Conferencia/WMS
+        "conferencia": 8, "conferindo": 8, "conferido": 8, "conferir": 8,
+        "separacao": 7, "separando": 7, "separado": 7,
+        "wms": 8, "expedicao": 6,
+        # Verbos de rastreio
+        "chegou": 6, "entregou": 6, "comprado": 6, "comprou": 6,
+        "faturado": 6, "faturou": 6,
+        # Contexto venda
+        "pedido": 5, "pedidos": 5,
+        "venda": 4, "vendeu": 4, "vendi": 4,
+        # Perguntas
+        "cade": 6, "onde": 3, "como": 3, "quando": 4,
+    },
 }
 
 # Thresholds por intent
@@ -300,9 +330,10 @@ INTENT_THRESHOLDS = {
     "gerar_excel": 8,
     "saudacao": 8,
     "ajuda": 8,
-    "busca_produto": 10,
+    "busca_produto": 8,
     "busca_cliente": 10,
     "busca_fornecedor": 10,
+    "rastreio_pedido": 10,
 }
 
 # Palavras de confirmacao (para follow-up/excel)
@@ -344,7 +375,7 @@ def score_intent(tokens: list) -> dict:
             if token in keywords:
                 s += keywords[token]
         scores[intent_id] = s
-    # Compilado (complementar)
+    # Compilado (complementar, peso reduzido para evitar poluicao cross-intent)
     for intent_id, keywords in _COMPILED_SCORES.items():
         if intent_id not in scores:
             scores[intent_id] = 0
@@ -352,7 +383,9 @@ def score_intent(tokens: list) -> dict:
             if token in keywords:
                 # So soma se nao foi contado no manual
                 if intent_id not in INTENT_SCORES or token not in INTENT_SCORES[intent_id]:
-                    scores[intent_id] += keywords[token]
+                    # Cap em 3: compiled e complementar, nao deve dominar o scoring
+                    # Evita que "compra"(6) compilado sob estoque empurre estoque acima do threshold
+                    scores[intent_id] += min(keywords[token], 3)
     return scores
 
 
@@ -380,6 +413,7 @@ Analise a pergunta do usuario e retorne APENAS um JSON (sem markdown, sem explic
 - busca_produto: usuario quer ENCONTRAR/PROCURAR um produto por nome, codigo, referencia, aplicacao. Palavras-chave: "tem", "busca", "procura", "encontra", "acha", "existe", "onde tem". Diferente de pendencia (pedidos) e estoque (saldo).
 - busca_cliente: usuario quer encontrar um CLIENTE por nome, CNPJ, cidade. Ex: "dados do cliente auto pecas", "clientes de uberlandia"
 - busca_fornecedor: usuario quer encontrar um FORNECEDOR por nome, contato. Ex: "contato do fornecedor nakata", "telefone da mann filter"
+- rastreio_pedido: o usuario quer RASTREAR um pedido de venda especifico por NUNOTA. Quer saber status, conferencia, separacao, se as pecas foram compradas, se chegou. Palavras-chave: "status do pedido", "como esta o pedido", "meu pedido", "pedido X", "conferencia", "separacao", "ja comprou", "ja chegou". IMPORTANTE: diferente de pendencia_compras (que e sobre pedidos de COMPRA pendentes). rastreio_pedido e sobre um pedido de VENDA especifico.
 - conhecimento: como funcionam processos, regras, politicas, explicacoes do ERP
 - saudacao: oi, bom dia, ola
 - ajuda: o que voce faz, como funciona, help
@@ -399,6 +433,7 @@ Analise a pergunta do usuario e retorne APENAS um JSON (sem markdown, sem explic
 - tipo_compra: "casada"|"estoque" ou null (tipo de compra mencionado - casada=empenho/vinculada, estoque=reposicao/entrega futura)
 - aplicacao: veiculo/motor/maquina mencionado para busca por aplicacao ou null (ex: "SCANIA R450", "MERCEDES ACTROS", "MOTOR DC13")
 - texto_busca: texto livre que o usuario quer buscar (nome do produto, nome do cliente, etc.) ou null. Usado com busca_produto/busca_cliente/busca_fornecedor.
+- nunota: numero unico da nota/pedido (NUNOTA) quando o usuario menciona um numero de pedido de venda. Extrair o numero da pergunta. Ex: "pedido 1199868" → nunota=1199868. Usado com rastreio_pedido.
 - extra_columns: lista de colunas extras que o usuario quer ver no relatorio, ou null
   Colunas possiveis: "EMPRESA", "TIPO_COMPRA", "COMPRADOR", "PREVISAO_ENTREGA", "CONFIRMADO",
   "FORNECEDOR", "UNIDADE", "QTD_PEDIDA", "QTD_ATENDIDA", "VLR_UNITARIO", "DIAS_ABERTO",
@@ -466,133 +501,172 @@ filtro de STATUS, NAO como filtro de DIAS_ABERTO ou outro campo numerico.
 
 # EXEMPLOS
 Pergunta: "o que falta chegar da mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "qual pedido esta sem previsao de entrega da tome?"
-{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "pedidos atrasados da Donaldson"
-{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "qual pedido da sabo tem a maior previsao de entrega?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"PREVISAO_ENTREGA_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"PREVISAO_ENTREGA_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "qual pedido da mann foi feito mais recentemente?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"DT_PEDIDO_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"DT_PEDIDO_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "qual o pedido mais caro da Mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "quais pedidos estao confirmados?"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"CONFIRMADO","operador":"igual","valor":"S"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"CONFIRMADO","operador":"igual","valor":"S"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "qual item com maior quantidade pendente da Tome?"
-{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":"QTD_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"TOME","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":"QTD_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "tem algum pedido acima de 50 mil reais?"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"VLR_PENDENTE","operador":"maior","valor":"50000"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"VLR_PENDENTE","operador":"maior","valor":"50000"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "vendas de hoje"
-{"intent":"vendas","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":"hoje","view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"vendas","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":"hoje","view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "como funciona a compra casada?"
-{"intent":"conhecimento","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"conhecimento","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "quais pedidos casados da sabo?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Casada"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Casada"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "quem compra a marca mann?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "quem fornece a marca sabo?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "pedidos de empenho atrasados"
-{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":"casada","aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "compras de estoque da eaton"
-{"intent":"pendencia_compras","marca":"EATON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Estoque"},"ordenar":null,"top":null,"tipo_compra":"estoque","aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"EATON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":{"campo":"TIPO_COMPRA","operador":"igual","valor":"Estoque"},"ordenar":null,"top":null,"tipo_compra":"estoque","aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "pendencias da Nakata por Ribeirao Preto"
-{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "estoque em Uberlandia"
-{"intent":"estoque","marca":null,"fornecedor":null,"empresa":"UBERL","comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"estoque","marca":null,"fornecedor":null,"empresa":"UBERL","comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "vendas de hoje em Itumbiara"
-{"intent":"vendas","marca":null,"fornecedor":null,"empresa":"ITUMBI","comprador":null,"periodo":"hoje","view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"vendas","marca":null,"fornecedor":null,"empresa":"ITUMBI","comprador":null,"periodo":"hoje","view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "HU711/51"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "tudo sobre o produto 133346"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "similares do produto 133346"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "quem tem o filtro WK 950/21"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "pecas para scania r450"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA R450","texto_busca":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA R450","texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "qual filtro serve no mercedes actros"
-{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MERCEDES ACTROS","texto_busca":null,"extra_columns":null}
+{"intent":"produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MERCEDES ACTROS","texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "filtros mann para motor dc13"
-{"intent":"produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MOTOR DC13","texto_busca":null,"extra_columns":null}
+{"intent":"produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"MOTOR DC13","texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "pendencias da nakata por ribeirao contendo codigo do fabricante"
-{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":["NUM_FABRICANTE"]}
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":["NUM_FABRICANTE"]}
 
 Pergunta: "itens pendentes da mann mostrando empresa e previsao"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":["EMPRESA","PREVISAO_ENTREGA"]}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":["EMPRESA","PREVISAO_ENTREGA"]}
 
 Pergunta: "pendencias da sabo com comprador e tipo de compra"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":["COMPRADOR","TIPO_COMPRA"]}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":["COMPRADOR","TIPO_COMPRA"]}
 
 Pergunta: "me traga as pendencias da nakata incluindo referencia do fabricante e dias em aberto"
-{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":["NUM_FABRICANTE","DIAS_ABERTO"]}
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":["NUM_FABRICANTE","DIAS_ABERTO"]}
 
 Pergunta: "tem filtro de ar da mann pra scania?"
-{"intent":"busca_produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA","texto_busca":"filtro de ar","extra_columns":null}
+{"intent":"busca_produto","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"SCANIA","texto_busca":"filtro de ar","nunota":null,"extra_columns":null}
 
 Pergunta: "busca o RS5362"
-{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"RS5362","extra_columns":null}
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"RS5362","nunota":null,"extra_columns":null}
 
 Pergunta: "procura pecas pra volvo fh"
-{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"VOLVO FH","texto_busca":"pecas","extra_columns":null}
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":"VOLVO FH","texto_busca":"pecas","nunota":null,"extra_columns":null}
+
+Pergunta: "preciso de todos os produto de filtro de ar"
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"filtro de ar","nunota":null,"extra_columns":null}
+
+Pergunta: "me traga todos os filtros de ar cadastrado no sistema"
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"filtro de ar","nunota":null,"extra_columns":null}
+
+Pergunta: "qual o codigo do produto ABRACADEIRA ACCUSEAL 127MM INOX"
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"ABRACADEIRA ACCUSEAL 127MM INOX","nunota":null,"extra_columns":null}
+
+Pergunta: "quais correias temos cadastradas"
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"correia","nunota":null,"extra_columns":null}
+
+Pergunta: "me lista os produtos da marca wix"
+{"intent":"busca_produto","marca":"WIX","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
+
+Pergunta: "qual o codigo dos produtos que contem filtro de ar na descricao"
+{"intent":"busca_produto","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"filtro de ar","nunota":null,"extra_columns":null}
+
+Pergunta: "esse item S2581 tem pedido de compra?"
+{"intent":"pendencia_compras","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Pergunta: "dados do cliente auto pecas ribeirao preto"
-{"intent":"busca_cliente","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"auto pecas ribeirao preto","extra_columns":null}
+{"intent":"busca_cliente","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"auto pecas ribeirao preto","nunota":null,"extra_columns":null}
 
 Pergunta: "qual o cnpj da empresa transportadora sul"
-{"intent":"busca_cliente","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"transportadora sul","extra_columns":null}
+{"intent":"busca_cliente","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"transportadora sul","nunota":null,"extra_columns":null}
 
 Pergunta: "telefone do fornecedor nakata"
-{"intent":"busca_fornecedor","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"nakata","extra_columns":null}
+{"intent":"busca_fornecedor","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"nakata","nunota":null,"extra_columns":null}
 
 Pergunta: "contato da mann filter"
-{"intent":"busca_fornecedor","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"mann filter","extra_columns":null}
+{"intent":"busca_fornecedor","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":"mann filter","nunota":null,"extra_columns":null}
+
+Pergunta: "como esta o pedido 1199868?"
+{"intent":"rastreio_pedido","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":1199868,"extra_columns":null}
+
+Pergunta: "status do pedido 1199868, ele ja foi comprado?"
+{"intent":"rastreio_pedido","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":1199868,"extra_columns":null}
+
+Pergunta: "o pedido 5000 ta na conferencia?"
+{"intent":"rastreio_pedido","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":5000,"extra_columns":null}
+
+Pergunta: "meus pedidos pendentes de venda"
+{"intent":"rastreio_pedido","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
+
+Pergunta: "ja chegou as pecas do pedido 6500?"
+{"intent":"rastreio_pedido","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":6500,"extra_columns":null}
+
+Pergunta: "quando vai chegar a peca do meu pedido 8000?"
+{"intent":"rastreio_pedido","marca":null,"fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":null,"filtro":null,"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":8000,"extra_columns":null}
 
 # EXEMPLOS COM CONTEXTO (quando ha conversa anterior anexada ao final)
 
 Contexto: pendencia_compras, marca=DONALDSON, 116 itens (ATRASADO: 41, NO PRAZO: 55, PROXIMO: 20)
 Pergunta: "me passa os 41 atrasados"
-{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"DONALDSON","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Contexto: pendencia_compras, marca=NAKATA, empresa=RIBEIR, 13 itens
 Pergunta: "e os atrasados?"
-{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"NAKATA","fornecedor":null,"empresa":"RIBEIR","comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"STATUS_ENTREGA","operador":"igual","valor":"ATRASADO"},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Contexto: pendencia_compras, marca=MANN, 85 itens, media 22 dias
 Pergunta: "qual o pedido mais caro?"
-{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"MANN","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"pedidos","filtro":null,"ordenar":"VLR_PENDENTE_DESC","top":1,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Contexto: pendencia_compras, marca=SABO, 50 itens (ATRASADO: 15, SEM PREVISAO: 8)
 Pergunta: "quais estao sem previsao?"
-{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"extra_columns":null}
+{"intent":"pendencia_compras","marca":"SABO","fornecedor":null,"empresa":null,"comprador":null,"periodo":null,"view":"itens","filtro":{"campo":"PREVISAO_ENTREGA","operador":"vazio","valor":null},"ordenar":null,"top":null,"tipo_compra":null,"aplicacao":null,"texto_busca":null,"nunota":null,"extra_columns":null}
 
 Agora classifique:
 Pergunta: "{question}"
@@ -640,7 +714,7 @@ def _build_context_hint(ctx) -> str:
     return "\n".join(parts)
 
 
-async def groq_classify(question: str, context_hint: str = "") -> Optional[dict]:
+async def groq_classify(question: str, context_hint: str = "", model: str = None) -> Optional[dict]:
     """Classifica pergunta via Groq usando pool_classify."""
     if not pool_classify.available:
         return None
@@ -649,11 +723,13 @@ async def groq_classify(question: str, context_hint: str = "") -> Optional[dict]
     if context_hint:
         prompt += f"\n\n# CONTEXTO DA CONVERSA ANTERIOR (use para interpretar referencias):\n{context_hint}"
 
+    _model = model or GROQ_MODEL
     result = await _groq_request(
         pool=pool_classify,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.0,
         max_tokens=400,
+        model=_model,
     )
 
     if not result:
@@ -678,7 +754,8 @@ async def groq_classify(question: str, context_hint: str = "") -> Optional[dict]
         print(f"[GROQ:classify] JSON invalido: {content[:100]}")
         return None
 
-    print(f"[GROQ:classify] {parsed.get('intent')} | extra_cols={parsed.get('extra_columns')}")
+    _model_short = _model.split("-")[-1] if "-" in _model else _model  # "70b-versatile" → "versatile"
+    print(f"[GROQ:classify:{_model_short}] {parsed.get('intent')} | extra_cols={parsed.get('extra_columns')}")
 
     # Normalizar entidades para MAIUSCULO
     for key in ["marca", "fornecedor", "empresa", "comprador", "aplicacao"]:
@@ -755,18 +832,25 @@ async def ollama_classify(question: str, context_hint: str = "") -> Optional[dic
 
 
 async def llm_classify(question: str, context_hint: str = "") -> Optional[dict]:
-    """Classificador inteligente: Groq (rapido) -> Ollama (fallback) -> None."""
+    """Classificador inteligente: Groq 70b (forte) -> Groq 8b (rapido) -> Ollama (local) -> None."""
     if not USE_LLM_CLASSIFIER:
         return None
 
-    # Tentar Groq primeiro (rapido, ~0.5s)
     if pool_classify.available:
-        result = await groq_classify(question, context_hint)
+        # 1) Tentar modelo forte (70b) — melhor classificacao, 1000 req/dia gratis
+        if GROQ_MODEL_CLASSIFY != GROQ_MODEL:
+            result = await groq_classify(question, context_hint, model=GROQ_MODEL_CLASSIFY)
+            if result:
+                return result
+            print(f"[LLM-CLS] {GROQ_MODEL_CLASSIFY} falhou, tentando {GROQ_MODEL}...")
+
+        # 2) Fallback: modelo rapido (8b) — 14.400 req/dia gratis
+        result = await groq_classify(question, context_hint, model=GROQ_MODEL)
         if result:
             return result
         print("[LLM-CLS] Groq falhou, tentando Ollama...")
 
-    # Fallback: Ollama local
+    # 3) Fallback: Ollama local
     result = await ollama_classify(question, context_hint)
     return result
 
@@ -896,11 +980,17 @@ def build_vendas_summary(kpi_row: dict, top_vendedores: list, periodo_nome: str)
     qtd = int(kpi_row.get("QTD_VENDAS", 0) or 0)
     fat = float(kpi_row.get("FATURAMENTO", 0) or 0)
     ticket = float(kpi_row.get("TICKET_MEDIO", 0) or 0)
+    margem = float(kpi_row.get("MARGEM_MEDIA", 0) or 0)
+    comissao = float(kpi_row.get("COMISSAO_TOTAL", 0) or 0)
 
     lines = [
         f"Periodo: {periodo_nome}",
         f"Total: {qtd} notas de venda, faturamento R$ {fat:,.2f}, ticket medio R$ {ticket:,.2f}",
     ]
+    if margem > 0:
+        lines.append(f"Margem media: {margem:.1f}%")
+    if comissao > 0:
+        lines.append(f"Comissao total: R$ {comissao:,.2f}")
 
     if top_vendedores:
         top_str = ", ".join(
@@ -985,7 +1075,14 @@ def extract_entities(question: str, known_marcas: set = None, known_empresas: se
                      "QUEM", "RESPONSAVEL", "FORNECEDORES", "COMPRADORES",
                      "CASADA", "CASADAS", "CASADO", "CASADOS", "EMPENHO",
                      "FUTURA", "REPOSICAO",
-                     "FILIAL", "UNIDADE", "LOJA"}
+                     "FILIAL", "UNIDADE", "LOJA",
+                     # Tipos de produto (nao sao marcas)
+                     "FILTRO", "FILTROS", "CORREIA", "CORREIAS", "DISCO", "DISCOS",
+                     "PASTILHA", "PASTILHAS", "ABRACADEIRA", "ROLAMENTO",
+                     "PECA", "PECAS", "AR", "OLEO", "COMBUSTIVEL", "CABINE",
+                     # Contexto de busca (nao sao entidades)
+                     "CADASTRADO", "CADASTRADA", "CADASTRADOS", "CADASTRADAS",
+                     "CODIGO", "REFERENCIA"}
             first_word = candidate.split()[0] if candidate else ""
             if first_word in noise:
                 # Buscar ultimo DA/DO (provavelmente antes do nome real)
@@ -1271,6 +1368,8 @@ def _build_where_extra(params, user_context=None):
         w += f" AND PRO.CODPROD = {int(params['codprod'])}"
     if params.get("produto_nome") and not params.get("codprod"):
         w += f" AND UPPER(PRO.DESCRPROD) LIKE UPPER('%{_safe_sql(params['produto_nome'])}%')"
+    if params.get("codigo_fabricante") and not params.get("codprod"):
+        w += f" AND UPPER(NVL(PRO.AD_NUMFABRICANTE,'')) LIKE UPPER('%{_safe_sql(params['codigo_fabricante'])}%')"
     if params.get("aplicacao"):
         w += f" AND UPPER(PRO.CARACTERISTICAS) LIKE UPPER('%{_safe_sql(params['aplicacao'])}%')"
     # Tipo de compra (casada/estoque) via CODTIPOPER (mais eficiente que filtrar pos-query)
@@ -1348,6 +1447,7 @@ def sql_pendencia_compras(params, user_context=None):
     if params.get("nunota"): filtro_desc.append(f"pedido **{params['nunota']}**")
     if params.get("codprod"): filtro_desc.append(f"produto **{params['codprod']}**")
     if params.get("produto_nome") and not params.get("codprod"): filtro_desc.append(f"produto **{params['produto_nome']}**")
+    if params.get("codigo_fabricante") and not params.get("codprod"): filtro_desc.append(f"referencia **{params['codigo_fabricante']}**")
     desc = "pendencia de compras"
     if filtro_desc: desc += " da " + ", ".join(filtro_desc)
     return sql_kpis, sql_detail, desc
@@ -1372,6 +1472,33 @@ PERIODO_NOMES = {
     "semana_passada": "semana passada", "mes": "este mes",
     "mes_passado": "mes passado", "ano": "este ano",
 }
+
+
+def _build_vendas_where(params, user_context=None):
+    """WHERE clause para queries de vendas. RBAC via CAB.CODVEND (vendedor da nota)."""
+    w = ""
+    if params.get("marca"):
+        w += f" AND UPPER(MAR.DESCRICAO) LIKE UPPER('%{_safe_sql(params['marca'])}%')"
+    if params.get("empresa"):
+        w += f" AND UPPER(EMP.NOMEFANTASIA) LIKE UPPER('%{_safe_sql(params['empresa'])}%')"
+    if params.get("cliente"):
+        w += f" AND UPPER(PAR.NOMEPARC) LIKE UPPER('%{_safe_sql(params['cliente'])}%')"
+    if params.get("vendedor_nome"):
+        w += f" AND UPPER(VEN.APELIDO) LIKE UPPER('%{_safe_sql(params['vendedor_nome'])}%')"
+    # RBAC - vendas usa C.CODVEND (vendedor da nota), NAO MAR.AD_CODVEND
+    if user_context:
+        role = user_context.get("role", "vendedor")
+        if role in ("admin", "diretor", "ti"):
+            pass
+        elif role == "gerente":
+            team = user_context.get("team_codvends", [])
+            if team:
+                w += f" AND C.CODVEND IN ({','.join(str(int(c)) for c in team)})"
+        elif role in ("vendedor",):
+            codvend = user_context.get("codvend", 0)
+            if codvend:
+                w += f" AND C.CODVEND = {int(codvend)}"
+    return w
 
 
 # ============================================================
@@ -2017,11 +2144,17 @@ def format_vendas_response(kpis_data, periodo_nome):
     qtd = int(kpis_data.get("QTD_VENDAS", 0) or 0)
     fat = float(kpis_data.get("FATURAMENTO", 0) or 0)
     ticket = float(kpis_data.get("TICKET_MEDIO", 0) or 0)
+    margem = float(kpis_data.get("MARGEM_MEDIA", 0) or 0)
+    comissao = float(kpis_data.get("COMISSAO_TOTAL", 0) or 0)
     if qtd == 0:
         return f"Nao encontrei vendas para o periodo **{periodo_nome}**."
-    lines = [f"\U0001f4ca **Vendas - {periodo_nome.title()}**\n",
-             f"**{fmt_num(qtd)}** notas de venda com faturamento total de **{fmt_brl(fat)}**.",
-             f"Ticket medio: **{fmt_brl(ticket)}**.\n"]
+    lines = [
+        f"\U0001f4ca **Vendas - {periodo_nome.title()}**\n",
+        f"**{fmt_num(qtd)}** notas | **{fmt_brl(fat)}** faturamento | Ticket medio **{fmt_brl(ticket)}**",
+    ]
+    if margem > 0:
+        lines.append(f"Margem media: **{margem:.1f}%** | Comissao total: **{fmt_brl(comissao)}**")
+    lines.append("")
     return "\n".join(lines)
 
 
@@ -2670,7 +2803,7 @@ class ConversationContext:
         """
         merged = {}
         param_keys = ["marca", "fornecedor", "empresa", "comprador", "periodo",
-                       "codprod", "produto_nome", "pedido"]
+                       "codprod", "codigo_fabricante", "produto_nome", "pedido", "aplicacao"]
 
         for key in param_keys:
             new_val = new_params.get(key)
@@ -2687,8 +2820,9 @@ class ConversationContext:
         """Atualiza contexto apos uma resposta bem-sucedida."""
         if intent != self.intent:
             self._extra_columns = []  # Limpa ao mudar de intent
+            self.params = {}          # Limpa params ao mudar de intent (evita marca/fornecedor de query anterior)
         self.intent = intent
-        # Atualiza params (nao apaga os antigos, so sobrescreve os que vieram)
+        # Atualiza params (nao apaga os antigos DENTRO DO MESMO INTENT, so sobrescreve os que vieram)
         for k, v in params.items():
             if v:
                 self.params[k] = v
@@ -2903,6 +3037,14 @@ class SmartAgent:
         best_intent = max(scores, key=scores.get)
         best_score = scores[best_intent]
 
+        # Debug: mostrar todos os scores significativos + contexto anterior
+        _sig_scores = {k: v for k, v in scores.items() if v >= 3}
+        print(f"[SMART] ---- Nova pergunta: '{question[:80]}' ----")
+        print(f"[SMART] Tokens: {tokens}")
+        print(f"[SMART] Scores(>=3): {_sig_scores} | best={best_intent}({best_score})")
+        if ctx.intent:
+            print(f"[SMART] Contexto anterior: intent={ctx.intent} | params={ctx.params}")
+
         if _log:
             _log["processing"]["score"] = best_score
 
@@ -2942,7 +3084,11 @@ class SmartAgent:
 
         # ========== EXTRAIR PARAMETROS + MERGE COM CONTEXTO ==========
         params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
-        has_entity = params.get("marca") or params.get("fornecedor") or params.get("comprador") or params.get("empresa")
+        _entity_params = {k: v for k, v in params.items() if v and k != "periodo"}
+        print(f"[SMART] Entities extraidas: {_entity_params} | followup={is_followup}")
+        has_entity = (params.get("marca") or params.get("fornecedor") or params.get("comprador")
+                      or params.get("empresa") or params.get("codprod") or params.get("codigo_fabricante")
+                      or params.get("produto_nome"))
 
         # Se e follow-up sem entidade nova, herda do contexto
         if is_followup and not has_entity and ctx.params:
@@ -2950,7 +3096,9 @@ class SmartAgent:
             if merged != params:
                 print(f"[CTX] Herdando contexto: {params} -> {merged}")
                 params = merged
-                has_entity = params.get("marca") or params.get("fornecedor") or params.get("comprador") or params.get("empresa")
+                has_entity = (params.get("marca") or params.get("fornecedor") or params.get("comprador")
+                              or params.get("empresa") or params.get("codprod") or params.get("codigo_fabricante")
+                              or params.get("produto_nome"))
 
         # Se score baixo mas tem contexto e a pergunta parece continuacao
         if best_score < INTENT_THRESHOLDS.get(best_intent, 8) and is_followup and ctx.intent:
@@ -2979,8 +3127,12 @@ class SmartAgent:
                 print(f"[ALIAS] Resolvido: '{original_term}' -> {resolved_to} (conf={alias.get('confidence',0):.0%})")
 
         # ========== LAYER 0.5: PRODUTO (roteamento especial) ==========
+        # So intercepta se scoring NAO detectou intent forte nao-produto
+        # Ex: "S2581 tem pedido de compra?" → pendencia_compras=12 >> busca → nao interceptar
+        _non_product = ("pendencia_compras", "estoque", "vendas", "rastreio_pedido")
+        _scoring_wins = best_intent in _non_product and best_score >= INTENT_THRESHOLDS.get(best_intent, 8)
         product_type = detect_product_query(q_norm, params)
-        if product_type:
+        if product_type and not _scoring_wins:
             print(f"[SMART] Layer 0.5 (produto): type={product_type} | params={params}")
             if _log: _log["processing"].update(layer="produto", intent=product_type)
             if product_type == "busca_fabricante":
@@ -2991,9 +3143,11 @@ class SmartAgent:
                 return await self._handle_produto_360(question, user_context, t0, params, ctx)
             elif product_type == "busca_aplicacao":
                 return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
+        elif product_type and _scoring_wins:
+            print(f"[SMART] Layer 0.5: produto detectado mas {best_intent}={best_score} mais forte, seguindo scoring")
 
         # ========== LAYER 1: SCORING (0ms) ==========
-        print(f"[SMART] Scores: pend={scores.get('pendencia_compras',0)} est={scores.get('estoque',0)} vend={scores.get('vendas',0)} | best={best_intent}({best_score}) | followup={is_followup}")
+        print(f"[SMART] Scores: pend={scores.get('pendencia_compras',0)} est={scores.get('estoque',0)} vend={scores.get('vendas',0)} rast={scores.get('rastreio_pedido',0)} | best={best_intent}({best_score}) | followup={is_followup}")
 
         # Log: entities extraidas
         if _log:
@@ -3081,12 +3235,16 @@ class SmartAgent:
             return await self._dispatch(best_intent, question, user_context, t0, tokens, params, ctx)
 
         # ========== LAYER 1.5: ENTITY DETECTION ==========
-        if has_entity and best_score >= 3:
-            # Tem entidade + algum score = provavelmente pendencia
+        # Se tem entidade E busca_produto tambem pontuou, deixar LLM decidir (Layer 2)
+        busca_score = scores.get("busca_produto", 0)
+        if has_entity and best_score >= 3 and busca_score < 3:
+            # Tem entidade + algum score + NAO parece busca produto = provavelmente pendencia
             print(f"[SMART] Layer 1.5 (entidade + score): pendencia | params={params}")
             if _log: _log["processing"].update(layer="scoring", intent="pendencia_compras")
             view_mode = detect_view_mode(tokens)
             return await self._handle_pendencia_compras(question, user_context, t0, params, view_mode, ctx)
+        elif has_entity and best_score >= 3 and busca_score >= 3:
+            print(f"[SMART] Layer 1.5: entidade detectada mas busca_produto={busca_score}, delegando pra LLM...")
 
         # ========== LAYER 2: LLM CLASSIFIER (Groq ~0.5s / Ollama ~10s) ==========
         if USE_LLM_CLASSIFIER:
@@ -3157,7 +3315,7 @@ class SmartAgent:
                 elif intent == "vendas":
                     return await self._handle_vendas(question, user_context, t0, params, ctx)
                 elif intent == "produto":
-                    # Redirecionar para detect_product_query ou busca_fabricante como fallback
+                    # Redirecionar para detect_product_query ou busca_produto como fallback
                     product_type = detect_product_query(q_norm, params)
                     if product_type == "similares":
                         return await self._handle_similares(question, user_context, t0, params, ctx)
@@ -3165,8 +3323,15 @@ class SmartAgent:
                         return await self._handle_produto_360(question, user_context, t0, params, ctx)
                     elif product_type == "busca_aplicacao":
                         return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
-                    else:
+                    elif product_type == "busca_fabricante":
                         return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
+                    else:
+                        # Sem codigo → busca por nome no Elastic
+                        params["texto_busca"] = llm_result.get("texto_busca")
+                        return await self._handle_busca_produto(question, user_context, t0, params, ctx)
+                elif intent == "rastreio_pedido":
+                    params["nunota"] = llm_result.get("nunota")
+                    return await self._handle_rastreio_pedido(question, user_context, t0, params, ctx)
                 elif intent == "busca_produto":
                     params["texto_busca"] = llm_result.get("texto_busca")
                     return await self._handle_busca_produto(question, user_context, t0, params, ctx)
@@ -3182,8 +3347,8 @@ class SmartAgent:
                     return self._handle_ajuda()
 
         # ========== LAYER 3: FALLBACK ==========
-        # Ultima tentativa: se tem entidade, assume pendencia
-        if has_entity:
+        # Ultima tentativa: se tem entidade e nao parece busca de produto, assume pendencia
+        if has_entity and busca_score < 3:
             print(f"[SMART] Layer 3 (fallback c/ entidade): {params}")
             if _log: _log["processing"].update(layer="fallback", intent="pendencia_compras")
             view_mode = detect_view_mode(tokens)
@@ -3221,8 +3386,13 @@ class SmartAgent:
                 return await self._handle_produto_360(question, user_context, t0, params, ctx)
             elif product_type == "busca_aplicacao":
                 return await self._handle_busca_aplicacao(question, user_context, t0, params, ctx)
-            else:
+            elif product_type == "busca_fabricante":
                 return await self._handle_busca_fabricante(question, user_context, t0, params, ctx)
+            else:
+                # Sem codigo fabricante/codprod → busca por nome no Elastic
+                return await self._handle_busca_produto(question, user_context, t0, params, ctx)
+        elif intent == "rastreio_pedido":
+            return await self._handle_rastreio_pedido(question, user_context, t0, params, ctx)
         elif intent == "busca_produto":
             return await self._handle_busca_produto(question, user_context, t0, params, ctx)
         elif intent == "busca_cliente":
@@ -3347,7 +3517,8 @@ class SmartAgent:
         r += "Como posso ajudar? Posso consultar:\n\n"
         r += "\U0001f4e6 **Pendencia de compras** - *\"pendencia da marca Donaldson\"*\n"
         r += "\U0001f4ca **Vendas e faturamento** - *\"vendas de hoje\"*\n"
-        r += "\U0001f4cb **Estoque** - *\"estoque do produto 133346\"*\n\nE so perguntar!"
+        r += "\U0001f4cb **Estoque** - *\"estoque do produto 133346\"*\n"
+        r += "\U0001f50d **Rastreio de pedido** - *\"como esta o pedido 1199868?\"*\n\nE so perguntar!"
         return {"response": r, "tipo": "info", "query_executed": None, "query_results": None}
 
     def _handle_ajuda(self):
@@ -3368,10 +3539,8 @@ class SmartAgent:
     async def _handle_pendencia_compras(self, question, user_context, t0, params=None, view_mode="pedidos", ctx=None, llm_filters=None, extra_columns=None):
         if params is None:
             params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
-        # Merge com contexto se disponivel
-        if ctx and not (params.get("marca") or params.get("fornecedor") or params.get("comprador")):
-            params = ctx.merge_params(params)
-            print(f"[CTX] Params merged: {params}")
+        # NOTA: merge de contexto foi removido daqui — agora e feito APENAS em _ask_core
+        # com guarda is_followup, evitando heranca de params quando nao e follow-up
 
         # Herdar extra_columns do contexto se nao veio nesta pergunta
         if not extra_columns and ctx and hasattr(ctx, '_extra_columns') and ctx._extra_columns:
@@ -3618,9 +3787,8 @@ class SmartAgent:
     async def _handle_estoque(self, question, user_context, t0, params=None, ctx=None):
         if params is None:
             params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
-        # Merge com contexto se disponivel
-        if ctx and not (params.get("codprod") or params.get("produto_nome") or params.get("marca")):
-            params = ctx.merge_params(params)
+        # NOTA: merge de contexto foi removido daqui — agora e feito APENAS em _ask_core
+        # com guarda is_followup, evitando heranca de params quando nao e follow-up
         print(f"[SMART] Estoque params: {params}")
         q_norm = normalize(question)
         is_critico = any(w in q_norm for w in ["critico", "baixo", "zerado", "minimo", "acabando", "faltando"])
@@ -3673,72 +3841,471 @@ class SmartAgent:
     async def _handle_vendas(self, question, user_context, t0, params=None, ctx=None):
         if params is None:
             params = extract_entities(question, self._known_marcas, self._known_empresas, self._known_compradores)
+        # NOTA: merge de contexto foi removido daqui — agora e feito APENAS em _ask_core
+        # com guarda is_followup, evitando heranca de params quando nao e follow-up
         print(f"[SMART] Vendas params: {params}")
+
         periodo = params.get("periodo", "mes")
         periodo_nome = PERIODO_NOMES.get(periodo, "este mes")
         pf = _build_periodo_filter(params)
-        rbac = ""
-        if user_context:
-            role = user_context.get("role", "vendedor")
-            if role in ("admin", "diretor", "ti"):
-                pass
-            elif role == "gerente":
-                team = user_context.get("team_codvends", [])
-                if team: rbac = f" AND C.CODVEND IN ({','.join(str(c) for c in team)})"
-            elif role == "vendedor":
-                codvend = user_context.get("codvend", 0)
-                if codvend: rbac = f" AND C.CODVEND = {codvend}"
-        emp_f = f" AND UPPER(EMP.NOMEFANTASIA) LIKE UPPER('%{params['empresa']}%')" if params.get("empresa") else ""
+        wv = _build_vendas_where(params, user_context)
+        has_marca = bool(params.get("marca"))
 
-        sql_kpis = f"SELECT COUNT(*) AS QTD_VENDAS, NVL(SUM(C.VLRNOTA),0) AS FATURAMENTO, NVL(ROUND(AVG(C.VLRNOTA),2),0) AS TICKET_MEDIO FROM TGFCAB C LEFT JOIN TSIEMP EMP ON EMP.CODEMP=C.CODEMP WHERE C.TIPMOV='V' AND C.CODTIPOPER IN (1100,1101) AND C.STATUSNOTA<>'C' {pf} {rbac} {emp_f}"
-        sql_top = f"SELECT NVL(V.APELIDO,'SEM VENDEDOR') AS VENDEDOR, COUNT(*) AS QTD, NVL(SUM(C.VLRNOTA),0) AS FATURAMENTO FROM TGFCAB C LEFT JOIN TGFVEN V ON V.CODVEND=C.CODVEND LEFT JOIN TSIEMP EMP ON EMP.CODEMP=C.CODEMP WHERE C.TIPMOV='V' AND C.CODTIPOPER IN (1100,1101) AND C.STATUSNOTA<>'C' {pf} {rbac} {emp_f} GROUP BY V.APELIDO ORDER BY SUM(C.VLRNOTA) DESC"
+        # Descricao para titulo/contexto
+        desc_parts = [periodo_nome]
+        if params.get("marca"):
+            desc_parts.append(f"marca {params['marca']}")
+        if params.get("empresa"):
+            desc_parts.append(f"{EMPRESA_DISPLAY.get(params['empresa'], params['empresa'])}")
+        description = " | ".join(desc_parts)
 
+        # ---- SQL KPIs ----
+        if has_marca:
+            # Com marca: usar ITE.VLRTOT (nivel item) para evitar contar valor de outras marcas
+            sql_kpis = f"""SELECT
+                COUNT(DISTINCT C.NUNOTA) AS QTD_VENDAS,
+                NVL(SUM(ITE.VLRTOT), 0) AS FATURAMENTO,
+                NVL(ROUND(AVG(ITE.VLRTOT), 2), 0) AS TICKET_MEDIO,
+                NVL(ROUND(AVG(C.AD_MARGEM), 2), 0) AS MARGEM_MEDIA,
+                NVL(SUM(C.AD_VLRCOMINT), 0) AS COMISSAO_TOTAL
+            FROM TGFCAB C
+            JOIN TGFITE ITE ON ITE.NUNOTA = C.NUNOTA
+            JOIN TGFPRO PRO ON PRO.CODPROD = ITE.CODPROD
+            LEFT JOIN TGFMAR MAR ON MAR.CODIGO = PRO.CODMARCA
+            LEFT JOIN TGFVEN VEN ON VEN.CODVEND = C.CODVEND
+            LEFT JOIN TSIEMP EMP ON EMP.CODEMP = C.CODEMP
+            LEFT JOIN TGFPAR PAR ON PAR.CODPARC = C.CODPARC
+            WHERE C.TIPMOV = 'V'
+                AND C.CODTIPOPER IN (1100, 1101)
+                AND C.STATUSNOTA <> 'C'
+                {pf} {wv}"""
+        else:
+            sql_kpis = f"""SELECT
+                COUNT(*) AS QTD_VENDAS,
+                NVL(SUM(C.VLRNOTA), 0) AS FATURAMENTO,
+                NVL(ROUND(AVG(C.VLRNOTA), 2), 0) AS TICKET_MEDIO,
+                NVL(ROUND(AVG(C.AD_MARGEM), 2), 0) AS MARGEM_MEDIA,
+                NVL(SUM(C.AD_VLRCOMINT), 0) AS COMISSAO_TOTAL
+            FROM TGFCAB C
+            LEFT JOIN TGFVEN VEN ON VEN.CODVEND = C.CODVEND
+            LEFT JOIN TSIEMP EMP ON EMP.CODEMP = C.CODEMP
+            LEFT JOIN TGFPAR PAR ON PAR.CODPARC = C.CODPARC
+            WHERE C.TIPMOV = 'V'
+                AND C.CODTIPOPER IN (1100, 1101)
+                AND C.STATUSNOTA <> 'C'
+                {pf} {wv}"""
+
+        # ---- SQL Top Vendedores (com margem) ----
+        sql_top = f"""SELECT
+            NVL(VEN.APELIDO, 'SEM VENDEDOR') AS VENDEDOR,
+            COUNT(*) AS QTD,
+            NVL(SUM(C.VLRNOTA), 0) AS FATURAMENTO,
+            NVL(ROUND(AVG(C.AD_MARGEM), 2), 0) AS MARGEM_MEDIA
+        FROM TGFCAB C
+        LEFT JOIN TGFVEN VEN ON VEN.CODVEND = C.CODVEND
+        LEFT JOIN TSIEMP EMP ON EMP.CODEMP = C.CODEMP
+        LEFT JOIN TGFPAR PAR ON PAR.CODPARC = C.CODPARC
+        WHERE C.TIPMOV = 'V'
+            AND C.CODTIPOPER IN (1100, 1101)
+            AND C.STATUSNOTA <> 'C'
+            {pf} {wv}
+        GROUP BY VEN.APELIDO
+        ORDER BY SUM(C.VLRNOTA) DESC"""
+
+        # ---- SQL Detail (para follow-ups + Excel) ----
+        sql_detail = f"""SELECT
+            C.NUNOTA,
+            TO_CHAR(C.DTNEG, 'DD/MM/YYYY') AS DATA,
+            NVL(VEN.APELIDO, 'SEM VENDEDOR') AS VENDEDOR,
+            NVL(PAR.NOMEPARC, '?') AS CLIENTE,
+            C.VLRNOTA AS FATURAMENTO,
+            NVL(C.AD_MARGEM, 0) AS MARGEM,
+            NVL(C.AD_VLRCOMINT, 0) AS COMISSAO,
+            NVL(EMP.NOMEFANTASIA, '?') AS EMPRESA
+        FROM TGFCAB C
+        LEFT JOIN TGFVEN VEN ON VEN.CODVEND = C.CODVEND
+        LEFT JOIN TSIEMP EMP ON EMP.CODEMP = C.CODEMP
+        LEFT JOIN TGFPAR PAR ON PAR.CODPARC = C.CODPARC
+        WHERE C.TIPMOV = 'V'
+            AND C.CODTIPOPER IN (1100, 1101)
+            AND C.STATUSNOTA <> 'C'
+            {pf} {wv}
+        ORDER BY C.DTNEG DESC
+        FETCH FIRST 500 ROWS ONLY"""
+
+        # ---- Executar KPIs ----
         kr = await self.executor.execute(sql_kpis)
         if not kr.get("success"):
             return {"response": f"Erro ao consultar vendas: {kr.get('error','?')}", "tipo": "consulta_banco", "query_executed": sql_kpis[:200], "query_results": 0}
         kd = kr.get("data", [])
         if kd and isinstance(kd[0], (list, tuple)):
-            cols = kr.get("columns") or ["QTD_VENDAS","FATURAMENTO","TICKET_MEDIO"]
+            cols = kr.get("columns") or ["QTD_VENDAS", "FATURAMENTO", "TICKET_MEDIO", "MARGEM_MEDIA", "COMISSAO_TOTAL"]
             kd = [dict(zip(cols, row)) for row in kd]
         kpi_row = kd[0] if kd else {}
 
+        # ---- Executar Top Vendedores ----
         tr = await self.executor.execute(sql_top)
         td = []
         if tr.get("success"):
             td = tr.get("data", [])
             if td and isinstance(td[0], (list, tuple)):
-                tc = tr.get("columns") or ["VENDEDOR","QTD","FATURAMENTO"]
+                tc = tr.get("columns") or ["VENDEDOR", "QTD", "FATURAMENTO", "MARGEM_MEDIA"]
                 td = [dict(zip(tc, row)) for row in td]
 
-        fallback_response = format_vendas_response(kpi_row, periodo_nome)
-        if td:
-            fallback_response += "\n**Top vendedores:**\n| Vendedor | Notas | Faturamento |\n|----------|-------|-------------|\n"
-            for row in td[:5]:
-                if isinstance(row, dict):
-                    fallback_response += f"| {str(row.get('VENDEDOR','?'))[:20]} | {fmt_num(row.get('QTD',0))} | {fmt_brl(row.get('FATURAMENTO',0))} |\n"
+        # ---- Executar Detail (para follow-ups e Excel) ----
+        detail_data = []
+        detail_columns = ["NUNOTA", "DATA", "VENDEDOR", "CLIENTE", "FATURAMENTO", "MARGEM", "COMISSAO", "EMPRESA"]
+        qtd_vendas = int(kpi_row.get("QTD_VENDAS", 0) or 0)
+        if qtd_vendas > 0:
+            dr = await self.executor.execute(sql_detail)
+            if dr.get("success"):
+                detail_data = dr.get("data", [])
+                if detail_data and isinstance(detail_data[0], (list, tuple)):
+                    rc = dr.get("columns") or detail_columns
+                    if rc and len(rc) == len(detail_data[0]):
+                        detail_data = [dict(zip(rc, row)) for row in detail_data]
+                    else:
+                        detail_data = [dict(zip(detail_columns, row)) for row in detail_data]
 
-        if USE_LLM_NARRATOR and int(kpi_row.get("QTD_VENDAS", 0) or 0) > 0:
-            summary = build_vendas_summary(kpi_row, td, periodo_nome)
+        # ---- Formatar resposta ----
+        fallback_response = format_vendas_response(kpi_row, description)
+        if td:
+            margem_col = any(float(row.get("MARGEM_MEDIA", 0) or 0) > 0 for row in td[:5] if isinstance(row, dict))
+            if margem_col:
+                fallback_response += "\n**Top vendedores:**\n| Vendedor | Notas | Faturamento | Margem |\n|----------|-------|-------------|--------|\n"
+                for row in td[:10]:
+                    if isinstance(row, dict):
+                        mg = float(row.get("MARGEM_MEDIA", 0) or 0)
+                        fallback_response += f"| {str(row.get('VENDEDOR','?'))[:20]} | {fmt_num(row.get('QTD',0))} | {fmt_brl(row.get('FATURAMENTO',0))} | {mg:.1f}% |\n"
+            else:
+                fallback_response += "\n**Top vendedores:**\n| Vendedor | Notas | Faturamento |\n|----------|-------|-------------|\n"
+                for row in td[:10]:
+                    if isinstance(row, dict):
+                        fallback_response += f"| {str(row.get('VENDEDOR','?'))[:20]} | {fmt_num(row.get('QTD',0))} | {fmt_brl(row.get('FATURAMENTO',0))} |\n"
+
+        # ---- Narracao ----
+        if USE_LLM_NARRATOR and qtd_vendas > 0:
+            summary = build_vendas_summary(kpi_row, td, description)
             narration = await llm_narrate(question, summary, "")
             if narration:
-                parts = [f"\U0001f4ca **Vendas - {periodo_nome.title()}**\n"]
-                parts.append(narration)
-                if td:
-                    parts.append(f"\n**Top vendedores:**\n| Vendedor | Notas | Faturamento |\n|----------|-------|-------------|")
-                    for row in td[:5]:
-                        if isinstance(row, dict):
-                            parts.append(f"| {str(row.get('VENDEDOR','?'))[:20]} | {fmt_num(row.get('QTD',0))} | {fmt_brl(row.get('FATURAMENTO',0))} |")
+                # Montar tabela de top vendedores
+                table_lines = fallback_response.split("\n")
+                table_start = next((i for i, l in enumerate(table_lines) if l.startswith("|")), None)
+                parts = [narration]
+                if table_start is not None:
+                    parts.append("\n" + "\n".join(table_lines[table_start:]))
                 response = "\n".join(parts)
             else:
                 response = fallback_response
         else:
             response = fallback_response
 
-        result_data = {"detail_data": td, "columns": ["VENDEDOR","QTD","FATURAMENTO"], "description": f"vendas - {periodo_nome}", "params": params, "intent": "vendas"}
+        # ---- Salvar contexto ----
+        result_data = {
+            "detail_data": detail_data,
+            "columns": detail_columns,
+            "description": f"vendas - {description}",
+            "params": params,
+            "intent": "vendas",
+        }
         if ctx:
             ctx.update("vendas", params, result_data, question)
+            print(f"[CTX] Vendas atualizado: {ctx}")
+
         elapsed = int((time.time() - t0) * 1000)
-        return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": int(kpi_row.get("QTD_VENDAS",0) or 0), "time_ms": elapsed, "_detail_data": td}
+        return {"response": response, "tipo": "consulta_banco", "query_executed": sql_kpis[:200] + "...", "query_results": qtd_vendas, "time_ms": elapsed, "_detail_data": detail_data}
+
+    # ---- RASTREIO DE PEDIDO DE VENDA ----
+    # Traducao de status para linguagem do vendedor
+    CONF_STATUS_MAP = {
+        "AL": "Aguardando liberacao p/ conferencia",
+        "AC": "Na fila de conferencia",
+        "A": "Sendo conferido agora",
+        "Z": "Aguardando finalizacao",
+        "F": "Conferencia OK",
+        "D": "Conferencia com divergencia",
+        "R": "Aguardando recontagem",
+        "RA": "Recontagem em andamento",
+        "RF": "Recontagem OK",
+        "RD": "Recontagem com divergencia",
+        "C": "Aguardando liberacao de corte",
+    }
+    WMS_STATUS_MAP = {
+        -1: "Nao enviado p/ separacao",
+        0: "Na fila de separacao",
+        1: "Enviado p/ separacao",
+        2: "Separando agora",
+        3: "Separado, aguardando conferencia",
+        4: "Sendo conferido",
+        9: "Conferencia OK, pronto p/ faturar",
+        10: "Aguardando conferencia (pos-separacao)",
+        12: "Conferencia com divergencia",
+        13: "Parcialmente conferido",
+        16: "Concluido",
+        17: "Aguardando conferencia de volumes",
+        7: "Pedido totalmente cortado",
+        8: "Pedido parcialmente cortado",
+        100: "Cancelado",
+    }
+
+    async def _handle_rastreio_pedido(self, question, user_context, t0, params=None, ctx=None):
+        """Rastreia um pedido de venda: status + itens + compras vinculadas."""
+        params = params or {}
+
+        # Extrair NUNOTA da pergunta
+        nunota = params.get("nunota")
+        if not nunota:
+            # Tentar extrair numero grande da pergunta (NUNOTA geralmente > 100000)
+            nums = re.findall(r'\b(\d{4,})\b', question)
+            if nums:
+                nunota = int(nums[0])
+
+        if not nunota:
+            # Sem numero: listar pedidos pendentes do vendedor
+            user = (user_context or {}).get("user", "")
+            codvend = (user_context or {}).get("codvend")
+
+            where_vend = ""
+            if codvend:
+                where_vend = f"AND C.CODVEND = {int(codvend)}"
+
+            sql = f"""SELECT C.NUNOTA, C.NUMNOTA, TO_CHAR(C.DTNEG, 'DD/MM/YYYY') AS DTNEG,
+                P.NOMEPARC AS CLIENTE, C.VLRNOTA, C.STATUSNOTA, C.PENDENTE,
+                C.STATUSCONFERENCIA, C.SITUACAOWMS
+            FROM TGFCAB C
+            JOIN TGFPAR P ON C.CODPARC = P.CODPARC
+            WHERE C.TIPMOV = 'P'
+                AND C.PENDENTE = 'S'
+                AND C.STATUSNOTA <> 'C'
+                AND C.CODTIPOPER IN (1001, 1007, 1012)
+                {where_vend}
+            ORDER BY C.DTNEG DESC"""
+
+            result = await self.executor.execute(sql)
+            if not result.get("success") or not result.get("data"):
+                return {"response": "Nenhum pedido de venda pendente encontrado.", "tipo": "consulta_banco",
+                        "query_executed": sql[:200], "query_results": 0, "time_ms": int((time.time() - t0) * 1000)}
+
+            data = result["data"]
+            if data and isinstance(data[0], (list, tuple)):
+                cols = result.get("columns") or ["NUNOTA","NUMNOTA","DTNEG","CLIENTE","VLRNOTA","STATUSNOTA","PENDENTE","STATUSCONFERENCIA","SITUACAOWMS"]
+                data = [dict(zip(cols, row)) for row in data]
+
+            response = f"**Pedidos de venda pendentes** ({len(data)} encontrados):\n\n"
+            response += "| Pedido | Data | Cliente | Valor | Conferencia |\n|---|---|---|---|---|\n"
+            for row in data[:20]:
+                nunota_r = row.get("NUNOTA", "?")
+                dt = row.get("DTNEG", "?")
+                cli = str(row.get("CLIENTE", ""))[:30]
+                vlr = float(row.get("VLRNOTA", 0) or 0)
+                conf = str(row.get("STATUSCONFERENCIA", "") or "")
+                conf_desc = self.CONF_STATUS_MAP.get(conf, conf or "-")
+                response += f"| {nunota_r} | {dt} | {cli} | R$ {vlr:,.2f} | {conf_desc} |\n"
+
+            if len(data) > 20:
+                response += f"\n*...e mais {len(data)-20} pedidos.*"
+
+            elapsed = int((time.time() - t0) * 1000)
+            return {"response": response, "tipo": "consulta_banco", "query_executed": sql[:200],
+                    "query_results": len(data), "time_ms": elapsed}
+
+        # ========== COM NUNOTA: rastreio completo ==========
+        nunota = int(nunota)
+
+        # ETAPA 1: Status do pedido
+        sql_status = f"""SELECT
+            C.NUNOTA, C.NUMNOTA, TO_CHAR(C.DTNEG, 'DD/MM/YYYY') AS DTNEG,
+            P.NOMEPARC AS CLIENTE, C.VLRNOTA, C.TIPMOV,
+            C.STATUSNOTA,
+            CASE C.STATUSNOTA WHEN 'L' THEN 'Liberada' WHEN 'P' THEN 'Pendente' WHEN 'A' THEN 'Em Atendimento' ELSE C.STATUSNOTA END AS STATUS_DESC,
+            C.PENDENTE,
+            C.STATUSNFE,
+            CASE C.STATUSNFE WHEN 'A' THEN 'NFe Autorizada' WHEN 'I' THEN 'NFe Enviada' WHEN 'R' THEN 'NFe Rejeitada' WHEN 'M' THEN 'Sem NFe' ELSE 'Nao enviada' END AS STATUS_NFE_DESC,
+            NVL(C.STATUSCONFERENCIA, '') AS STATUSCONFERENCIA,
+            NVL(C.LIBCONF, '') AS LIBCONF,
+            NVL(C.SITUACAOWMS, -1) AS SITUACAOWMS,
+            NVL(V.APELIDO, '') AS VENDEDOR,
+            C.CODEMP
+        FROM TGFCAB C
+        JOIN TGFPAR P ON C.CODPARC = P.CODPARC
+        LEFT JOIN TGFVEN V ON C.CODVEND = V.CODVEND
+        WHERE C.NUNOTA = {nunota}"""
+
+        r1 = await self.executor.execute(sql_status)
+        if not r1.get("success") or not r1.get("data"):
+            return {"response": f"Pedido **{nunota}** nao encontrado no sistema.",
+                    "tipo": "consulta_banco", "query_executed": sql_status[:200],
+                    "query_results": 0, "time_ms": int((time.time() - t0) * 1000)}
+
+        d1 = r1["data"]
+        if d1 and isinstance(d1[0], (list, tuple)):
+            cols = r1.get("columns") or ["NUNOTA","NUMNOTA","DTNEG","CLIENTE","VLRNOTA","TIPMOV","STATUSNOTA","STATUS_DESC","PENDENTE","STATUSNFE","STATUS_NFE_DESC","STATUSCONFERENCIA","LIBCONF","SITUACAOWMS","VENDEDOR","CODEMP"]
+            d1 = [dict(zip(cols, row)) for row in d1]
+        cab = d1[0]
+
+        # Traduzir status
+        conf_code = str(cab.get("STATUSCONFERENCIA", "") or "")
+        conf_desc = self.CONF_STATUS_MAP.get(conf_code, conf_code or "N/A")
+        wms_code = int(cab.get("SITUACAOWMS", -1) or -1)
+        wms_desc = self.WMS_STATUS_MAP.get(wms_code, f"Codigo {wms_code}")
+        codemp = cab.get("CODEMP", 1)
+
+        # Montar cabecalho
+        response = f"**Pedido #{nunota}** — {cab.get('CLIENTE', '?')}\n\n"
+        response += "| Campo | Status |\n|---|---|\n"
+        response += f"| **Data** | {cab.get('DTNEG', '?')} |\n"
+        response += f"| **Valor** | R$ {float(cab.get('VLRNOTA', 0) or 0):,.2f} |\n"
+        response += f"| **Status Nota** | {cab.get('STATUS_DESC', '?')} |\n"
+        response += f"| **NFe** | {cab.get('STATUS_NFE_DESC', '?')} |\n"
+        response += f"| **Conferencia** | {conf_desc} |\n"
+        response += f"| **WMS** | {wms_desc} |\n"
+        if cab.get("VENDEDOR"):
+            response += f"| **Vendedor** | {cab['VENDEDOR']} |\n"
+        response += f"| **Pendente** | {'Sim' if cab.get('PENDENTE') == 'S' else 'Nao'} |\n"
+
+        # ETAPA 2: Itens do pedido com estoque
+        sql_itens = f"""SELECT
+            ITE.SEQUENCIA, PRO.CODPROD, PRO.DESCRPROD AS PRODUTO,
+            NVL(MAR.DESCRICAO, '') AS MARCA,
+            ITE.QTDNEG AS QTD_VENDIDA,
+            NVL(EST.ESTOQUE, 0) AS ESTOQUE,
+            NVL(EST.RESERVADO, 0) AS RESERVADO,
+            NVL(EST.ESTOQUE, 0) - NVL(EST.RESERVADO, 0) AS DISPONIVEL,
+            CASE
+                WHEN NVL(EST.ESTOQUE,0) - NVL(EST.RESERVADO,0) >= ITE.QTDNEG THEN 'DISPONIVEL'
+                WHEN NVL(EST.ESTOQUE,0) > 0 THEN 'PARCIAL'
+                ELSE 'SEM ESTOQUE'
+            END AS STATUS_ESTOQUE
+        FROM TGFITE ITE
+        JOIN TGFPRO PRO ON ITE.CODPROD = PRO.CODPROD
+        LEFT JOIN TGFMAR MAR ON PRO.CODMARCA = MAR.CODIGO
+        LEFT JOIN (
+            SELECT CODPROD, SUM(ESTOQUE) AS ESTOQUE, SUM(RESERVADO) AS RESERVADO
+            FROM TGFEST WHERE CODLOCAL = 0 AND TIPO = 'P' AND CODPARC = 0
+            GROUP BY CODPROD
+        ) EST ON EST.CODPROD = ITE.CODPROD
+        WHERE ITE.NUNOTA = {nunota}
+        ORDER BY ITE.SEQUENCIA"""
+
+        r2 = await self.executor.execute(sql_itens)
+        itens = []
+        sem_estoque_prods = []
+        if r2.get("success") and r2.get("data"):
+            itens_data = r2["data"]
+            if itens_data and isinstance(itens_data[0], (list, tuple)):
+                cols = r2.get("columns") or ["SEQUENCIA","CODPROD","PRODUTO","MARCA","QTD_VENDIDA","ESTOQUE","RESERVADO","DISPONIVEL","STATUS_ESTOQUE"]
+                itens_data = [dict(zip(cols, row)) for row in itens_data]
+            itens = itens_data
+
+            response += f"\n**Itens do pedido** ({len(itens)}):\n\n"
+            response += "| Produto | Marca | Qtd | Disponivel | Status |\n|---|---|---|---|---|\n"
+            for it in itens:
+                prod = str(it.get("PRODUTO", ""))[:35]
+                marca = str(it.get("MARCA", ""))[:15]
+                qtd = int(it.get("QTD_VENDIDA", 0) or 0)
+                disp = int(it.get("DISPONIVEL", 0) or 0)
+                st = str(it.get("STATUS_ESTOQUE", "?"))
+                icon = {"DISPONIVEL": "OK", "PARCIAL": "PARCIAL", "SEM ESTOQUE": "SEM EST."}.get(st, st)
+                response += f"| {prod} | {marca} | {qtd} | {disp} | {icon} |\n"
+
+                if st in ("SEM ESTOQUE", "PARCIAL"):
+                    sem_estoque_prods.append(int(it.get("CODPROD", 0) or 0))
+
+        # ETAPA 3: Rastrear compras vinculadas (para itens sem estoque)
+        if sem_estoque_prods:
+            codprods_str = ",".join(str(c) for c in sem_estoque_prods if c > 0)
+            if codprods_str:
+                sql_compras = f"""SELECT
+                    COMPRA.NUNOTA AS PEDIDO_COMPRA,
+                    TO_CHAR(COMPRA.DTNEG, 'DD/MM/YYYY') AS DT_COMPRA,
+                    FORN.NOMEPARC AS FORNECEDOR,
+                    ITEM_COMPRA.CODPROD,
+                    PRO.DESCRPROD AS PRODUTO,
+                    ITEM_COMPRA.QTDNEG AS QTD_COMPRADA,
+                    NVL(VAR_AGG.TOTAL_ATENDIDO, 0) AS QTD_ENTREGUE,
+                    ITEM_COMPRA.QTDNEG - NVL(VAR_AGG.TOTAL_ATENDIDO, 0) AS QTD_FALTANDO,
+                    NVL(TO_CHAR(COMPRA.DTPREVENT,'DD/MM/YYYY'), 'Sem previsao') AS PREVISAO,
+                    CASE
+                        WHEN NVL(VAR_AGG.TOTAL_ATENDIDO,0) >= ITEM_COMPRA.QTDNEG THEN 'ENTREGUE'
+                        WHEN NVL(VAR_AGG.TOTAL_ATENDIDO,0) > 0 THEN 'ENTREGA PARCIAL'
+                        WHEN COMPRA.DTPREVENT < TRUNC(SYSDATE) THEN 'ATRASADO'
+                        WHEN COMPRA.DTPREVENT IS NOT NULL THEN 'AGUARDANDO'
+                        ELSE 'SEM PREVISAO'
+                    END AS STATUS_COMPRA,
+                    NVL(ENTRADA.STATUSCONFERENCIA, '') AS CONF_ENTRADA,
+                    NVL(ENTRADA.SITUACAOWMS, -1) AS WMS_ENTRADA
+                FROM TGFCAB COMPRA
+                JOIN TGFITE ITEM_COMPRA ON COMPRA.NUNOTA = ITEM_COMPRA.NUNOTA
+                JOIN TGFPAR FORN ON COMPRA.CODPARC = FORN.CODPARC
+                JOIN TGFPRO PRO ON ITEM_COMPRA.CODPROD = PRO.CODPROD
+                LEFT JOIN (
+                    SELECT V.NUNOTAORIG, V.SEQUENCIAORIG,
+                        SUM(V.QTDATENDIDA) AS TOTAL_ATENDIDO,
+                        MAX(V.NUNOTA) AS ULTIMA_NOTA
+                    FROM TGFVAR V
+                    JOIN TGFCAB CV ON CV.NUNOTA = V.NUNOTA
+                    WHERE CV.STATUSNOTA <> 'C'
+                    GROUP BY V.NUNOTAORIG, V.SEQUENCIAORIG
+                ) VAR_AGG ON VAR_AGG.NUNOTAORIG = COMPRA.NUNOTA
+                    AND VAR_AGG.SEQUENCIAORIG = ITEM_COMPRA.SEQUENCIA
+                LEFT JOIN TGFCAB ENTRADA ON ENTRADA.NUNOTA = VAR_AGG.ULTIMA_NOTA
+                WHERE ITEM_COMPRA.CODPROD IN ({codprods_str})
+                    AND COMPRA.TIPMOV = 'O'
+                    AND COMPRA.CODTIPOPER IN (1301, 1313)
+                    AND COMPRA.STATUSNOTA <> 'C'
+                    AND COMPRA.PENDENTE = 'S'
+                ORDER BY COMPRA.DTNEG DESC"""
+
+                r3 = await self.executor.execute(sql_compras)
+                if r3.get("success") and r3.get("data"):
+                    compras_data = r3["data"]
+                    if compras_data and isinstance(compras_data[0], (list, tuple)):
+                        cols = r3.get("columns") or ["PEDIDO_COMPRA","DT_COMPRA","FORNECEDOR","CODPROD","PRODUTO","QTD_COMPRADA","QTD_ENTREGUE","QTD_FALTANDO","PREVISAO","STATUS_COMPRA","CONF_ENTRADA","WMS_ENTRADA"]
+                        compras_data = [dict(zip(cols, row)) for row in compras_data]
+
+                    response += f"\n**Compras vinculadas** (itens sem estoque):\n\n"
+                    response += "| Produto | Fornecedor | Ped.Compra | Comprado | Entregue | Faltando | Previsao | Status |\n|---|---|---|---|---|---|---|---|\n"
+                    for c in compras_data:
+                        prod = str(c.get("PRODUTO", ""))[:25]
+                        forn = str(c.get("FORNECEDOR", ""))[:20]
+                        ped = c.get("PEDIDO_COMPRA", "?")
+                        qtd_c = int(c.get("QTD_COMPRADA", 0) or 0)
+                        qtd_e = int(c.get("QTD_ENTREGUE", 0) or 0)
+                        qtd_f = int(c.get("QTD_FALTANDO", 0) or 0)
+                        prev = str(c.get("PREVISAO", "?"))
+                        st = str(c.get("STATUS_COMPRA", "?"))
+
+                        # Se tem nota de entrada, mostrar status conferencia
+                        conf_e = str(c.get("CONF_ENTRADA", "") or "")
+                        if conf_e:
+                            conf_txt = self.CONF_STATUS_MAP.get(conf_e, conf_e)
+                            st = f"{st} ({conf_txt})"
+
+                        response += f"| {prod} | {forn} | {ped} | {qtd_c} | {qtd_e} | {qtd_f} | {prev} | {st} |\n"
+
+                elif not r3.get("success"):
+                    response += f"\n*Erro ao buscar compras vinculadas: {r3.get('error', '?')}*"
+                else:
+                    response += "\n*Nenhuma compra pendente encontrada para os itens sem estoque.*"
+
+        # Narrar se habilitado
+        if USE_LLM_NARRATOR and pool_narrate.available:
+            try:
+                narr_prompt = f"Resuma em 2-3 frases para o vendedor o status do pedido {nunota}. Dados:\n{response[:800]}"
+                narr = await _groq_request(pool_narrate, [{"role": "user", "content": narr_prompt}], temperature=0.3, max_tokens=200)
+                if narr and narr.get("content"):
+                    response = narr["content"].strip() + "\n\n---\n\n" + response
+            except Exception:
+                pass
+
+        # Salvar contexto
+        result_data = {"detail_data": itens, "description": f"rastreio pedido {nunota}", "params": params, "intent": "rastreio_pedido", "nunota": nunota}
+        if ctx:
+            ctx.update("rastreio_pedido", params, result_data, question)
+
+        elapsed = int((time.time() - t0) * 1000)
+        return {"response": response, "tipo": "consulta_banco", "query_executed": f"Rastreio pedido {nunota}",
+                "query_results": len(itens), "time_ms": elapsed}
 
     # ---- BUSCA POR CODIGO FABRICANTE ----
     async def _handle_busca_fabricante(self, question, user_context, t0, params=None, ctx=None):
@@ -3934,7 +4501,9 @@ class SmartAgent:
 
         text = params.get("texto_busca") or params.get("produto_nome")
         codigo = params.get("codigo_fabricante")
-        marca = params.get("marca")
+        # Se LLM forneceu texto_busca, ignorar marca do regex (pode ser poluida)
+        # Ex: "filtro de ar" → regex extrai marca="AR" erroneamente
+        marca = params.get("marca") if not params.get("texto_busca") else None
         aplicacao = params.get("aplicacao")
 
         # Se nao extraiu texto dos params, extrair da pergunta original
@@ -3942,15 +4511,18 @@ class SmartAgent:
             import re as _re
             clean = _re.sub(
                 r'\b(busca|buscar|procura|procurar|encontra|encontrar|pesquisa|pesquisar|'
-                r'tem|existe|acha|achar|me|mostra|mostrar|quero|ver|o|a|os|as|um|uma|'
-                r'do|da|dos|das|de|pra|para|no|na|nos|nas|pelo|pela|que|com|e|ou)\b',
+                r'tem|temos|existe|acha|achar|me|mostra|mostrar|quero|ver|o|a|os|as|um|uma|'
+                r'do|da|dos|das|de|pra|para|no|na|nos|nas|pelo|pela|que|com|e|ou|'
+                r'preciso|traga|traz|lista|listar|todos|todas|todo|toda|'
+                r'produto|produtos|peca|pecas|cadastrado|cadastrada|cadastrados|cadastradas|'
+                r'sistema|qual|quais|codigo|contem|contendo|conter|descricao|nome)\b',
                 '', question.lower()
             ).strip()
             clean = _re.sub(r'\s+', ' ', clean).strip()
             if clean:
                 text = clean
-            # Se marca foi extraida mas text nao, usar marca como text tambem
-            if not text and marca:
+            # Se marca foi extraida mas text nao, usar marca como text (se >= 3 chars)
+            if not text and marca and len(marca) >= 3:
                 text = marca
             if not text and aplicacao:
                 text = aplicacao

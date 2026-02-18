@@ -62,15 +62,15 @@
       }
     },
     "knowledge/glossario/sinonimos.md": {
-      "hash": "sha256:526085d94e79e132",
-      "size_lines": 312,
+      "hash": "sha256:d5cb9aff06c148fe",
+      "size_lines": 368,
       "doc_type": "glossario",
-      "processed_at": "2026-02-13T13:05:41",
+      "processed_at": "2026-02-18T15:31:00",
       "generated": {
-        "keywords": 60,
-        "filter_rules": 22,
+        "keywords": 40,
+        "filter_rules": 33,
         "groq_examples": 0,
-        "synonyms": 0
+        "synonyms": 12
       }
     },
     "knowledge/processos/compras/fluxo_compra.md": {
@@ -218,15 +218,15 @@
       }
     },
     "knowledge/sankhya/exemplos_sql.md": {
-      "hash": "sha256:7ceb5679aa9bbc80",
-      "size_lines": 873,
+      "hash": "sha256:d2448630d4555ff5",
+      "size_lines": 1186,
       "doc_type": "referencia",
-      "processed_at": "2026-02-13T13:10:26",
+      "processed_at": "2026-02-18T15:32:01",
       "generated": {
-        "keywords": 9,
+        "keywords": 15,
         "filter_rules": 0,
         "groq_examples": 0,
-        "synonyms": 10
+        "synonyms": 7
       }
     },
     "knowledge/sankhya/relacionamentos.md": {
@@ -456,14 +456,63 @@
         "groq_examples": 3,
         "synonyms": 5
       }
+    },
+    "knowledge/processos/financeiro/resumo_financeiro.md": {
+      "hash": "sha256:5885b78eadddc87f",
+      "size_lines": 68,
+      "doc_type": "processo",
+      "processed_at": "2026-02-18T15:31:00",
+      "generated": {
+        "keywords": 5,
+        "filter_rules": 3,
+        "groq_examples": 4,
+        "synonyms": 4
+      }
+    },
+    "knowledge/processos/vendas/conferencia_vendedor.md": {
+      "hash": "sha256:78a8b5819680e91b",
+      "size_lines": 114,
+      "doc_type": "processo",
+      "processed_at": "2026-02-18T15:31:13",
+      "generated": {
+        "keywords": 5,
+        "filter_rules": 3,
+        "groq_examples": 4,
+        "synonyms": 4
+      }
+    },
+    "knowledge/processos/vendas/rastreio_pedido.md": {
+      "hash": "sha256:c42277dfd9d1fe90",
+      "size_lines": 140,
+      "doc_type": "processo",
+      "processed_at": "2026-02-18T15:31:33",
+      "generated": {
+        "keywords": 5,
+        "filter_rules": 5,
+        "groq_examples": 4,
+        "synonyms": 5
+      }
+    },
+    "knowledge/regras/rbac_vendas.md": {
+      "hash": "sha256:80dd4a61bbbc4f5d",
+      "size_lines": 69,
+      "doc_type": "regra",
+      "processed_at": "2026-02-18T15:31:44",
+      "generated": {
+        "keywords": 5,
+        "filter_rules": 3,
+        "groq_examples": 3,
+        "synonyms": 5
+      }
     }
   },
   "stats": {
-    "total_files": 38,
-    "total_keywords": 327,
-    "total_filter_rules": 240,
-    "total_groq_examples": 85,
-    "total_synonyms": 154
+    "total_files": 42,
+    "total_keywords": 333,
+    "total_filter_rules": 265,
+    "total_groq_examples": 100,
+    "total_synonyms": 181
   },
-  "last_full_compile": "2026-02-13T13:15:01"
+  "last_full_compile": "2026-02-13T13:15:01",
+  "last_incremental": "2026-02-18T15:32:01"
 }

@@ -871,3 +871,316 @@ SELECT * FROM (
 - Usuario quer ranking dos piores ou melhores fornecedores
 - Usuario pergunta "qual fornecedor atrasa mais"
 - Para analise de fornecedor especifico, adicionar filtro de nome
+
+---
+
+## 26. Vendas por marca (nivel ITEM)
+
+**Pergunta:** Vendas por marca este mes / Quanto vendi de cada marca?
+
+**REGRA:** Quando filtra por marca, usar ITE.VLRTOT (valor do item), NUNCA VLRNOTA (valor da nota inteira).
+
+```sql
+SELECT M.DESCRICAO AS MARCA,
+       COUNT(DISTINCT C.NUNOTA) AS QTD_NOTAS,
+       SUM(I.QTDNEG) AS QTD_ITENS,
+       SUM(I.VLRTOT) AS FATURAMENTO
+FROM TGFCAB C
+JOIN TGFITE I ON C.NUNOTA = I.NUNOTA
+JOIN TGFPRO PR ON I.CODPROD = PR.CODPROD
+LEFT JOIN TGFMAR M ON PR.CODMARCA = M.CODIGO
+WHERE C.TIPMOV = 'V'
+  AND C.CODTIPOPER IN (1100, 1101)
+  AND C.STATUSNOTA <> 'C'
+  AND C.DTNEG >= TRUNC(SYSDATE, 'MM')
+GROUP BY M.DESCRICAO
+ORDER BY FATURAMENTO DESC
+```
+
+**Explicacao:** Nivel ITEM porque envolve marca. ITE.VLRTOT = valor correto por marca (nao VLRNOTA). CODTIPOPER IN (1100, 1101) = vendas efetivas.
+
+---
+
+## 27. Vendas por cliente
+
+**Pergunta:** Quem sao meus maiores clientes? / Vendas por cliente / Quanto o cliente X comprou?
+
+```sql
+SELECT * FROM (
+  SELECT P.CODPARC, P.NOMEPARC AS CLIENTE,
+         COUNT(*) AS QTD_NOTAS,
+         SUM(C.VLRNOTA) AS FATURAMENTO
+  FROM TGFCAB C
+  JOIN TGFPAR P ON C.CODPARC = P.CODPARC
+  WHERE C.TIPMOV = 'V'
+    AND C.CODTIPOPER IN (1100, 1101)
+    AND C.STATUSNOTA <> 'C'
+    AND C.DTNEG >= TRUNC(SYSDATE, 'MM')
+  GROUP BY P.CODPARC, P.NOMEPARC
+  ORDER BY FATURAMENTO DESC
+) WHERE ROWNUM <= 20
+```
+
+**Explicacao:** Nivel CABECALHO (sem marca). VLRNOTA confiavel. Filtro opcional: AND C.CODVEND = :codvend (RBAC vendedor).
+
+---
+
+## 28. Margem do vendedor
+
+**Pergunta:** Qual minha margem esse mes? / Margem media das vendas
+
+**RBAC:** Vendedor so ve a dele. Gerente ve da equipe. Admin ve tudo.
+
+```sql
+SELECT COUNT(*) AS QTD_VENDAS,
+       SUM(C.VLRNOTA) AS FATURAMENTO,
+       ROUND(AVG(C.AD_MARGEM), 2) AS MARGEM_MEDIA,
+       MIN(C.AD_MARGEM) AS MARGEM_MIN,
+       MAX(C.AD_MARGEM) AS MARGEM_MAX
+FROM TGFCAB C
+WHERE C.TIPMOV = 'V'
+  AND C.CODTIPOPER IN (1100, 1101)
+  AND C.STATUSNOTA <> 'C'
+  AND C.AD_MARGEM IS NOT NULL
+  AND C.DTNEG >= TRUNC(SYSDATE, 'MM')
+```
+
+**Explicacao:** AD_MARGEM = campo customizado MMarra na TGFCAB. Filtrar IS NOT NULL para evitar distorcao na media. Adicionar AND C.CODVEND = :codvend para RBAC.
+
+---
+
+## 29. Comissao do vendedor
+
+**Pergunta:** Quanto tenho de comissao? / Minha comissao do mes
+
+**RBAC:** Vendedor so ve a dele. Campos: AD_ALIQCOMINT (aliquota), AD_VLRCOMINT (valor), AD_VLRBASECOMINT (base).
+
+```sql
+SELECT COUNT(*) AS QTD_VENDAS,
+       SUM(C.VLRNOTA) AS FATURAMENTO,
+       ROUND(AVG(C.AD_ALIQCOMINT), 2) AS ALIQ_MEDIA,
+       SUM(C.AD_VLRCOMINT) AS TOTAL_COMISSAO,
+       SUM(C.AD_VLRBASECOMINT) AS BASE_COMISSAO
+FROM TGFCAB C
+WHERE C.TIPMOV = 'V'
+  AND C.CODTIPOPER IN (1100, 1101)
+  AND C.STATUSNOTA <> 'C'
+  AND C.DTNEG >= TRUNC(SYSDATE, 'MM')
+```
+
+**Explicacao:** AD_VLRCOMINT = valor da comissao do vendedor interno. AD_ALIQCOMINT = aliquota %. AD_VLRBASECOMINT = base de calculo. OBRIGATORIO filtrar por CODVEND (vendedor so ve a dele).
+
+---
+
+## 30. Devolucoes de venda
+
+**Pergunta:** Minhas devolucoes do mes / Quanto foi devolvido?
+
+```sql
+SELECT COUNT(*) AS QTD_DEVOLUCOES,
+       NVL(SUM(C.VLRNOTA),0) AS VLR_DEVOLVIDO
+FROM TGFCAB C
+WHERE C.TIPMOV = 'D'
+  AND C.CODTIPOPER = 1202
+  AND C.STATUSNOTA <> 'C'
+  AND C.DTNEG >= TRUNC(SYSDATE, 'MM')
+```
+
+**Explicacao:** Devolucao de venda = TIPMOV='D', TOP 1202. Estorna estoque (entra) e financeiro (cancela receber).
+
+---
+
+## 31. Venda liquida (bruto - devolucoes)
+
+**Pergunta:** Venda liquida do mes / Faturamento liquido
+
+```sql
+SELECT
+  (SELECT NVL(SUM(C.VLRNOTA),0) FROM TGFCAB C
+   WHERE C.TIPMOV='V' AND C.CODTIPOPER IN (1100,1101)
+   AND C.STATUSNOTA<>'C' AND C.DTNEG >= TRUNC(SYSDATE,'MM')) AS BRUTO,
+  (SELECT NVL(SUM(C.VLRNOTA),0) FROM TGFCAB C
+   WHERE C.TIPMOV='D' AND C.CODTIPOPER=1202
+   AND C.STATUSNOTA<>'C' AND C.DTNEG >= TRUNC(SYSDATE,'MM')) AS DEVOLUCAO,
+  (SELECT NVL(SUM(C.VLRNOTA),0) FROM TGFCAB C
+   WHERE C.TIPMOV='V' AND C.CODTIPOPER IN (1100,1101)
+   AND C.STATUSNOTA<>'C' AND C.DTNEG >= TRUNC(SYSDATE,'MM'))
+  -
+  (SELECT NVL(SUM(C.VLRNOTA),0) FROM TGFCAB C
+   WHERE C.TIPMOV='D' AND C.CODTIPOPER=1202
+   AND C.STATUSNOTA<>'C' AND C.DTNEG >= TRUNC(SYSDATE,'MM')) AS LIQUIDO
+FROM DUAL
+```
+
+**Explicacao:** Liquido = Bruto - Devolucoes. Cada subquery com seus proprios filtros (TIPMOV diferente). FROM DUAL para Oracle.
+
+---
+
+## 32. Comparativo vendas entre periodos
+
+**Pergunta:** Comparar com mes passado / Evolucao de vendas
+
+```sql
+SELECT
+  'Mes Atual' AS PERIODO,
+  COUNT(*) AS QTD, SUM(C.VLRNOTA) AS FAT
+FROM TGFCAB C
+WHERE C.TIPMOV='V' AND C.CODTIPOPER IN (1100,1101)
+  AND C.STATUSNOTA<>'C' AND C.DTNEG >= TRUNC(SYSDATE,'MM')
+UNION ALL
+SELECT
+  'Mes Anterior' AS PERIODO,
+  COUNT(*), SUM(C.VLRNOTA)
+FROM TGFCAB C
+WHERE C.TIPMOV='V' AND C.CODTIPOPER IN (1100,1101)
+  AND C.STATUSNOTA<>'C'
+  AND C.DTNEG >= ADD_MONTHS(TRUNC(SYSDATE,'MM'),-1)
+  AND C.DTNEG < TRUNC(SYSDATE,'MM')
+```
+
+**Explicacao:** UNION ALL combina 2 periodos. Adicionar filtro CODVEND para RBAC. Pode expandir para mais meses adicionando mais UNION ALL.
+
+---
+
+## 33. Resumo financeiro (contas a pagar e receber)
+
+**Pergunta:** Resumo financeiro / Contas a pagar e receber / Visao geral financeira
+
+```sql
+SELECT
+  SUM(CASE WHEN F.RECDESP = 1 AND F.DHBAIXA IS NULL THEN F.VLRDESDOB ELSE 0 END) AS A_RECEBER,
+  SUM(CASE WHEN F.RECDESP = -1 AND F.DHBAIXA IS NULL THEN F.VLRDESDOB ELSE 0 END) AS A_PAGAR,
+  SUM(CASE WHEN F.RECDESP = 1 AND F.DHBAIXA IS NULL
+           AND F.DTVENC < TRUNC(SYSDATE) THEN F.VLRDESDOB ELSE 0 END) AS VENCIDO_RECEBER,
+  SUM(CASE WHEN F.RECDESP = -1 AND F.DHBAIXA IS NULL
+           AND F.DTVENC < TRUNC(SYSDATE) THEN F.VLRDESDOB ELSE 0 END) AS VENCIDO_PAGAR
+FROM TGFFIN F
+```
+
+**Explicacao:** Uma unica query retorna 4 KPIs financeiros. RECDESP = 1 (receber), -1 (pagar). DHBAIXA IS NULL = em aberto. DTVENC < SYSDATE = vencido. Adicionar filtro CODEMP para empresa.
+
+---
+
+## 34. Status de pedido de venda (rastreio)
+
+**Pergunta:** Status do pedido 5000 / Como esta meu pedido? / Pedido ja foi faturado?
+
+```sql
+SELECT
+  C.NUNOTA,
+  C.NUMNOTA AS NUM_NOTA,
+  C.DTNEG,
+  P.NOMEPARC AS CLIENTE,
+  C.VLRNOTA,
+  C.STATUSNOTA,
+  CASE C.STATUSNOTA
+    WHEN 'L' THEN 'Liberada'
+    WHEN 'P' THEN 'Pendente'
+    WHEN 'A' THEN 'Em Atendimento'
+  END AS STATUS_DESC,
+  C.PENDENTE,
+  C.STATUSNFE,
+  CASE C.STATUSNFE
+    WHEN 'A' THEN 'NFe Autorizada'
+    WHEN 'I' THEN 'NFe Enviada'
+    WHEN 'R' THEN 'NFe Rejeitada'
+    WHEN 'M' THEN 'Sem NFe'
+    ELSE 'Nao enviada'
+  END AS STATUS_NFE_DESC,
+  C.STATUSCONFERENCIA,
+  C.LIBCONF,
+  C.SITUACAOWMS,
+  V.APELIDO AS VENDEDOR
+FROM TGFCAB C
+JOIN TGFPAR P ON C.CODPARC = P.CODPARC
+LEFT JOIN TGFVEN V ON C.CODVEND = V.CODVEND
+WHERE C.NUNOTA = :nunota
+```
+
+**Explicacao:** Retorna cabecalho completo do pedido. STATUSNOTA = estado da nota. STATUSNFE = situacao NFe. STATUSCONFERENCIA = estado da conferencia WMS. SITUACAOWMS = etapa operacional. Funciona pra qualquer TIPMOV (venda, pedido, compra).
+
+---
+
+## 35. Itens do pedido de venda com estoque
+
+**Pergunta:** Quais itens do pedido 5000? / Tem estoque pro pedido? / Pecas disponiveis do pedido
+
+```sql
+SELECT
+  ITE.SEQUENCIA,
+  PRO.CODPROD,
+  PRO.DESCRPROD AS PRODUTO,
+  MAR.DESCRICAO AS MARCA,
+  ITE.QTDNEG AS QTD_VENDIDA,
+  NVL(EST.ESTOQUE, 0) AS ESTOQUE_ATUAL,
+  NVL(EST.RESERVADO, 0) AS RESERVADO,
+  NVL(EST.ESTOQUE, 0) - NVL(EST.RESERVADO, 0) AS DISPONIVEL,
+  CASE
+    WHEN NVL(EST.ESTOQUE,0) - NVL(EST.RESERVADO,0) >= ITE.QTDNEG THEN 'DISPONIVEL'
+    WHEN NVL(EST.ESTOQUE,0) > 0 THEN 'PARCIAL'
+    ELSE 'SEM ESTOQUE'
+  END AS STATUS_ESTOQUE
+FROM TGFITE ITE
+JOIN TGFPRO PRO ON ITE.CODPROD = PRO.CODPROD
+LEFT JOIN TGFMAR MAR ON PRO.CODMARCA = MAR.CODIGO
+LEFT JOIN (
+  SELECT CODPROD, SUM(ESTOQUE) AS ESTOQUE, SUM(RESERVADO) AS RESERVADO
+  FROM TGFEST
+  WHERE CODLOCAL = 0 AND TIPO = 'P' AND CODPARC = 0
+  GROUP BY CODPROD
+) EST ON EST.CODPROD = ITE.CODPROD
+WHERE ITE.NUNOTA = :nunota
+ORDER BY ITE.SEQUENCIA
+```
+
+**Explicacao:** Para cada item do pedido, cruza com TGFEST para saber se tem estoque. CODLOCAL=0 e TIPO='P' e CODPARC=0 = estoque proprio padrao. STATUS_ESTOQUE classifica em DISPONIVEL, PARCIAL ou SEM ESTOQUE. Pode adicionar filtro CODEMP no TGFEST.
+
+---
+
+## 36. Rastreio compra vinculada a item do pedido
+
+**Pergunta:** A peca do pedido ja foi comprada? / Quando chega a peca? / Onde foi comprado?
+
+```sql
+SELECT
+  COMPRA.NUNOTA AS PEDIDO_COMPRA,
+  COMPRA.DTNEG AS DT_PEDIDO_COMPRA,
+  FORN.NOMEPARC AS FORNECEDOR,
+  COMPRA.PENDENTE AS COMPRA_PENDENTE,
+  NVL(TO_CHAR(COMPRA.DTPREVENT,'DD/MM/YYYY'), 'Sem previsao') AS PREVISAO_ENTREGA,
+  ITEM_COMPRA.QTDNEG AS QTD_COMPRADA,
+  NVL(VAR_AGG.TOTAL_ATENDIDO, 0) AS QTD_ENTREGUE,
+  ITEM_COMPRA.QTDNEG - NVL(VAR_AGG.TOTAL_ATENDIDO, 0) AS QTD_FALTANDO,
+  CASE
+    WHEN VAR_AGG.TOTAL_ATENDIDO >= ITEM_COMPRA.QTDNEG THEN 'ENTREGUE'
+    WHEN VAR_AGG.TOTAL_ATENDIDO > 0 THEN 'ENTREGA PARCIAL'
+    WHEN COMPRA.DTPREVENT < TRUNC(SYSDATE) THEN 'ATRASADO'
+    WHEN COMPRA.DTPREVENT IS NOT NULL THEN 'AGUARDANDO'
+    ELSE 'SEM PREVISAO'
+  END AS STATUS_COMPRA,
+  ENTRADA.NUNOTA AS NOTA_ENTRADA,
+  ENTRADA.STATUSCONFERENCIA,
+  ENTRADA.SITUACAOWMS
+FROM TGFCAB COMPRA
+JOIN TGFITE ITEM_COMPRA ON COMPRA.NUNOTA = ITEM_COMPRA.NUNOTA
+JOIN TGFPAR FORN ON COMPRA.CODPARC = FORN.CODPARC
+LEFT JOIN (
+  SELECT V.NUNOTAORIG, V.SEQUENCIAORIG,
+         SUM(V.QTDATENDIDA) AS TOTAL_ATENDIDO,
+         MAX(V.NUNOTA) AS ULTIMA_NOTA_ENTRADA
+  FROM TGFVAR V
+  JOIN TGFCAB CV ON CV.NUNOTA = V.NUNOTA
+  WHERE CV.STATUSNOTA <> 'C'
+  GROUP BY V.NUNOTAORIG, V.SEQUENCIAORIG
+) VAR_AGG ON VAR_AGG.NUNOTAORIG = COMPRA.NUNOTA
+         AND VAR_AGG.SEQUENCIAORIG = ITEM_COMPRA.SEQUENCIA
+LEFT JOIN TGFCAB ENTRADA ON ENTRADA.NUNOTA = VAR_AGG.ULTIMA_NOTA_ENTRADA
+WHERE ITEM_COMPRA.CODPROD = :codprod
+  AND COMPRA.TIPMOV = 'O'
+  AND COMPRA.CODTIPOPER IN (1301, 1313)
+  AND COMPRA.STATUSNOTA <> 'C'
+  AND COMPRA.PENDENTE = 'S'
+ORDER BY COMPRA.DTNEG DESC
+```
+
+**Explicacao:** Dado um CODPROD, busca pedidos de compra pendentes que contem esse produto. TGFVAR rastreia entregas parciais. STATUS_COMPRA classifica: ENTREGUE, ENTREGA PARCIAL, ATRASADO, AGUARDANDO ou SEM PREVISAO. NOTA_ENTRADA mostra se ja gerou nota de entrada e qual o status de conferencia (WMS).

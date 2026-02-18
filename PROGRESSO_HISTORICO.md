@@ -1,11 +1,44 @@
 # 📜 Historico de Sessoes - Data Hub
 
-**Arquivo:** Historico completo de sessoes anteriores (1-32).
+**Arquivo:** Historico completo de sessoes anteriores (1-34).
 **Para estado atual:** Ver `PROGRESSO_ATUAL.md`
 
 ---
 
 ## SESSOES ANTERIORES
+
+### 2026-02-18 (sessao 34) - Rastreio de Pedido de Venda + Base de Conhecimento
+
+**Contexto:** Usuario forneceu DOMINIO_VENDAS_COMPLETO.md (733 linhas). Sessao dividida em 2 partes.
+
+**Parte 1 - Base de Conhecimento:** Distribuido conteudo novo (~40% do documento):
+- Criados: `knowledge/processos/vendas/rastreio_pedido.md`, `conferencia_vendedor.md`, `knowledge/processos/financeiro/resumo_financeiro.md`, `knowledge/regras/rbac_vendas.md`
+- Atualizados: `exemplos_sql.md` (+11 queries #26-36), `sinonimos.md` (+5 secoes)
+
+**Parte 2 - Handler rastreio_pedido:** Novo intent completo (~200 linhas):
+- LLM_CLASSIFIER_PROMPT atualizado (intent + campo nunota + 6 exemplos)
+- INTENT_SCORES: rastrear:10, rastreio:10, conferencia:8, wms:8... (threshold: 10)
+- CONF_STATUS_MAP / WMS_STATUS_MAP para traducao de codigos
+- Handler 3 cenarios: sem NUNOTA (lista pendentes), com NUNOTA etapa 1 (status), etapa 2 (itens+estoque), etapa 3 (compras vinculadas)
+- Routing em _dispatch() + extracao de nunota no Layer 2
+
+---
+
+### 2026-02-18 (sessao 33) - Context-Aware LLM Classifier
+
+**Problema:** Classificador Groq recebia follow-ups sem contexto da conversa anterior.
+**Exemplo:** "me passa os 41 atrasados" → Groq interpretava como DIAS_ABERTO > 41 (numero literal) em vez de STATUS_ENTREGA = ATRASADO.
+
+**Implementado:**
+1. `_build_context_hint(ctx)` - Monta resumo compacto (~80-120 tokens) do contexto
+2. Assinaturas `groq_classify`, `ollama_classify`, `llm_classify` recebem `context_hint`
+3. Context hint appendado ao final do prompt dinamicamente
+4. Propagacao no `_ask_core` para Layer 1+ e Layer 2
+5. Secao "CONTEXTO DE CONVERSA" no LLM_CLASSIFIER_PROMPT + 4 exemplos com contexto
+
+**Impacto:** ~12% tokens extras por chamada, melhora significativa em follow-ups.
+
+---
 
 ### 2026-02-13 (sessao 32) - Groq 3 Pools + Colunas Extras + Toggle + Training + Limpeza
 
@@ -365,5 +398,5 @@ WHERE ITE.PENDENTE = 'S'  -- CRITICO!
 
 ---
 
-*Este arquivo contem o historico de sessoes 1-32.*
+*Este arquivo contem o historico de sessoes 1-33.*
 *Para estado atual, ver `PROGRESSO_ATUAL.md`.*

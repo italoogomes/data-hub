@@ -1,19 +1,45 @@
 {
     "_meta": {
-        "descricao": "Apelidos de produto usados pelos usuarios da MMarra. Mapeia termos informais para nomes reais de produto ou CODPROD.",
-        "formato": "chave = apelido normalizado (minusculo, sem acento), valor = objeto com nome_real, codprod, confidence, hits, criado_em, origem",
+        "descricao": "Apelidos de produto usados pelos usuarios da MMarra.",
+        "formato": "chave = apelido normalizado, valor = objeto com nome_real, codprod, confidence, hits, criado_em, origem",
         "versao": "1.0",
-        "atualizado_em": "2026-02-12"
+        "atualizado_em": "2026-02-18"
     },
     "aliases": {
         "boneca": {
             "nome_real": "PINO DO CABECALHO",
             "codprod": null,
-            "confidence": 0.90,
+            "confidence": 0.9,
             "hits": 0,
             "criado_em": "2026-02-12",
             "origem": "manual"
         }
     },
-    "suggestions": []
+    "suggestions": [
+        {
+            "term": "ABRACADEIRA ACCUSEAL 127MM INOX",
+            "term_norm": "abracadeira accuseal 127mm inox",
+            "count": 3,
+            "first_seen": "2026-02-18 15:41",
+            "last_seen": "2026-02-18 15:41",
+            "contexts": [
+                "[FEEDBACK NEGATIVO]"
+            ],
+            "user": "ITALO",
+            "status": "pending",
+            "feedback_negative": 1
+        },
+        {
+            "term": "DE FILTRO DE AR",
+            "term_norm": "de filtro de ar",
+            "count": 1,
+            "first_seen": "2026-02-18 16:37",
+            "last_seen": "2026-02-18 16:37",
+            "contexts": [
+                "esse item S2581 tem pedido de compra?"
+            ],
+            "user": "italo",
+            "status": "pending"
+        }
+    ]
 }

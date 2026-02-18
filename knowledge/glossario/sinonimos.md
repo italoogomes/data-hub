@@ -310,3 +310,59 @@ A palavra "pendencia" tem 3 significados diferentes. A LLM DEVE identificar qual
 | data de entrega, previsao, quando chega | PREVISAO_ENTREGA | DT_PEDIDO |
 | data do pedido, quando comprou | DT_PEDIDO | PREVISAO_ENTREGA |
 | prazo, prazo de entrega | PREVISAO_ENTREGA | DT_PEDIDO |
+
+---
+
+## Rastreio de Pedido de Venda
+
+| Termo do usuario | Intent | Dados |
+|------------------|--------|-------|
+| status do pedido, como esta o pedido, meu pedido | rastreio_pedido | TGFCAB por NUNOTA |
+| pedido pendente, meus pedidos pendentes | rastreio_pedido | PENDENTE='S', TIPMOV='P' |
+| ja foi comprada, a peca foi comprada | rastreio_pedido | TGFVAR + compra vinculada |
+| ja chegou, entregou | rastreio_pedido | TGFVAR entregas |
+| conferencia, ta na conferencia, conferindo | rastreio_pedido | STATUSCONFERENCIA / SITUACAOWMS |
+| quando chega, previsao de chegada | rastreio_pedido | DTPREVENT do pedido compra |
+| separacao, separando, ta separado | rastreio_pedido | SITUACAOWMS (0-2) |
+| faturado, ja faturou, nota fiscal | rastreio_pedido | STATUSNFE |
+
+---
+
+## Conferencia WMS (STATUSCONFERENCIA)
+
+| Termo do usuario | Status | Filtro |
+|------------------|--------|--------|
+| aguardando conferencia, na fila | AC | STATUSCONFERENCIA = 'AC' |
+| conferenciando, sendo conferido | A | STATUSCONFERENCIA = 'A' |
+| conferencia ok, conferido | F ou RF | STATUSCONFERENCIA IN ('F','RF') |
+| divergencia, conferencia com problema | D ou RD | STATUSCONFERENCIA IN ('D','RD') |
+| recontagem | R ou RA | STATUSCONFERENCIA IN ('R','RA') |
+| cortado, corte | C | STATUSCONFERENCIA = 'C' |
+
+---
+
+## Financeiro
+
+| Termo do usuario | Significado | Filtro SQL |
+|------------------|-------------|------------|
+| financeiro, resumo financeiro | Visao geral pagar/receber | TGFFIN com CASE RECDESP |
+| contas a pagar, divida | Despesas pendentes | RECDESP = -1 AND DHBAIXA IS NULL |
+| contas a receber | Receitas pendentes | RECDESP = 1 AND DHBAIXA IS NULL |
+| vencido, atrasado (financeiro) | Titulo com data passada | DTVENC < TRUNC(SYSDATE) AND DHBAIXA IS NULL |
+| pago, baixado, quitado | Titulo ja liquidado | DHBAIXA IS NOT NULL |
+| em aberto, nao pago | Titulo pendente | DHBAIXA IS NULL |
+| fluxo de caixa | Projecao por data | GROUP BY DTVENC, SUM VLRDESDOB |
+
+---
+
+## Vendas — Termos Novos
+
+| Termo do usuario | Significado | Dados |
+|------------------|-------------|-------|
+| margem, lucratividade | Margem da venda | AD_MARGEM da TGFCAB |
+| comissao, comissoes | Comissao do vendedor | AD_VLRCOMINT, AD_ALIQCOMINT |
+| devolucao, devolvido, devolveu | Devolucao de venda | TIPMOV='D', TOP 1202 |
+| venda liquida, liquido, faturamento liquido | Vendas - devolucoes | TIPMOV V - TIPMOV D |
+| comparar, comparativo, evolucao | 2 periodos lado a lado | UNION ALL com filtros de data |
+| ticket medio, tiquete medio | Valor medio por nota | AVG(VLRNOTA) |
+| ranking, top vendedores, melhores | Classificacao por valor | ORDER BY SUM(VLRNOTA) DESC |

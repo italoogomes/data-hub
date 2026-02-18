@@ -1,33 +1,38 @@
 # PROGRESSO_ATUAL.md
 
-> Ultima atualizacao: 2026-02-18 (sessao 33)
+> Ultima atualizacao: 2026-02-18 (sessao 35f)
 > Historico de sessoes: Ver `PROGRESSO_HISTORICO.md`
 
 ---
 
 ## STATUS ATUAL
 
-**Smart Agent v3 com Groq 3 Pools + Context-Aware Classifier + Extra Columns + Toggle Frontend + Training Scheduler**
+**Smart Agent v3 com Groq 3 Pools + Context-Aware Classifier + Rastreio Pedido + Vendas Expandido + Extra Columns + Toggle Frontend + Training Scheduler**
 
 - **Web:** http://localhost:8000 (`python start.py`)
 - **Login:** Autenticacao via Sankhya MobileLoginSP.login
-- **Smart Agent:** `src/llm/smart_agent.py` (~3900+ linhas)
+- **Smart Agent:** `src/llm/smart_agent.py` (~4700 linhas)
 - **Groq 3 Pools:** classify (3 keys), narrate (3 keys), train (1 key) com round-robin e cooldown
-- **LLM Classifier:** Groq API via pool_classify (~0.5s) + Ollama (fallback, ~10s)
+- **LLM Classifier:** Groq 70b (Layer 2, forte) → Groq 8b (Layer 1+, filtros) → Ollama (fallback)
 - **Context-Aware:** `_build_context_hint()` injeta contexto da conversa no classificador LLM
+- **Rastreio Pedido:** `_handle_rastreio_pedido()` - 3 etapas (status + itens + compra vinculada)
+- **Vendas Expandido:** `_handle_vendas()` com margem, comissao, vendas por marca, detail query (500 rows)
 - **Narrator:** Groq API via pool_narrate (migrado de Ollama)
 - **Extra Columns:** Groq detecta colunas extras no prompt (NUM_FABRICANTE, REFERENCIA, etc.) e injeta no SQL
 - **Frontend Toggle:** Chips de colunas na mensagem, re-renderiza tabela client-side
 - **Training Scheduler:** Roda de madrugada (3h), compila knowledge + auto-aprova aliases
 - **SQL Sanitizado:** `_safe_sql()` em todos os pontos de interpolacao
-- **Scoring:** Keywords manuais + compiladas (Knowledge Compiler), resolve 90%+ em 0ms
+- **Scoring:** Keywords manuais + compiladas (Knowledge Compiler, cap=3), resolve 90%+ em 0ms
 - **Filtros:** FILTER_RULES manuais + compiladas + Groq interpretacao semantica
-- **Contexto:** Conversa por usuario com heranca de parametros + extra_columns + context_hint para LLM
+- **Contexto:** Conversa por usuario com heranca de parametros (so em follow-ups) + limpeza ao mudar intent
 - **Produto:** Busca por codigo fabricante + similares + visao 360 + aplicacao/veiculo
+- **Busca Elastic:** Fix: ignora marca de regex quando LLM fornece texto_busca
 - **Apelidos:** AliasResolver com auto-learning (feedback + sequencia)
 
+**Intents ativos:** `pendencia_compras`, `estoque`, `vendas`, `rastreio_pedido`, `busca_produto`, `busca_cliente`, `busca_fornecedor`, `conhecimento`, `saudacao`, `ajuda`
+
 **Arquivos principais:**
-- `src/llm/smart_agent.py` - Smart Agent v3 (GroqKeyPool + 3 pools + context_hint + extra_columns + _safe_sql + daily_training)
+- `src/llm/smart_agent.py` - Smart Agent v3 (~4700 linhas)
 - `src/llm/knowledge_compiler.py` - Knowledge Compiler (auto-gera inteligencia)
 - `src/llm/train.py` - CLI para treinamento manual
 - `src/llm/alias_resolver.py` - Sistema de apelidos de produto
@@ -37,81 +42,141 @@
 - `src/api/app.py` - API FastAPI (auth + pools admin + train endpoint + table_data)
 - `src/api/static/index.html` - Frontend (login + chat + column toggles)
 - `tests/test_smart_agent.py` - Testes pytest basicos
+- `PROMPT_MASTER.md` - Documentacao completa da arquitetura v5.0
 - `.env` - Config (Sankhya, Groq pools, Ollama, Training)
 
 ---
 
-## SESSAO 33 - Context-Aware LLM Classifier (2026-02-18)
+## SESSAO 35f - Fix Definitivo: Heranca de Contexto + Compiled Scores (2026-02-18)
 
-### Problema
+### Contexto
 
-O classificador Groq recebia perguntas de follow-up **sem contexto da conversa anterior**, causando interpretacoes erradas:
+Apos 4 tentativas de fix (35b, 35c, 35d, 35e), o bot continuava retornando "Nao encontrei informacoes de estoque para POLIFILTRO" para queries completamente diferentes. Investigacao profunda revelou **4 causas raiz** que se combinavam:
 
-**Exemplo:**
-1. Usuario: "pendencias da donaldson" → 116 itens (41 ATRASADO, 55 NO PRAZO, 20 PROXIMO)
-2. Usuario: "me passa os 41 atrasados"
-3. **ANTES:** Groq interpretava como `DIAS_ABERTO > 41` (numero literal)
-4. **AGORA:** Groq interpreta como `STATUS_ENTREGA = ATRASADO` (referencia ao contexto)
+### Diagnostico (4 causas raiz)
 
-### O que foi feito (5 passos):
+1. **Handlers faziam merge_params SEM verificar is_followup** — `_handle_estoque` (ln 3770), `_handle_pendencia_compras` (ln 3520), `_handle_vendas` (ln 3825) todos chamavam `ctx.merge_params()` quando params atual estava esparso, INDEPENDENTE de ser follow-up. Resultado: qualquer query sem marca/fornecedor herdava params antigos.
 
-#### Passo 1: `_build_context_hint(ctx)` (linha ~555)
-- Funcao que monta resumo compacto (~80-120 tokens) do contexto da conversa
-- Inclui: intent anterior, filtros ativos (marca/empresa/etc), contagem por STATUS_ENTREGA, descricao, pergunta anterior
-- Retorna string vazia se nao ha contexto relevante (turn_count == 0)
+2. **ctx.update NUNCA limpava params ao mudar de intent** — Se o usuario perguntava "busca_produto" (que salvava marca=POLIFILTRO dos resultados) e depois "estoque" (sem marca), o ctx.params ACUMULAVA a marca antiga. O intent mudava, mas os params persistiam.
 
-#### Passo 2: Assinaturas atualizadas
-- `groq_classify(question, context_hint="")` (linha ~596)
-- `ollama_classify(question, context_hint="")` (linha ~644)
-- `llm_classify(question, context_hint="")` (linha ~710)
-- Todas as 3 funcoes appendam o context_hint ao final do prompt quando presente
+3. **compiled_knowledge.json poluia estoque** — O Knowledge Compiler atribuiu keywords como "compra"(6), "pedidos"(5), "marca"(5) ao intent "estoque" (porque os arquivos de glossario mencionam estoque no contexto). Isso fazia estoque pontuar 8+ para queries sobre compras.
 
-#### Passo 3: Injecao no prompt
+4. **"produtos" (plural) ausente de busca_produto** — INTENT_SCORES so tinha "produto"(3) singular. "Qual o codigo dos **produtos** que contem filtro de ar" pontuava busca_produto=7 (abaixo do threshold 8), caindo no LLM que podia misclassificar como estoque.
+
+### 7 Fixes implementados
+
+#### Fix 1: Remover merge_params dos handlers
 ```python
-if context_hint:
-    prompt += f"\n\n# CONTEXTO DA CONVERSA ANTERIOR (use para interpretar referencias):\n{context_hint}"
+# _handle_estoque, _handle_pendencia_compras, _handle_vendas:
+# REMOVIDO:
+if ctx and not (...):
+    params = ctx.merge_params(params)
+# O merge agora so acontece em _ask_core com guarda is_followup (ln 3083)
 ```
-- Adicionado em `groq_classify()` e `ollama_classify()`
-- Context hint fica **fora** do template, appendado dinamicamente
+**Impacto:** Handlers recebem SOMENTE os params extraidos da pergunta atual. Merge so acontece em _ask_core quando `is_followup=True` e `not has_entity`.
 
-#### Passo 4: Propagacao no `_ask_core`
+#### Fix 2: Limpar params em ctx.update ao mudar de intent
 ```python
-ctx = self._get_context(user_id)
-context_hint = _build_context_hint(ctx)
+def update(self, intent, params, result, question, view_mode="pedidos"):
+    if intent != self.intent:
+        self._extra_columns = []
+        self.params = {}  # NOVO: limpa params ao mudar de intent
+    self.intent = intent
+    for k, v in params.items():
+        if v:
+            self.params[k] = v
 ```
-- Layer 1+ (scoring resolveu mas query complexa): `groq_classify(question, context_hint)`
-- Layer 2 (scoring nao resolveu): `llm_classify(question, context_hint)`
+**Impacto:** Ao mudar de busca_produto para estoque (ou qualquer outro intent), os params antigos (marca, fornecedor) sao limpos. Dentro do mesmo intent, params continuam acumulando (ex: "vendas de hoje" → "vendas da Mann" herda periodo mas atualiza marca).
 
-#### Passo 5: Instrucoes + exemplos no LLM_CLASSIFIER_PROMPT
-- **Secao "CONTEXTO DE CONVERSA"** (linha ~429) com regras explicitas:
-  - Numeros que coincidem com contagens anteriores = filtro de STATUS, nao campo numerico
-  - "desses", "e os atrasados?", "os mais caros" = referencia aos dados anteriores
-- **4 exemplos com contexto** (linha ~532):
-  1. "me passa os 41 atrasados" (com contexto 41 ATRASADO) → STATUS_ENTREGA=ATRASADO
-  2. "e os atrasados?" (com contexto NAKATA+RIBEIR) → herda marca+empresa
-  3. "qual o pedido mais caro?" (com contexto MANN) → VLR_PENDENTE_DESC + top 1
-  4. "quais estao sem previsao?" (com contexto SABO) → PREVISAO_ENTREGA vazio
+#### Fix 3: Adicionar keywords faltantes a busca_produto
+```python
+"busca_produto": {
+    ...
+    "produtos": 3,      # NOVO (plural)
+    "contem": 4,         # NOVO ("que contem X na descricao")
+    "descricao": 3,      # NOVO ("filtro de ar na descricao")
+    "cadastradas": 4,    # NOVO (plural)
+    ...
+}
+```
+**Impacto:** "Qual o codigo dos produtos que contem filtro de ar na descricao" agora pontua: codigo(4)+produtos(3)+contem(4)+filtro(3)+descricao(3) = **17** >= 8. Resolve em Layer 1 sem LLM.
 
-### Cenarios corrigidos:
+#### Fix 4: Limitar peso de compiled scores (cap=3)
+```python
+# score_intent(): compiled keywords agora contribuem no maximo 3 pontos cada
+scores[intent_id] += min(keywords[token], 3)  # era: keywords[token]
+```
+**Impacto:** "compra"(6) compilado sob estoque agora contribui apenas 3. Estoque nao atinge threshold com keywords de compra. Manual continua dominante.
 
-| Follow-up | Antes | Agora |
-|-----------|-------|-------|
-| "me passa os 41 atrasados" | DIAS_ABERTO > 41 | STATUS_ENTREGA = ATRASADO |
-| "e os atrasados?" | Perdia marca/empresa | Herda filtros do contexto |
-| "qual o mais caro?" | Sem referencia | VLR_PENDENTE_DESC dos dados anteriores |
-| "quais sem previsao?" | Sem referencia | PREVISAO_ENTREGA vazio dos anteriores |
+#### Fix 5: Debug logs detalhados
+```python
+# Em _ask_core, apos score:
+print(f"[SMART] ---- Nova pergunta: '{question[:80]}' ----")
+print(f"[SMART] Tokens: {tokens}")
+print(f"[SMART] Scores(>=3): {_sig_scores} | best={best_intent}({best_score})")
+print(f"[SMART] Contexto anterior: intent={ctx.intent} | params={ctx.params}")
+print(f"[SMART] Entities extraidas: {_entity_params} | followup={is_followup}")
+```
+**Impacto:** Console mostra o caminho exato de cada query para debugging.
 
-### Impacto:
-- ~80-120 tokens extras por chamada (~12% do prompt)
-- Sem impacto na primeira pergunta (context_hint vazio)
-- Melhora significativa em follow-ups que referenciam dados anteriores
+#### Fix 6: Suporte a codigo_fabricante em sql_pendencia_compras
+```python
+# Em _build_where_extra:
+if params.get("codigo_fabricante") and not params.get("codprod"):
+    w += f" AND UPPER(NVL(PRO.AD_NUMFABRICANTE,'')) LIKE UPPER('%{_safe_sql(params['codigo_fabricante'])}%')"
+```
+**Impacto:** "S2581 tem pedido de compra?" agora filtra por AD_NUMFABRICANTE no SQL, em vez de retornar TODAS as pendencias.
+
+#### Fix 7: Exemplos LLM + regex de limpeza
+- **LLM prompt:** +2 exemplos para queries que falhavam
+- **Regex limpeza:** Adicionado "contem", "contendo", "conter", "descricao", "nome" para limpeza em busca_produto
+
+### Resultado esperado
+
+**Query 1:** "Qual o codigo dos produtos que contem filtro de ar na descricao?"
+- Score: busca_produto=17 (Layer 1) → _dispatch → _handle_busca_produto
+- Regex limpa → "filtro ar" → Elastic search → resultados
+
+**Query 2:** "esse item S2581 tem pedido de compra?"
+- Score: pendencia_compras=12 (Layer 1) → _dispatch → _handle_pendencia_compras
+- params: {codigo_fabricante: "S2581"} → SQL filtra por AD_NUMFABRICANTE → resultados
+
+**Context isolation:** Mesmo que query 1 rode antes de query 2:
+- Query 1 salva ctx.intent="busca_produto", ctx.params={...}
+- Query 2 muda intent para "pendencia_compras" → ctx.params e LIMPO → sem heranca
 
 ### Pendente:
-- [ ] Testar no servidor real com os 6 cenarios especificados
-- [ ] Implementar `_handle_financeiro()` (intent detectado pelo compiler)
+- [ ] Testar no servidor real (reiniciar com `python start.py`)
+- [ ] Implementar `_handle_financeiro()` (queries ja documentadas)
+- [ ] Implementar devolucoes e venda liquida no handler vendas
 - [ ] Dashboard HTML
 - [ ] Tela admin de apelidos no frontend
 
 ---
 
-> Sessoes anteriores (1-32): Ver `PROGRESSO_HISTORICO.md`
+## SESSAO 35 a 35e - Resumo (2026-02-18)
+
+### Sessao 35: Fix Bug Busca Elastic + Handler Vendas Expandido
+- Fix: ignorar marca quando texto_busca existe
+- Vendas: reescrita completa com margem, comissao, detail query, por marca
+
+### Sessao 35b: Fix Classificacao Busca por Nome de Produto
+- Threshold busca_produto: 10 → 8
+- +20 keywords, +6 exemplos LLM, +18 noise words
+- Layer 1.5 guard para busca_score
+
+### Sessao 35c: Upgrade Classificador Groq 70b
+- GROQ_MODEL_CLASSIFY = llama-3.3-70b-versatile
+- Cadeia: 70b → 8b → Ollama
+- Layer 1+ usa 8b (filtros), Layer 2 usa 70b (classificacao)
+
+### Sessao 35d: Fix Context Merge (has_entity + merge_params)
+- has_entity ampliado com codprod/codigo_fabricante/produto_nome
+- merge_params param_keys expandido
+
+### Sessao 35e: Fix Layer 0.5 (scoring guard)
+- detect_product_query nao intercepta quando scoring detectou intent forte
+
+---
+
+> Sessoes anteriores (1-34): Ver `PROGRESSO_HISTORICO.md`
