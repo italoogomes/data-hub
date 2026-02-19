@@ -768,7 +768,7 @@ class KnowledgeCompiler:
     def _deduplicate_against_manual(self, compiled: dict) -> dict:
         """Remove keywords/rules que ja existem no INTENT_SCORES/FILTER_RULES manual."""
         try:
-            from src.llm.smart_agent import INTENT_SCORES, FILTER_RULES
+            from src.llm.smart_agent_v3_backup import INTENT_SCORES, FILTER_RULES
         except ImportError:
             print("[COMPILER] AVISO: nao conseguiu importar smart_agent para dedup.")
             return compiled
@@ -797,7 +797,7 @@ class KnowledgeCompiler:
     def _detect_potential_intents(self, compiled: dict) -> list:
         """Detecta intents sugeridos que nao existem no codigo."""
         try:
-            from src.llm.smart_agent import INTENT_SCORES
+            from src.llm.smart_agent_v3_backup import INTENT_SCORES
             existing = set(INTENT_SCORES.keys())
         except ImportError:
             existing = {"pendencia_compras", "estoque", "vendas", "gerar_excel", "saudacao", "ajuda"}

@@ -48,7 +48,8 @@
       "Bash(cmd /c \"taskkill /PID 7068 /F\")",
       "Bash(ls \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\data\"\" 2>&1 || dir \"c:Usersitalo.gomesOneDrive - MMarra Distribuidora AutomotivaDocumentosdata-hubdata\"\")",
       "Bash(del \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\_test_cols.py\")",
-      "Bash(if not exist \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\tests\" mkdir \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\tests\")"
+      "Bash(if not exist \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\tests\" mkdir \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\tests\")",
+      "Bash(cd:*)"
     ]
   },
   "model": "claude-opus-4-6"

@@ -1,11 +1,48 @@
 # 📜 Historico de Sessoes - Data Hub
 
-**Arquivo:** Historico completo de sessoes anteriores (1-34).
+**Arquivo:** Historico completo de sessoes anteriores (1-36).
 **Para estado atual:** Ver `PROGRESSO_ATUAL.md`
 
 ---
 
 ## SESSOES ANTERIORES
+
+### 2026-02-19 (sessao 36) - Refatoracao V5 + Guardrails + Elastic Hybrid + Vendas Devolucoes
+
+**Contexto:** Sessao longa cobrindo continuacao de sessoes 35e-35f (contexto anterior compactado) + 4 novas implementacoes.
+
+**Parte 1 — Fix Multi-step retorna valores identicos:**
+- `_handle_comissao` e `_handle_financeiro` criavam dict `{"periodo": periodo}` perdendo `data_inicio`/`data_fim`
+- Fix: incluir data_inicio/data_fim no dict passado a `_build_periodo_filter`
+- `extract_kpis_from_result`: MARGEM_MEDIA/TICKET_MEDIO agora usam media ao inves de soma
+
+**Parte 2 — 3 Guardrails Cirurgicos:**
+1. **Rate Limiting:** `SimpleRateLimiter` em `src/api/app.py` (30 req/min/usuario, in-memory)
+2. **Whitelist SQL:** Ativada em `SafeQueryExecutor` com 11 tabelas + callback `on_security_event`
+3. **Security Event Logging:** `log_security_event()` em `QueryLogger` (rate_limit, sql_blocked, login_failed)
+
+**Parte 3 — Busca Hibrida Elasticsearch:**
+1. `is_product_code()` em `src/agent/product.py` — detecta codigos puros (P618689, W950)
+2. `search_products()` reescrito com 3 prioridades (exact boost 10, phrase boost 5, multi_match boost 1-4)
+3. Layer 0.5a interceptor em `ask_core_v5.py` — codigos vao direto pro Elastic
+
+**Parte 4 — Fix Narrador alucina em busca Elastic:**
+- `build_produto_summary()` em `src/agent/narrator.py` — contexto explicito "PRODUTOS DO CATALOGO"
+- Substitui summary generico que induzia LLM a interpretar como pedidos de compra
+
+**Parte 5 — Fix Vendedor nao filtra em vendas:**
+- `_build_vendas_where` usava chave `vendedor_nome` mas extraction retorna `vendedor`
+- Fix: aceita ambas (`params.get("vendedor") or params.get("vendedor_nome")`)
+
+**Parte 6 — Vendas com Devolucoes (TIPMOV V+D):**
+- 3 SQLs (KPIs, Top Vendedores, Detail) agora incluem TIPMOV IN ('V','D')
+- CASE WHEN separa VLR_VENDAS, VLR_DEVOLUCAO, FATURAMENTO (liquido)
+- Formatter mostra "Vendas brutas | Devolucoes | Liquido" quando dev > 0
+- Detail inclui coluna TIPMOV para identificar V/D
+
+**Testes:** 46/48 (mesmos 2 pre-existentes em v3_backup). 22 novos testes adicionados nesta sessao.
+
+---
 
 ### 2026-02-18 (sessao 34) - Rastreio de Pedido de Venda + Base de Conhecimento
 

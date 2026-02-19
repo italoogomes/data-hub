@@ -13,6 +13,7 @@ import sys
 import time
 import secrets
 import requests as http_requests
+from collections import defaultdict
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Optional
@@ -75,6 +76,38 @@ SANKHYA_CLIENT_SECRET = os.getenv("SANKHYA_CLIENT_SECRET", "")
 SANKHYA_X_TOKEN = os.getenv("SANKHYA_X_TOKEN", "")
 ADMIN_USERS = [u.strip().upper() for u in os.getenv("ADMIN_USERS", "").split(",") if u.strip()]
 _oauth_token = {"token": None, "expires_at": 0}
+
+
+# ============================================================
+# RATE LIMITER (in-memory, sem dependencias externas)
+# ============================================================
+
+class SimpleRateLimiter:
+    """Rate limiter simples por usuario. 30 requests/minuto por padrao."""
+
+    def __init__(self, max_requests: int = 30, window_seconds: int = 60):
+        self.max_requests = max_requests
+        self.window = window_seconds
+        self._requests: dict[str, list[float]] = defaultdict(list)
+
+    def is_allowed(self, user_id: str) -> bool:
+        now = time.time()
+        # Limpar requests fora da janela
+        self._requests[user_id] = [
+            t for t in self._requests[user_id] if now - t < self.window
+        ]
+        if len(self._requests[user_id]) >= self.max_requests:
+            return False
+        self._requests[user_id].append(now)
+        return True
+
+    def remaining(self, user_id: str) -> int:
+        now = time.time()
+        recent = [t for t in self._requests.get(user_id, []) if now - t < self.window]
+        return max(0, self.max_requests - len(recent))
+
+
+rate_limiter = SimpleRateLimiter(max_requests=30, window_seconds=60)
 
 
 def get_sankhya_oauth_token() -> str:
@@ -409,6 +442,10 @@ async def login(req: LoginRequest):
     if str(status) != "1":
         msg = data.get("statusMessage", data.get("message", ""))
         print(f"[AUTH] Login falhou para '{req.username}': status={status}, full={data}")
+        smart_agent.query_logger.log_security_event(
+            req.username, "login_failed",
+            f"status={status}, msg={msg[:100] if msg else 'N/A'}"
+        )
         detail = msg if msg else f"Sankhya retornou: {data}"
         raise HTTPException(status_code=401, detail=detail)
 
@@ -497,6 +534,7 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
     2. Se nao matchou, cai no LLM Agent (Ollama, pode demorar)
     """
     session = get_current_user(authorization)
+    user = session.get("user", "anonymous")
     start = time.time()
     question = req.message.strip()
 
@@ -506,6 +544,21 @@ async def chat(req: ChatRequest, authorization: Optional[str] = Header(None)):
             sources=[],
             mode=req.mode,
             tipo="erro",
+        )
+
+    # Rate limiting
+    if not rate_limiter.is_allowed(user):
+        print(f"[SECURITY] Rate limit exceeded: {user}")
+        smart_agent.query_logger.log_security_event(
+            user, "rate_limit",
+            f"Exceeded {rate_limiter.max_requests} req/{rate_limiter.window}s"
+        )
+        return ChatResponse(
+            response="Muitas consultas em sequencia. Aguarde alguns segundos e tente novamente.",
+            sources=[],
+            mode=req.mode,
+            tipo="rate_limit",
+            time_ms=int((time.time() - start) * 1000),
         )
 
     user_context = {

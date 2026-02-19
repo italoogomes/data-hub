@@ -78,15 +78,17 @@ class SafeQueryExecutor:
         "INTO DUMPFILE", "LOAD_FILE", "UTL_FILE", "DBMS_", "XP_", "SP_"
     ]
 
-    def __init__(self, whitelist: Optional[list] = None):
+    def __init__(self, whitelist: Optional[list] = None, on_security_event=None):
         """
         Inicializa o executor.
 
         Args:
             whitelist: Lista opcional de tabelas permitidas (ex: ["TGFPAR", "TGFCAB"])
                       Se None, permite qualquer tabela (somente SELECT)
+            on_security_event: Callback(user, event_type, details) para audit log
         """
         self.whitelist = [t.upper() for t in whitelist] if whitelist else None
+        self.on_security_event = on_security_event
         self.access_token = None
         self.token_expires = None
 
@@ -274,6 +276,8 @@ class SafeQueryExecutor:
         # 1. Validar query
         is_valid, error_msg = self.validate_query(query)
         if not is_valid:
+            if self.on_security_event:
+                self.on_security_event("sql_blocked", f"{error_msg} | SQL: {query[:200]}")
             raise QuerySecurityError(error_msg)
 
         # 2. Adicionar limite de linhas

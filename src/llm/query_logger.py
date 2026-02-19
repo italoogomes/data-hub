@@ -83,12 +83,36 @@ class QueryLogger:
         """Salva um registro no JSONL. Thread-safe, fire-and-forget."""
         try:
             self._rotate_if_needed()
-            line = json.dumps(entry, ensure_ascii=False, default=str)
-            with self._lock:
-                with open(self.log_file, "a", encoding="utf-8") as f:
-                    f.write(line + "\n")
+            self._write_line(entry)
         except Exception as e:
             print(f"[QLOG] Erro ao salvar: {e}")
+
+    def _write_line(self, entry: dict):
+        """Escreve uma linha no JSONL. Thread-safe."""
+        line = json.dumps(entry, ensure_ascii=False, default=str)
+        with self._lock:
+            with open(self.log_file, "a", encoding="utf-8") as f:
+                f.write(line + "\n")
+
+    def log_security_event(self, user_id: str, event_type: str, details: str = ""):
+        """
+        Registra evento de seguranca no mesmo JSONL.
+
+        event_type: "rate_limit", "sql_blocked", "login_failed"
+        """
+        entry = {
+            "id": str(uuid.uuid4()),
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "type": "security",
+            "user": (user_id or "").upper(),
+            "event": event_type,
+            "details": details[:500],
+        }
+        try:
+            self._write_line(entry)
+            print(f"[SECURITY] {event_type}: user={user_id} {details[:100]}")
+        except Exception as e:
+            print(f"[SECURITY] Erro ao registrar evento: {e}")
 
     def _rotate_if_needed(self):
         """Rotaciona arquivo se ultrapassar MAX_LOG_SIZE."""

@@ -25,7 +25,12 @@ class ElasticSearchEngine:
                                marca: str = None, aplicacao: str = None,
                                limit: int = 10) -> list:
         """
-        Busca produtos no Elasticsearch.
+        Busca híbrida de produtos no Elasticsearch.
+
+        Combina 3 estratégias:
+          Prioridade 1: Match EXATO em campos de código (boost 10)
+          Prioridade 2: Phrase match em descrição (boost 5)
+          Prioridade 3: Multi-match fuzzy com cross_fields (boost 1-3)
 
         Args:
             text: busca geral na descricao/complemento/aplicacao
@@ -37,31 +42,53 @@ class ElasticSearchEngine:
         Returns:
             Lista de dicts com produtos rankeados por relevancia
         """
-        must = []
+        should = []
         filter_clauses = [{"term": {"ativo": True}}]
 
-        # Busca por codigo (exact + fuzzy nos campos de codigo)
+        # ============================================================
+        # PRIORIDADE 1: Match exato em campos de código (boost 10)
+        # ============================================================
         if codigo:
             clean_code = re.sub(r'[\s\-/\.]', '', codigo).upper()
 
-            code_should = [
-                # Match exato (boost alto)
-                {"term": {"referencia.raw": {"value": codigo.upper(), "boost": 10}}},
-                {"term": {"num_fabricante.raw": {"value": codigo.upper(), "boost": 10}}},
-                {"term": {"num_original.raw": {"value": codigo.upper(), "boost": 10}}},
-                {"term": {"ref_fornecedor.raw": {"value": codigo.upper(), "boost": 10}}},
-                # Match limpo (sem espacos/tracos)
-                {"match": {"all_codes": {"query": clean_code, "boost": 8}}},
-                # Fuzzy (pega typos)
-                {"fuzzy": {"all_codes": {"value": clean_code, "fuzziness": "AUTO", "boost": 5}}},
-                # Match parcial
-                {"wildcard": {"all_codes": {"value": f"*{clean_code}*", "boost": 3}}},
-            ]
-            must.append({"bool": {"should": code_should, "minimum_should_match": 1}})
+            # Match exato nos campos .raw (keyword)
+            for field in ("referencia.raw", "num_fabricante.raw", "num_fabricante2.raw",
+                          "num_original.raw", "ref_fornecedor.raw"):
+                should.append({"term": {field: {"value": codigo.upper(), "boost": 10}}})
 
-        # Busca por texto (descricao, aplicacao, complemento)
+            # Match limpo no campo composto (code_analyzer tira espaços/traços)
+            should.append({"match": {"all_codes": {"query": clean_code, "boost": 8}}})
+
+            # Fuzzy (typos em código)
+            should.append({"fuzzy": {"all_codes": {"value": clean_code, "fuzziness": "AUTO", "boost": 5}}})
+
+            # Wildcard parcial (substring match)
+            should.append({"wildcard": {"all_codes": {"value": f"*{clean_code}*", "boost": 3}}})
+
+            # CODPROD exato (se for numérico)
+            if clean_code.isdigit():
+                should.append({"term": {"codprod": {"value": int(clean_code), "boost": 10}}})
+
+        # ============================================================
+        # PRIORIDADE 2: Phrase match em descrição (boost 5)
+        # ============================================================
         if text:
-            must.append({
+            for field in ("descricao", "full_text"):
+                should.append({
+                    "match_phrase": {
+                        field: {
+                            "query": text,
+                            "boost": 5,
+                            "slop": 2,  # até 2 palavras entre os termos
+                        }
+                    }
+                })
+
+        # ============================================================
+        # PRIORIDADE 3: Multi-match fuzzy (boost base)
+        # ============================================================
+        if text:
+            should.append({
                 "multi_match": {
                     "query": text,
                     "fields": [
@@ -73,10 +100,35 @@ class ElasticSearchEngine:
                     "type": "best_fields",
                     "fuzziness": "AUTO",
                     "prefix_length": 2,
+                    "boost": 1,
                 }
             })
 
-        # Filtro por marca (exact + fuzzy)
+            # Cross-fields para queries multi-palavra ("filtro oleo mann w950")
+            if ' ' in text.strip():
+                should.append({
+                    "multi_match": {
+                        "query": text,
+                        "fields": [
+                            "descricao",
+                            "marca",
+                            "aplicacao",
+                            "all_codes",
+                        ],
+                        "type": "cross_fields",
+                        "operator": "and",
+                        "boost": 3,
+                    }
+                })
+
+            # Também tentar código nos campos de código (ex: "W950" pode ser texto E código)
+            clean_text = re.sub(r'[\s\-/\.]', '', text).upper()
+            if len(clean_text) >= 3:
+                should.append({"match": {"all_codes": {"query": clean_text, "boost": 4}}})
+
+        # ============================================================
+        # FILTROS (não afetam score, só filtram)
+        # ============================================================
         if marca:
             filter_clauses.append({
                 "bool": {
@@ -87,26 +139,33 @@ class ElasticSearchEngine:
                 }
             })
 
-        # Filtro por aplicacao
         if aplicacao:
-            must.append({
+            should.append({
                 "match": {
                     "aplicacao": {
                         "query": aplicacao,
                         "fuzziness": "AUTO",
+                        "boost": 2,
                     }
                 }
             })
 
-        # Montar query
+        # ============================================================
+        # MONTAR QUERY
+        # ============================================================
+        if not should:
+            should = [{"match_all": {}}]
+
         query = {
             "size": limit,
             "query": {
                 "bool": {
-                    "must": must if must else [{"match_all": {}}],
+                    "should": should,
+                    "minimum_should_match": 1,
                     "filter": filter_clauses,
                 }
             },
+            "min_score": 1.0,
             "_source": ["codprod", "descricao", "marca", "aplicacao", "referencia",
                          "num_fabricante", "num_original", "ref_fornecedor",
                          "num_fabricante2", "complemento", "unidade"],
@@ -115,6 +174,7 @@ class ElasticSearchEngine:
                     "descricao": {},
                     "aplicacao": {},
                     "all_codes": {},
+                    "marca": {},
                 }
             }
         }

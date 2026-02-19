@@ -31,7 +31,7 @@ async def main():
     args = parser.parse_args()
 
     if args.pools:
-        from src.llm.smart_agent import pool_classify, pool_narrate, pool_train
+        from src.llm.smart_agent_v3_backup import pool_classify, pool_narrate, pool_train
         print("\n=== GROQ POOLS STATUS ===\n")
         for name, pool in [("classify", pool_classify), ("narrate", pool_narrate), ("train", pool_train)]:
             s = pool.stats()
@@ -43,7 +43,7 @@ async def main():
             print()
         return
 
-    from src.llm.smart_agent import daily_training
+    from src.llm.smart_agent_v3_backup import daily_training
     stats = await daily_training(force=args.full)
     print(f"\nResultado: {stats}")
 

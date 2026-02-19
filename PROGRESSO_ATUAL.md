@@ -1,182 +1,141 @@
 # PROGRESSO_ATUAL.md
 
-> Ultima atualizacao: 2026-02-18 (sessao 35f)
+> Ultima atualizacao: 2026-02-19 (sessao 36)
 > Historico de sessoes: Ver `PROGRESSO_HISTORICO.md`
 
 ---
 
 ## STATUS ATUAL
 
-**Smart Agent v3 com Groq 3 Pools + Context-Aware Classifier + Rastreio Pedido + Vendas Expandido + Extra Columns + Toggle Frontend + Training Scheduler**
+**Smart Agent V5 Tool Use + Guardrails + Elastic Hybrid Search + Vendas com Devolucoes**
 
 - **Web:** http://localhost:8000 (`python start.py`)
 - **Login:** Autenticacao via Sankhya MobileLoginSP.login
-- **Smart Agent:** `src/llm/smart_agent.py` (~4700 linhas)
-- **Groq 3 Pools:** classify (3 keys), narrate (3 keys), train (1 key) com round-robin e cooldown
-- **LLM Classifier:** Groq 70b (Layer 2, forte) → Groq 8b (Layer 1+, filtros) → Ollama (fallback)
-- **Context-Aware:** `_build_context_hint()` injeta contexto da conversa no classificador LLM
-- **Rastreio Pedido:** `_handle_rastreio_pedido()` - 3 etapas (status + itens + compra vinculada)
-- **Vendas Expandido:** `_handle_vendas()` com margem, comissao, vendas por marca, detail query (500 rows)
-- **Narrator:** Groq API via pool_narrate (migrado de Ollama)
-- **Extra Columns:** Groq detecta colunas extras no prompt (NUM_FABRICANTE, REFERENCIA, etc.) e injeta no SQL
-- **Frontend Toggle:** Chips de colunas na mensagem, re-renderiza tabela client-side
-- **Training Scheduler:** Roda de madrugada (3h), compila knowledge + auto-aprova aliases
-- **SQL Sanitizado:** `_safe_sql()` em todos os pontos de interpolacao
-- **Scoring:** Keywords manuais + compiladas (Knowledge Compiler, cap=3), resolve 90%+ em 0ms
-- **Filtros:** FILTER_RULES manuais + compiladas + Groq interpretacao semantica
-- **Contexto:** Conversa por usuario com heranca de parametros (so em follow-ups) + limpeza ao mudar intent
-- **Produto:** Busca por codigo fabricante + similares + visao 360 + aplicacao/veiculo
-- **Busca Elastic:** Fix: ignora marca de regex quando LLM fornece texto_busca
-- **Apelidos:** AliasResolver com auto-learning (feedback + sequencia)
+- **Arquitetura V5:** `route() → ToolCall → dispatch() → handler → result` (src/agent/ask_core_v5.py)
+- **3-Layer Routing:** Layer 0.5 (Produto) → Layer 0.5a (Codigo Produto) → Layer 1 (Scoring) → Layer 2 (Groq FC) → Layer 3 (Fallback)
+- **Groq 3 Pools:** classify (3 keys, 70b), narrate (3 keys, 8b), train (1 key) com round-robin e cooldown
+- **Elasticsearch 8.17:** 393k produtos, 57k parceiros indexados
+- **Guardrails:** Rate limiting (30/min), table whitelist (11 tabelas), security event logging
+- **Multi-step:** Comparacoes temporais/entidade (ex: "compare janeiro vs fevereiro")
+- **Narrator:** Groq com summaries especificos por dominio (pendencia, vendas, produto, estoque)
+- **SQL Sanitizado:** `safe_sql()` + `SafeQueryExecutor` com whitelist ativa + callback security events
+- **Testes:** 48 testes (46 passando, 2 pre-existentes em v3_backup)
 
-**Intents ativos:** `pendencia_compras`, `estoque`, `vendas`, `rastreio_pedido`, `busca_produto`, `busca_cliente`, `busca_fornecedor`, `conhecimento`, `saudacao`, `ajuda`
-
-**Arquivos principais:**
-- `src/llm/smart_agent.py` - Smart Agent v3 (~4700 linhas)
-- `src/llm/knowledge_compiler.py` - Knowledge Compiler (auto-gera inteligencia)
-- `src/llm/train.py` - CLI para treinamento manual
-- `src/llm/alias_resolver.py` - Sistema de apelidos de produto
-- `src/llm/knowledge_base.py` - Knowledge Base com TF-IDF
-- `src/llm/query_executor.py` - Executor seguro de SQL
-- `src/llm/query_logger.py` - Logger de queries
-- `src/api/app.py` - API FastAPI (auth + pools admin + train endpoint + table_data)
-- `src/api/static/index.html` - Frontend (login + chat + column toggles)
-- `tests/test_smart_agent.py` - Testes pytest basicos
-- `PROMPT_MASTER.md` - Documentacao completa da arquitetura v5.0
-- `.env` - Config (Sankhya, Groq pools, Ollama, Training)
+**Intents ativos:** `pendencia_compras`, `estoque`, `vendas`, `comissao`, `financeiro`, `inadimplencia`, `rastreio_pedido`, `busca_produto`, `busca_parceiro`, `produto_360`, `buscar_similares`, `conhecimento`, `saudacao`, `ajuda`
 
 ---
 
-## SESSAO 35f - Fix Definitivo: Heranca de Contexto + Compiled Scores (2026-02-18)
+## ARQUITETURA V5 - ARQUIVOS PRINCIPAIS
 
-### Contexto
+### Core (novo - refatoracao modular)
+- `src/agent/ask_core_v5.py` — Core dispatch V5 (~480 linhas) - route → dispatch → handler
+- `src/agent/tool_router.py` — Router: scoring → Groq FC → fallback
+- `src/agent/tools.py` — Definicoes de tools + ToolCall + INTENT_TO_TOOL
+- `src/agent/scoring.py` — Score por keywords + COLUMN_NORMALIZE + detect_view_mode
+- `src/agent/entities.py` — Entity extraction (marca, empresa, vendedor, etc)
+- `src/agent/context.py` — ConversationContext + follow-up detection
+- `src/agent/session.py` — SessionStore (memoria por usuario)
+- `src/agent/product.py` — detect_product_query + is_product_code + resolve_manufacturer_code
+- `src/agent/narrator.py` — llm_narrate + build_*_summary (pendencia, vendas, estoque, produto)
+- `src/agent/multistep.py` — detect_multistep + extract_kpis_from_result + StepResult
 
-Apos 4 tentativas de fix (35b, 35c, 35d, 35e), o bot continuava retornando "Nao encontrei informacoes de estoque para POLIFILTRO" para queries completamente diferentes. Investigacao profunda revelou **4 causas raiz** que se combinavam:
+### SQL
+- `src/sql/__init__.py` — _build_periodo_filter + _build_pendencia_where + _build_vendas_where
 
-### Diagnostico (4 causas raiz)
+### Formatters
+- `src/formatters/__init__.py` — format_pendencia_response + format_vendas_response + format_estoque_response
+- `src/formatters/comparison.py` — format_comparison (multi-step)
 
-1. **Handlers faziam merge_params SEM verificar is_followup** — `_handle_estoque` (ln 3770), `_handle_pendencia_compras` (ln 3520), `_handle_vendas` (ln 3825) todos chamavam `ctx.merge_params()` quando params atual estava esparso, INDEPENDENTE de ser follow-up. Resultado: qualquer query sem marca/fornecedor herdava params antigos.
+### Elasticsearch
+- `src/elastic/search.py` — ElasticSearchEngine (search_products, search_partners, health)
+- `src/elastic/mappings.py` — Schema dos indices (code_analyzer, brazilian analyzer)
+- `src/elastic/indexer.py` — Indexador de produtos e parceiros
 
-2. **ctx.update NUNCA limpava params ao mudar de intent** — Se o usuario perguntava "busca_produto" (que salvava marca=POLIFILTRO dos resultados) e depois "estoque" (sem marca), o ctx.params ACUMULAVA a marca antiga. O intent mudava, mas os params persistiam.
+### LLM
+- `src/llm/smart_agent.py` — Smart Agent (~2700 linhas) - handlers de cada dominio
+- `src/llm/groq_client.py` — Groq 3 pools + groq_request + groq_classify
+- `src/llm/classifier.py` — LLM classifier (70b → 8b → Ollama)
+- `src/llm/knowledge_base.py` — Knowledge Base com TF-IDF
+- `src/llm/knowledge_compiler.py` — Compila knowledge em scores/filtros
+- `src/llm/query_executor.py` — SafeQueryExecutor (whitelist + row limit + security callback)
+- `src/llm/query_logger.py` — QueryLogger (JSONL + security events)
+- `src/llm/alias_resolver.py` — AliasResolver (apelidos de produto)
+- `src/llm/train.py` — CLI para treinamento manual
 
-3. **compiled_knowledge.json poluia estoque** — O Knowledge Compiler atribuiu keywords como "compra"(6), "pedidos"(5), "marca"(5) ao intent "estoque" (porque os arquivos de glossario mencionam estoque no contexto). Isso fazia estoque pontuar 8+ para queries sobre compras.
+### API + Frontend
+- `src/api/app.py` — FastAPI (auth + rate limiter + pools admin + train)
+- `src/api/static/index.html` — Frontend (login + chat + column toggles)
 
-4. **"produtos" (plural) ausente de busca_produto** — INTENT_SCORES so tinha "produto"(3) singular. "Qual o codigo dos **produtos** que contem filtro de ar" pontuava busca_produto=7 (abaixo do threshold 8), caindo no LLM que podia misclassificar como estoque.
+### Testes
+- `tests/test_smart_agent.py` — 48 testes (entities, scoring, safe_sql, columns, pool, is_product_code, elastic_query, produto_summary, vendas_where, vendas_devolucoes)
 
-### 7 Fixes implementados
+---
 
-#### Fix 1: Remover merge_params dos handlers
-```python
-# _handle_estoque, _handle_pendencia_compras, _handle_vendas:
-# REMOVIDO:
-if ctx and not (...):
-    params = ctx.merge_params(params)
-# O merge agora so acontece em _ask_core com guarda is_followup (ln 3083)
-```
-**Impacto:** Handlers recebem SOMENTE os params extraidos da pergunta atual. Merge so acontece em _ask_core quando `is_followup=True` e `not has_entity`.
+## SESSAO 36 - V5 Completo + Guardrails + Elastic + Vendas (2026-02-19)
 
-#### Fix 2: Limpar params em ctx.update ao mudar de intent
-```python
-def update(self, intent, params, result, question, view_mode="pedidos"):
-    if intent != self.intent:
-        self._extra_columns = []
-        self.params = {}  # NOVO: limpa params ao mudar de intent
-    self.intent = intent
-    for k, v in params.items():
-        if v:
-            self.params[k] = v
-```
-**Impacto:** Ao mudar de busca_produto para estoque (ou qualquer outro intent), os params antigos (marca, fornecedor) sao limpos. Dentro do mesmo intent, params continuam acumulando (ex: "vendas de hoje" → "vendas da Mann" herda periodo mas atualiza marca).
+### O que foi feito (6 partes)
 
-#### Fix 3: Adicionar keywords faltantes a busca_produto
-```python
-"busca_produto": {
-    ...
-    "produtos": 3,      # NOVO (plural)
-    "contem": 4,         # NOVO ("que contem X na descricao")
-    "descricao": 3,      # NOVO ("filtro de ar na descricao")
-    "cadastradas": 4,    # NOVO (plural)
-    ...
-}
-```
-**Impacto:** "Qual o codigo dos produtos que contem filtro de ar na descricao" agora pontua: codigo(4)+produtos(3)+contem(4)+filtro(3)+descricao(3) = **17** >= 8. Resolve em Layer 1 sem LLM.
+#### Parte 1: Fix Multi-step valores identicos
+- `_handle_comissao` e `_handle_financeiro` perdiam `data_inicio`/`data_fim` ao criar dict pro periodo
+- `extract_kpis_from_result` somava MARGEM_MEDIA em vez de calcular media
+- **Arquivos:** `smart_agent.py:2448,2153`, `multistep.py:440`
 
-#### Fix 4: Limitar peso de compiled scores (cap=3)
-```python
-# score_intent(): compiled keywords agora contribuem no maximo 3 pontos cada
-scores[intent_id] += min(keywords[token], 3)  # era: keywords[token]
-```
-**Impacto:** "compra"(6) compilado sob estoque agora contribui apenas 3. Estoque nao atinge threshold com keywords de compra. Manual continua dominante.
+#### Parte 2: 3 Guardrails Cirurgicos
+1. **Rate Limiting:** `SimpleRateLimiter` (30 req/60s por usuario, in-memory sliding window)
+2. **Table Whitelist:** 11 tabelas permitidas no SafeQueryExecutor + callback on_security_event
+3. **Security Logging:** `log_security_event()` em QueryLogger (rate_limit, sql_blocked, login_failed)
+- **Arquivos:** `app.py:84-109,512-525`, `query_executor.py:81,276-279`, `query_logger.py:90-115`, `smart_agent.py:165`
 
-#### Fix 5: Debug logs detalhados
-```python
-# Em _ask_core, apos score:
-print(f"[SMART] ---- Nova pergunta: '{question[:80]}' ----")
-print(f"[SMART] Tokens: {tokens}")
-print(f"[SMART] Scores(>=3): {_sig_scores} | best={best_intent}({best_score})")
-print(f"[SMART] Contexto anterior: intent={ctx.intent} | params={ctx.params}")
-print(f"[SMART] Entities extraidas: {_entity_params} | followup={is_followup}")
-```
-**Impacto:** Console mostra o caminho exato de cada query para debugging.
+#### Parte 3: Busca Hibrida Elasticsearch
+1. `is_product_code()` — detecta codigos puros (P618689, W950, 0986B02486, HU727/1X)
+2. `search_products()` reescrito com 3 prioridades:
+   - P1 (boost 10): exact term em .raw + all_codes match/fuzzy/wildcard + CODPROD
+   - P2 (boost 5): match_phrase em descricao/full_text (slop 2)
+   - P3 (boost 1-4): multi_match best_fields + cross_fields + text-as-code
+3. Layer 0.5a interceptor: `is_product_code(question)` → direto pro Elastic
+- **Arquivos:** `product.py:17-49`, `search.py` (reescrito), `ask_core_v5.py:102-110`
 
-#### Fix 6: Suporte a codigo_fabricante em sql_pendencia_compras
-```python
-# Em _build_where_extra:
-if params.get("codigo_fabricante") and not params.get("codprod"):
-    w += f" AND UPPER(NVL(PRO.AD_NUMFABRICANTE,'')) LIKE UPPER('%{_safe_sql(params['codigo_fabricante'])}%')"
-```
-**Impacto:** "S2581 tem pedido de compra?" agora filtra por AD_NUMFABRICANTE no SQL, em vez de retornar TODAS as pendencias.
+#### Parte 4: Fix Narrador alucina em busca Elastic
+- Criou `build_produto_summary()` com contexto explicito "PRODUTOS DO CATALOGO"
+- Substitui summary generico que induzia LLM a inventar valores monetarios
+- **Arquivos:** `narrator.py:200-259`, `smart_agent.py:52,1902-1908`
 
-#### Fix 7: Exemplos LLM + regex de limpeza
-- **LLM prompt:** +2 exemplos para queries que falhavam
-- **Regex limpeza:** Adicionado "contem", "contendo", "conter", "descricao", "nome" para limpeza em busca_produto
+#### Parte 5: Fix Vendedor nao filtra em vendas
+- `_build_vendas_where` usava chave `vendedor_nome` mas extraction retorna `vendedor`
+- Fix: `vendedor = params.get("vendedor") or params.get("vendedor_nome")`
+- Adicionou vendedor na descricao do titulo
+- **Arquivos:** `src/sql/__init__.py:189-191`, `smart_agent.py:1175`
 
-### Resultado esperado
+#### Parte 6: Vendas com Devolucoes (TIPMOV V+D)
+- 3 SQLs reescritos com `TIPMOV IN ('V','D')` + CASE WHEN:
+  - KPIs: VLR_VENDAS, VLR_DEVOLUCAO, FATURAMENTO (liquido)
+  - Top Vendedores: +VLR_VENDAS, +VLR_DEVOLUCAO, ORDER BY liquido
+  - Detail: +TIPMOV, FATURAMENTO→VALOR
+- Formatter: mostra "Vendas brutas | Devolucoes | Liquido" quando dev > 0
+- Tabela top vendedores: 3 formatos (com dev, com margem, basico)
+- build_vendas_summary: inclui devolucoes no resumo pro narrador
+- **Arquivos:** `smart_agent.py:1183-1328`, `formatters/__init__.py:227-248`, `narrator.py:133-164`
 
-**Query 1:** "Qual o codigo dos produtos que contem filtro de ar na descricao?"
-- Score: busca_produto=17 (Layer 1) → _dispatch → _handle_busca_produto
-- Regex limpa → "filtro ar" → Elastic search → resultados
+### Testes adicionados nesta sessao (22 novos)
+- `TestIsProductCode` (8): alfanumerico, separadores, numerico, texto, curto, sem digito, 2 tokens, multi-palavra
+- `TestElasticHybridQuery` (5): prioridade 1 codigo, prioridade 2+3 texto, cross_fields, marca filter, codprod numerico
+- `TestBuildProdutoSummary` (4): identifica produtos, codigo buscado, dados produtos, nao inventa valores
+- `TestBuildVendasWhere` (4): vendedor gera filtro, vendedor_nome retrocompat, sem vendedor, vendedor+marca
+- `TestFormatVendasDevolucoes` (3): sem devolucao, com devolucao, zero vendas
 
-**Query 2:** "esse item S2581 tem pedido de compra?"
-- Score: pendencia_compras=12 (Layer 1) → _dispatch → _handle_pendencia_compras
-- params: {codigo_fabricante: "S2581"} → SQL filtra por AD_NUMFABRICANTE → resultados
+---
 
-**Context isolation:** Mesmo que query 1 rode antes de query 2:
-- Query 1 salva ctx.intent="busca_produto", ctx.params={...}
-- Query 2 muda intent para "pendencia_compras" → ctx.params e LIMPO → sem heranca
+## PENDENTE
 
-### Pendente:
-- [ ] Testar no servidor real (reiniciar com `python start.py`)
-- [ ] Implementar `_handle_financeiro()` (queries ja documentadas)
-- [ ] Implementar devolucoes e venda liquida no handler vendas
-- [ ] Dashboard HTML
+- [ ] Testar no servidor real: busca hibrida Elastic com codigos (P618689, W950)
+- [ ] Testar no servidor real: vendas com devolucoes ("faturamento do alvaro" → "quanto de devolucao?")
+- [ ] Testar no servidor real: filtro de vendedor ("faturamento do rafael")
+- [ ] Monitorar narrador: verificar que busca Elastic nao alucina mais
+- [ ] Implementar `_handle_financeiro()` completo (atualmente basico)
+- [ ] Dashboard HTML (substituir Power BI)
 - [ ] Tela admin de apelidos no frontend
+- [ ] Corrigir 2 testes pre-existentes em v3_backup (test_sem_entidade, test_cooldown)
 
 ---
 
-## SESSAO 35 a 35e - Resumo (2026-02-18)
-
-### Sessao 35: Fix Bug Busca Elastic + Handler Vendas Expandido
-- Fix: ignorar marca quando texto_busca existe
-- Vendas: reescrita completa com margem, comissao, detail query, por marca
-
-### Sessao 35b: Fix Classificacao Busca por Nome de Produto
-- Threshold busca_produto: 10 → 8
-- +20 keywords, +6 exemplos LLM, +18 noise words
-- Layer 1.5 guard para busca_score
-
-### Sessao 35c: Upgrade Classificador Groq 70b
-- GROQ_MODEL_CLASSIFY = llama-3.3-70b-versatile
-- Cadeia: 70b → 8b → Ollama
-- Layer 1+ usa 8b (filtros), Layer 2 usa 70b (classificacao)
-
-### Sessao 35d: Fix Context Merge (has_entity + merge_params)
-- has_entity ampliado com codprod/codigo_fabricante/produto_nome
-- merge_params param_keys expandido
-
-### Sessao 35e: Fix Layer 0.5 (scoring guard)
-- detect_product_query nao intercepta quando scoring detectou intent forte
-
----
-
-> Sessoes anteriores (1-34): Ver `PROGRESSO_HISTORICO.md`
+> Sessoes anteriores (1-35d): Ver `PROGRESSO_HISTORICO.md`
