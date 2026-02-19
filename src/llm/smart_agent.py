@@ -2546,13 +2546,14 @@ class SmartAgent:
 
         top_n = int(params.get("top", 50))
 
-        # SQL KPIs (agregado geral — separa vendas e devoluções)
+        # SQL KPIs (agregado geral — VLRNOTA p/ faturado, AD_VLRBASECOMINT p/ base comissao)
         sql_kpis = f"""SELECT
             COUNT(DISTINCT C.NUNOTA) AS QTD_NOTAS,
-            NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0) AS VLR_VENDAS,
-            NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0) AS VLR_DEVOLUCAO,
-            NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0)
-              - NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0) AS VLR_LIQUIDO,
+            NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.VLRNOTA ELSE 0 END), 0) AS VLR_FATURADO,
+            NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.VLRNOTA ELSE 0 END), 0) AS VLR_DEVOLUCAO,
+            NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.VLRNOTA ELSE 0 END), 0)
+              - NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.VLRNOTA ELSE 0 END), 0) AS VLR_LIQUIDO,
+            NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0) AS BASE_COMISSAO,
             NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRCOMINT ELSE 0 END), 0) AS COM_VENDAS,
             NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.AD_VLRCOMINT ELSE 0 END), 0) AS COM_DEVOLUCAO,
             NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRCOMINT ELSE 0 END), 0)
@@ -2564,8 +2565,8 @@ class SmartAgent:
         {joins_marca}
         WHERE {where_clause} {pf}"""
 
-        kpi_columns = ["QTD_NOTAS", "VLR_VENDAS", "VLR_DEVOLUCAO", "VLR_LIQUIDO",
-                        "COM_VENDAS", "COM_DEVOLUCAO", "COM_LIQUIDA", "MARGEM_MEDIA"]
+        kpi_columns = ["QTD_NOTAS", "VLR_FATURADO", "VLR_DEVOLUCAO", "VLR_LIQUIDO",
+                        "BASE_COMISSAO", "COM_VENDAS", "COM_DEVOLUCAO", "COM_LIQUIDA", "MARGEM_MEDIA"]
 
         # SQL Detail depende da view
         if view == "ranking":
@@ -2579,10 +2580,11 @@ class SmartAgent:
                 VEN.APELIDO AS VENDEDOR,
                 {select_empresa}
                 COUNT(DISTINCT C.NUNOTA) AS QTD_NOTAS,
-                NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0) AS VLR_VENDAS,
-                NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0) AS VLR_DEVOLUCAO,
-                NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0)
-                  - NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0) AS VLR_LIQUIDO,
+                NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.VLRNOTA ELSE 0 END), 0) AS VLR_FATURADO,
+                NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.VLRNOTA ELSE 0 END), 0) AS VLR_DEVOLUCAO,
+                NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.VLRNOTA ELSE 0 END), 0)
+                  - NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.VLRNOTA ELSE 0 END), 0) AS VLR_LIQUIDO,
+                NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRBASECOMINT ELSE 0 END), 0) AS BASE_COMISSAO,
                 NVL(SUM(CASE WHEN C.TIPMOV = 'V' THEN C.AD_VLRCOMINT ELSE 0 END), 0)
                   - NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.AD_VLRCOMINT ELSE 0 END), 0) AS COM_LIQUIDA,
                 NVL(ROUND(AVG(CASE WHEN C.TIPMOV = 'V' THEN C.AD_MARGEM END), 2), 0) AS MARGEM_MEDIA,
@@ -2597,16 +2599,17 @@ class SmartAgent:
                       - NVL(SUM(CASE WHEN C.TIPMOV = 'D' THEN C.AD_VLRCOMINT ELSE 0 END), 0)) DESC
             FETCH FIRST {top_n} ROWS ONLY"""
             if por_empresa:
-                detail_columns = ["VENDEDOR", "EMPRESA", "QTD_NOTAS", "VLR_VENDAS", "VLR_DEVOLUCAO", "VLR_LIQUIDO", "COM_LIQUIDA", "MARGEM_MEDIA", "ALIQ_MEDIA"]
+                detail_columns = ["VENDEDOR", "EMPRESA", "QTD_NOTAS", "VLR_FATURADO", "VLR_DEVOLUCAO", "VLR_LIQUIDO", "BASE_COMISSAO", "COM_LIQUIDA", "MARGEM_MEDIA", "ALIQ_MEDIA"]
             else:
-                detail_columns = ["VENDEDOR", "QTD_NOTAS", "VLR_VENDAS", "VLR_DEVOLUCAO", "VLR_LIQUIDO", "COM_LIQUIDA", "MARGEM_MEDIA", "ALIQ_MEDIA"]
+                detail_columns = ["VENDEDOR", "QTD_NOTAS", "VLR_FATURADO", "VLR_DEVOLUCAO", "VLR_LIQUIDO", "BASE_COMISSAO", "COM_LIQUIDA", "MARGEM_MEDIA", "ALIQ_MEDIA"]
         else:
             sql_detail = f"""SELECT
                 C.NUNOTA,
                 VEN.APELIDO AS VENDEDOR,
                 TO_CHAR(C.DTNEG, 'DD/MM/YYYY') AS DT_NEG,
                 C.TIPMOV,
-                C.AD_VLRBASECOMINT AS VLR_BASE_COM,
+                C.VLRNOTA AS VLR_FATURADO,
+                C.AD_VLRBASECOMINT AS BASE_COMISSAO,
                 C.AD_VLRCUSTOIARA AS VLR_CUSTO,
                 C.AD_MARGEM AS MARGEM,
                 C.AD_PMV AS PMV,
@@ -2620,7 +2623,7 @@ class SmartAgent:
             WHERE {where_clause} {pf}
             ORDER BY C.DTNEG DESC, C.NUNOTA DESC
             FETCH FIRST {top_n} ROWS ONLY"""
-            detail_columns = ["NUNOTA", "VENDEDOR", "DT_NEG", "TIPMOV", "VLR_BASE_COM", "VLR_CUSTO", "MARGEM", "PMV", "ALIQUOTA", "VLR_COMISSAO", "EMPRESA"]
+            detail_columns = ["NUNOTA", "VENDEDOR", "DT_NEG", "TIPMOV", "VLR_FATURADO", "BASE_COMISSAO", "VLR_CUSTO", "MARGEM", "PMV", "ALIQUOTA", "VLR_COMISSAO", "EMPRESA"]
 
         # Execute KPIs
         kr = await self.executor.execute(sql_kpis)

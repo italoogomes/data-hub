@@ -384,6 +384,9 @@ class AliasRequest(BaseModel):
 # ROUTES
 # ============================================================
 
+# Garantir que pasta exports exista antes do mount
+Path(__file__).parent.joinpath("static", "exports").mkdir(parents=True, exist_ok=True)
+
 # Montar pasta static para servir imagens, CSS, JS
 app.mount("/imagens", StaticFiles(directory=str(Path(__file__).parent / "static" / "imagens")), name="imagens")
 app.mount("/static/exports", StaticFiles(directory=str(Path(__file__).parent / "static" / "exports")), name="exports")
