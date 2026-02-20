@@ -277,10 +277,16 @@ class ConversationContext:
         self.turn_count += 1
 
     def has_data(self) -> bool:
-        return bool(self.last_result and self.last_result.get("detail_data"))
+        """Verifica se tem dados de detalhe. Aceita 'detail_data' e '_detail_data'."""
+        if not self.last_result:
+            return False
+        return bool(self.last_result.get("detail_data") or self.last_result.get("_detail_data"))
 
     def get_data(self) -> list:
-        return self.last_result.get("detail_data", [])
+        """Retorna dados de detalhe. Aceita 'detail_data' e '_detail_data'."""
+        if not self.last_result:
+            return []
+        return self.last_result.get("detail_data") or self.last_result.get("_detail_data", [])
 
     def get_description(self) -> str:
         return self.last_result.get("description", "")

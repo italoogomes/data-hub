@@ -9,7 +9,9 @@ import re
 import os
 from typing import Optional
 
-from src.core.groq_client import pool_narrate, groq_request
+from src.core.groq_client import pool_narrate, pool_classify, groq_request
+from src.core.config import GROQ_MODEL_CLASSIFY
+from src.agent.brain import is_analytical_query, ANALYTICAL_SYSTEM
 
 USE_LLM_NARRATOR = os.getenv("USE_LLM_NARRATOR", "true").lower() in ("true", "1", "yes")
 
@@ -32,10 +34,66 @@ REGRAS:
 
 
 async def llm_narrate(question: str, data_summary: str, fallback_response: str) -> str:
-    """Pede pro Groq (pool_narrate) explicar os dados de forma natural."""
+    """Pede pro Groq explicar os dados de forma natural.
+
+    Cerebro Analitico: perguntas analiticas (por que, compare, sugira)
+    escalam pro 70b via pool_classify. Perguntas fatuais usam 8b normal.
+    Se 70b falhar, cai pro 8b como fallback.
+    """
     if not USE_LLM_NARRATOR or not pool_narrate.available:
         return fallback_response
 
+    analytical = is_analytical_query(question)
+
+    if analytical:
+        print(f"[BRAIN] Query analitica detectada: '{question[:60]}...' → escalando pro 70b")
+        user_msg = f"""Pergunta do usuario: "{question}"
+
+Dados retornados do banco:
+{data_summary}
+
+Analise esses dados em profundidade. Identifique padroes, riscos e sugira acoes."""
+
+        # Tentar 70b primeiro (pool_classify)
+        if pool_classify.available:
+            result = await groq_request(
+                pool=pool_classify,
+                messages=[
+                    {"role": "system", "content": ANALYTICAL_SYSTEM},
+                    {"role": "user", "content": user_msg},
+                ],
+                model=GROQ_MODEL_CLASSIFY,
+                temperature=0.7,
+                max_tokens=600,
+                timeout=15,
+            )
+
+            text = _clean_response(result)
+            if text:
+                print(f"[BRAIN] 70b OK ({len(text)} chars)")
+                return text
+
+            print(f"[BRAIN] 70b falhou, fallback pro 8b")
+
+        # Fallback: 8b com prompt analitico (melhor que nada)
+        result = await groq_request(
+            pool=pool_narrate,
+            messages=[
+                {"role": "system", "content": ANALYTICAL_SYSTEM},
+                {"role": "user", "content": user_msg},
+            ],
+            temperature=0.7,
+            max_tokens=500,
+        )
+
+        text = _clean_response(result)
+        if text:
+            print(f"[BRAIN] 8b-fallback OK ({len(text)} chars)")
+            return text
+
+        return fallback_response
+
+    # ---- Query simples/fatual: 8b normal ----
     user_msg = f"""Pergunta do usuario: "{question}"
 
 Dados retornados do banco:
@@ -53,19 +111,26 @@ Explique esses dados de forma natural e analise o que chama atencao."""
         max_tokens=400,
     )
 
+    text = _clean_response(result)
+    if text:
+        print(f"[NARRATOR] 8b OK ({len(text)} chars)")
+        return text
+
+    print(f"[NARRATOR] Groq falhou, usando fallback")
+    return fallback_response
+
+
+def _clean_response(result: dict | None) -> str | None:
+    """Limpa resposta do Groq. Retorna None se invalida."""
     if not result or not result.get("content"):
-        print(f"[NARRATOR] Groq falhou, usando fallback")
-        return fallback_response
+        return None
 
     text = result["content"].strip()
-
-    # Limpeza minima (Groq nao vaza thinking como Qwen3, mas prevenir)
     text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
 
     if not text or len(text) < 30:
-        return fallback_response
+        return None
 
-    print(f"[NARRATOR] Groq OK ({len(text)} chars)")
     return text
 
 

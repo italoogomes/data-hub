@@ -481,12 +481,14 @@ INTENT_TO_TOOL = {
     "saudacao": "saudacao",
     "ajuda": "ajuda",
     "gerar_excel": "gerar_excel",
+    "brain_analyze": "brain_analyze",  # Haiku pode retornar para queries analíticas
 }
 
 # Reverse: tool name → intent (para compatibilidade com contexto/logs)
 TOOL_TO_INTENT = {v: k for k, v in INTENT_TO_TOOL.items()}
 TOOL_TO_INTENT["buscar_parceiro"] = "busca_parceiro"
 TOOL_TO_INTENT["gerar_excel"] = "gerar_excel"
+TOOL_TO_INTENT["brain_analyze"] = "brain_analyze"
 
 
 # ============================================================

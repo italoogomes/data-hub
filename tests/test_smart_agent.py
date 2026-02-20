@@ -437,3 +437,311 @@ class TestFormatVendasDevolucoes:
         kpi = {"QTD_VENDAS": 0, "FATURAMENTO": 0, "VLR_VENDAS": 0, "VLR_DEVOLUCAO": 0}
         r = format_vendas_response(kpi, "fevereiro")
         assert "Nao encontrei" in r
+
+
+# ============================================================
+# TestIsAnalyticalQuery (Cerebro Analitico)
+# ============================================================
+
+class TestIsAnalyticalQuery:
+    """Valida detecção de queries analíticas vs fatuais."""
+
+    # ---- Queries SIMPLES (fatual → routing normal) ----
+
+    def test_fatual_quanto(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("quanto faturou o alvaro esse mes?") is False
+
+    def test_fatual_qual_valor(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("qual o valor de pendência da mann?") is False
+
+    def test_fatual_mostra(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("mostra os pedidos atrasados") is False
+
+    def test_fatual_curta(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("oi") is False
+
+    def test_fatual_comissao(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("comissão do rafael") is False
+
+    def test_fatual_ajuda(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("ajuda com as funcionalidades") is False
+
+    def test_fatual_pendencias(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("pendências da nakata") is False
+
+    def test_fatual_estoque(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("estoque do produto 133346") is False
+
+    def test_fatual_relatorio(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("quero um relatório de vendas") is False
+
+    # ---- CONSULTIVOS (pedem ação/conselho → 70b) ----
+
+    def test_consultivo_o_que_eu_posso_fazer(self):
+        """BUG FIX: 'o que eu posso fazer' não era detectado (tinha 'eu' no meio)."""
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("o que eu posso fazer para melhorar a entrega?") is True
+
+    def test_consultivo_oq_posso_fazer(self):
+        """Informal: 'oq posso fazer'."""
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("oq posso fazer pra melhorar?") is True
+
+    def test_consultivo_como_melhorar(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("como melhorar as vendas do próximo mês?") is True
+
+    def test_consultivo_como_resolver(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("como resolver os atrasos?") is True
+
+    def test_consultivo_me_da_sugestoes(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("me dá sugestões pra vender mais") is True
+
+    def test_consultivo_tem_como_melhorar(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("tem como melhorar isso?") is True
+
+    def test_consultivo_o_que_fazer(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("o que fazer com esses pedidos atrasados?") is True
+
+    # ---- CAUSAIS (pedem explicação → 70b) ----
+
+    def test_causal_por_que(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("por que o faturamento caiu em janeiro?") is True
+
+    def test_causal_pq_informal(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("pq os pedidos atrasaram?") is True
+
+    def test_causal_qual_motivo(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("qual o motivo da queda?") is True
+
+    # ---- DECISÓRIOS (pedem opinião → 70b) ----
+
+    def test_decisorio_vale_a_pena(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("vale a pena trocar de fornecedor?") is True
+
+    def test_decisorio_devo(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("devo focar em qual vendedor?") is True
+
+    # ---- AVALIATIVOS (pedem análise → 70b) ----
+
+    def test_avaliativo_analise(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("analise os dados de vendas") is True
+
+    def test_avaliativo_como_estamos(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("como estamos esse mês?") is True
+
+    def test_avaliativo_o_que_significa(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("o que isso significa?") is True
+
+    def test_avaliativo_tendencia(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("qual a tendência de vendas pra março?") is True
+
+    def test_avaliativo_me_explica(self):
+        from src.agent.brain import is_analytical_query
+        assert is_analytical_query("me explica essa queda de margem") is True
+
+
+# ============================================================
+# TestCollectSessionContext
+# ============================================================
+
+class TestCollectSessionContext:
+    """Valida coleta de contexto de sessão para o brain."""
+
+    def test_sem_contexto(self):
+        """Sem dados no contexto, retorna None."""
+        from src.agent.brain import collect_session_context
+        from src.agent.context import ConversationContext
+        ctx = ConversationContext("test")
+        assert collect_session_context(ctx) is None
+
+    def test_sem_intent(self):
+        """Sem intent no contexto, retorna None."""
+        from src.agent.brain import collect_session_context
+        assert collect_session_context(None) is None
+
+    def test_com_contexto(self):
+        """Com dados no contexto, retorna dict com info relevante."""
+        from src.agent.brain import collect_session_context
+        from src.agent.context import ConversationContext
+        ctx = ConversationContext("test")
+        ctx.intent = "pendencia_compras"
+        ctx.params = {"marca": "NAKATA"}
+        ctx.last_question = "pendências da nakata"
+        ctx.last_result = {
+            "response": "7 itens pendentes da NAKATA...",
+            "detail_data": [{"PRODUTO": "A", "VLR_PENDENTE": 100}, {"PRODUTO": "B", "VLR_PENDENTE": 200}],
+            "description": "Pendências de compra NAKATA",
+        }
+        result = collect_session_context(ctx)
+        assert result is not None
+        assert result["intent"] == "pendencia_compras"
+        assert result["total_rows"] == 2
+        assert result["params"]["marca"] == "NAKATA"
+        assert "nakata" in result["last_question"]
+
+    def test_contexto_sem_detail_data(self):
+        """Contexto com intent mas sem detail_data retorna None."""
+        from src.agent.brain import collect_session_context
+        from src.agent.context import ConversationContext
+        ctx = ConversationContext("test")
+        ctx.intent = "saudacao"
+        ctx.last_result = {"response": "Bom dia!"}
+        assert collect_session_context(ctx) is None
+
+    def test_contexto_com_underscore_detail_data(self):
+        """BUG FIX: handlers retornam '_detail_data' (com underscore).
+        has_data()/get_data() devem aceitar ambas as chaves."""
+        from src.agent.brain import collect_session_context
+        from src.agent.context import ConversationContext
+        ctx = ConversationContext("test")
+        ctx.intent = "pendencia_compras"
+        ctx.params = {"marca": "NAKATA"}
+        ctx.last_question = "pendências da nakata"
+        # Simula resultado como handler REALMENTE retorna (com underscore)
+        ctx.last_result = {
+            "response": "7 itens pendentes da NAKATA...",
+            "_detail_data": [{"PRODUTO": "A"}, {"PRODUTO": "B"}, {"PRODUTO": "C"}],
+        }
+        # has_data() e get_data() devem funcionar com _detail_data
+        assert ctx.has_data() is True
+        assert len(ctx.get_data()) == 3
+        # collect_session_context deve encontrar os dados
+        result = collect_session_context(ctx)
+        assert result is not None
+        assert result["total_rows"] == 3
+
+
+# ============================================================
+# TestBrainResult
+# ============================================================
+
+class TestBrainResult:
+    """Valida formato do resultado do brain."""
+
+    def test_build_result_format(self):
+        """_build_result retorna dict compatível com handlers."""
+        from src.agent.brain import _build_result
+        result = _build_result("Análise dos dados mostra concentração em Nakata", model="70b")
+        assert "response" in result
+        assert "Análise" in result["response"]
+        assert "Nakata" in result["response"]
+        assert result["tipo"] == "brain_analysis"
+        assert result["_brain_model"] == "70b"
+
+    def test_format_context(self):
+        """_format_context_for_llm formata contexto legível pro LLM."""
+        from src.agent.brain import _format_context_for_llm
+        ctx_data = {
+            "intent": "pendencia_compras",
+            "params": {"marca": "NAKATA"},
+            "description": "Pendências NAKATA",
+            "last_question": "pendências da nakata",
+            "data": [{"PRODUTO": "A", "VLR_PENDENTE": 1000, "STATUS_ENTREGA": "ATRASADO"}],
+            "total_rows": 7,
+            "response_text": "7 itens pendentes da NAKATA, R$ 50.000",
+        }
+        text = _format_context_for_llm(ctx_data)
+        assert "nakata" in text.lower()
+        assert "7" in text
+        assert "pendencia" in text.lower()
+        # Deve conter a narração anterior
+        assert "50.000" in text
+        # Deve conter resumo calculado
+        assert "1.000" in text or "1,000" in text
+
+    def test_format_context_prioriza_narracao(self):
+        """Narração anterior é prioridade no contexto."""
+        from src.agent.brain import _format_context_for_llm
+        ctx_data = {
+            "intent": "pendencia_compras",
+            "params": {},
+            "description": "Pendências",
+            "last_question": "pendências da nakata",
+            "data": [{"PRODUTO": "A", "VLR_PENDENTE": 100}],
+            "total_rows": 1,
+            "response_text": "📦 **Pendência de compra NAKATA**\n\n7 pedidos, R$ 29.401, 44% fora do prazo",
+        }
+        text = _format_context_for_llm(ctx_data)
+        # Narração deve estar presente (sem emoji)
+        assert "29.401" in text
+        assert "44%" in text
+
+    def test_format_context_sem_narracao_usa_resumo(self):
+        """Sem narração, usa resumo calculado."""
+        from src.agent.brain import _format_context_for_llm
+        ctx_data = {
+            "intent": "pendencia_compras",
+            "params": {"marca": "NAKATA"},
+            "description": "Pendências",
+            "last_question": "pendências da nakata",
+            "data": [
+                {"PRODUTO": "A", "VLR_PENDENTE": 1000, "STATUS_ENTREGA": "ATRASADO", "PEDIDO": "100"},
+                {"PRODUTO": "B", "VLR_PENDENTE": 2000, "STATUS_ENTREGA": "NO PRAZO", "PEDIDO": "101"},
+            ],
+            "total_rows": 2,
+            "response_text": "",
+        }
+        text = _format_context_for_llm(ctx_data)
+        # Deve ter resumo calculado
+        assert "3.000" in text or "3,000" in text  # soma
+        assert "ATRASADO" in text
+        assert "NO PRAZO" in text
+
+
+# ============================================================
+# TestSummarizeData
+# ============================================================
+
+class TestSummarizeData:
+    """Valida cálculo de resumo estatístico por domínio."""
+
+    def test_pendencia_summary(self):
+        from src.agent.brain import _summarize_data
+        rows = [
+            {"VLR_PENDENTE": 1000, "STATUS_ENTREGA": "ATRASADO", "PEDIDO": "100", "MARCA": "NAKATA"},
+            {"VLR_PENDENTE": 2000, "STATUS_ENTREGA": "ATRASADO", "PEDIDO": "100", "MARCA": "NAKATA"},
+            {"VLR_PENDENTE": 500, "STATUS_ENTREGA": "NO PRAZO", "PEDIDO": "101", "MARCA": "FRAS-LE"},
+        ]
+        text = _summarize_data(rows, "pendencia_compras")
+        assert "3.500" in text or "3,500" in text  # valor total
+        assert "ATRASADO: 2" in text
+        assert "NO PRAZO: 1" in text
+        assert "Pedidos distintos: 2" in text
+
+    def test_vendas_summary(self):
+        from src.agent.brain import _summarize_data
+        rows = [
+            {"VALOR": 5000, "MARGEM": 8.5, "VENDEDOR": "RAFAEL"},
+            {"VALOR": 3000, "MARGEM": 10.0, "VENDEDOR": "RAFAEL"},
+        ]
+        text = _summarize_data(rows, "vendas")
+        assert "8.000" in text or "8,000" in text  # valor total
+        assert "Margem" in text
+
+    def test_empty_data(self):
+        from src.agent.brain import _summarize_data
+        assert _summarize_data([], "pendencia_compras") == ""
+        assert _summarize_data([42], "pendencia_compras") == ""  # não é dict

@@ -50,7 +50,10 @@
       "Bash(del \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\_test_cols.py\")",
       "Bash(if not exist \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\tests\" mkdir \"c:\\\\Users\\\\italo.gomes\\\\OneDrive - MMarra Distribuidora Automotiva\\\\Documentos\\\\data-hub\\\\tests\")",
       "Bash(cd:*)",
-      "WebFetch(domain:ajuda.sankhya.com.br)"
+      "WebFetch(domain:ajuda.sankhya.com.br)",
+      "WebFetch(domain:community.sankhya.com.br)",
+      "Bash(grep:*)",
+      "Bash(pip show:*)"
     ]
   },
   "model": "claude-opus-4-6"

@@ -3,7 +3,7 @@
         "descricao": "Apelidos de produto usados pelos usuarios da MMarra.",
         "formato": "chave = apelido normalizado, valor = objeto com nome_real, codprod, confidence, hits, criado_em, origem",
         "versao": "1.0",
-        "atualizado_em": "2026-02-19"
+        "atualizado_em": "2026-02-20"
     },
     "aliases": {
         "boneca": {
@@ -44,14 +44,17 @@
         {
             "term": "P618689",
             "term_norm": "p618689",
-            "count": 3,
+            "count": 8,
             "first_seen": "2026-02-19 10:45",
-            "last_seen": "2026-02-19 12:04",
+            "last_seen": "2026-02-20 17:59",
             "contexts": [
-                "qual a proxima entrega do item p618689 ?"
+                "qual a proxima entrega do item p618689 ?",
+                "qual a proxima entrega do item p618689?",
+                "qual a próxima entrega do item P618689?"
             ],
             "user": "italo",
-            "status": "pending"
+            "status": "pending",
+            "feedback_negative": 1
         }
     ]
 }

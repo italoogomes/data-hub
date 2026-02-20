@@ -43,6 +43,15 @@ GROQ_TIMEOUT = int(os.getenv("GROQ_TIMEOUT", "10"))
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 # ============================================================
+# LLM - Anthropic Haiku (classificador inteligente)
+# ============================================================
+
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+USE_HAIKU_CLASSIFIER = os.getenv("USE_HAIKU_CLASSIFIER", "false").lower() in ("true", "1", "yes")
+HAIKU_MODEL = os.getenv("HAIKU_MODEL", "claude-haiku-4-5-20251001")
+HAIKU_TIMEOUT = int(os.getenv("HAIKU_TIMEOUT", "8"))
+
+# ============================================================
 # AZURE DATA LAKE
 # ============================================================
 

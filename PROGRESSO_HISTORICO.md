@@ -1,11 +1,124 @@
 # 📜 Historico de Sessoes - Data Hub
 
-**Arquivo:** Historico completo de sessoes anteriores (1-36).
+**Arquivo:** Historico completo de sessoes anteriores (1-38).
 **Para estado atual:** Ver `PROGRESSO_ATUAL.md`
 
 ---
 
 ## SESSOES ANTERIORES
+
+### 2026-02-20 (sessao 37f) - Fix Prioridade Brain vs Multi-Step
+
+**Problema:** Queries analiticas como "como melhorar o faturamento?" eram interceptadas pelo MULTISTEP antes do BRAIN. O `_detect_trend()` via "melhorar faturamento" e disparava comparacao de meses.
+
+**Solucao:** Swap simples — mover bloco Brain para ANTES do Multi-step em `ask_core_v5.py`.
+- Nova ordem: Brain → Multi-step → Layer 0.5 → Layer 0.5a → Layer 1 → Layer 2 → Layer 3
+- Analitica + contexto → Brain intercepta (bypass multi-step)
+- Analitica + sem contexto → cai pro multi-step / routing normal
+- Nao analitica → multi-step e routing normal
+
+**Arquivo:** `src/agent/ask_core_v5.py` (linhas 78-128)
+**Testes:** 84/86 passando (mesmos 2 pre-existentes)
+
+---
+
+### 2026-02-20 (sessao 37e) - Refinar Cerebro Analitico: Contexto Rico + Prompt Melhor
+
+**Problema:** Brain funcionava mas a qualidade da analise era ruim. O 70b disse "R$ 0,00" porque:
+1. `response_len=0` — narracao anterior nao estava no contexto
+2. `rows=59` — enviava todos os registros brutos sem resumo
+3. O 70b tentava calcular totais sozinho e errava
+
+**Causa raiz:** Handlers chamam `ctx.update(result_data)` ANTES de gerar a narracao. O `result_data` tem `detail_data` mas nao tem `response`.
+
+**Solucao (5 partes):**
+1. Salvar narracao no contexto (`ask_core_v5.py`): `ctx.last_result["response"] = result["response"]`
+2. Implementar `_summarize_data()` com resumo estatistico por dominio (pendencia, vendas, comissao, financeiro, inadimplencia, estoque, generico)
+3. Reescrever `_format_context_for_llm()`: narracao > resumo > amostra, limite 6000 chars
+4. Melhorar ANALYTICAL_SYSTEM prompt: "USE numeros do resumo — NAO recalcule"
+5. Melhorar user_msg do brain_analyze()
+
+**Arquivos:** `src/agent/ask_core_v5.py`, `src/agent/brain.py` (reescrito)
+**Testes:** 84/86 passando (+5 novos: format_context_prioriza_narracao, format_context_sem_narracao_usa_resumo, test_pendencia_summary, test_vendas_summary, test_empty_data)
+
+---
+
+### 2026-02-20 (sessao 37d) - Fix: collect_session_context() nao encontra dados da sessao
+
+**Contexto:** Brain detectava queries analiticas mas collect_session_context() retornava None. Causa: double ctx.update() — handler atualizava ctx com "detail_data" (correto), depois ask_core_v5.py sobrescrevia com "_detail_data" (underscore). has_data() procurava "detail_data" e nao encontrava.
+
+**ask_core_v5.py:** Removido ctx.update() redundante (handlers ja fazem). Adicionado salvamento de response no ctx.last_result.
+
+**context.py:** has_data()/get_data() aceitam ambas as chaves ("detail_data" e "_detail_data").
+
+**brain.py:** Logs detalhados no collect_session_context().
+
+**Testes:** 81 (79 passando). +1 teste: test_contexto_com_underscore_detail_data.
+
+---
+
+### 2026-02-20 (sessao 37c) - Fix Urgente: brain.py nao detecta queries analiticas
+
+**Contexto:** `is_analytical_query("O que eu posso fazer para melhorar a entrega?")` retornava False. Keyword rigida "o que posso fazer" nao fazia match com "o que eu posso fazer" (palavra "eu" no meio).
+
+**brain.py (reescrito — keywords + regex):**
+- `_ANALYTICAL_PATTERNS`: expandido de ~4 para ~20 regex flexiveis com grupos opcionais
+- Consultivos: `r"\bo\s*q(?:ue)?\s+(?:eu\s+)?posso\s+fazer\b"` — cobre variacoes
+- Causais, Decisorios, Avaliativos: regex flexiveis
+- `_FACTUAL_OVERRIDES`: +relatorio/relatório
+
+**ask_core_v5.py:** Log `[BRAIN] is_analytical=True/False` agora imprime pra TODA query.
+
+**Testes:** 80 (78 passando). 25 em TestIsAnalyticalQuery.
+
+---
+
+### 2026-02-20 (sessao 37b) - Cerebro Analitico V2: Intercept no Roteamento
+
+**Contexto:** Brain V1 (sessao 37) so funcionava na narracao (DEPOIS do handler). Queries analiticas como "o que posso fazer pra melhorar?" eram roteadas erroneamente pelo scoring (ex: consultar_estoque) e retornavam lixo.
+
+**Solucao: Brain V2 — Intercept no Roteamento (ask_core_v5.py):**
+- Brain check inserido entre multi-step e Layer 0.5
+- Cenario A: analitica + contexto de sessao → brain_analyze() → 70b direto → resposta
+- Cenario B: analitica sem contexto → routing normal + 70b na narracao
+- Fallback: 70b + 8b falharem → routing normal
+
+**brain.py (reescrito):**
+- `is_analytical_query()` melhorado: +decisorias, +avaliacao, +interpretacao, +factual overrides
+- `collect_session_context(ctx)` — coleta intent, params, detail_data, response_text
+- `brain_analyze(question, context_data)` — 70b (pool_classify) → 8b fallback
+- `_build_result()`, `_format_context_for_llm()`, `_clean_brain_response()`
+
+**Testes:** 68 (66 passando). 22 novos: TestIsAnalyticalQuery (14), TestCollectSessionContext (4), TestBrainResult (2).
+
+---
+
+### 2026-02-20 (sessao 37) - Cerebro Analitico no Roteamento (70b)
+
+**Contexto:** Brain intercepta queries analiticas no roteamento. 2 cenarios: com contexto (brain responde direto) e sem contexto (routing normal + 70b narracao).
+
+**brain.py (reescrito):**
+- `is_analytical_query()` melhorado: +decisorias (vale a pena, compensa, devo), +avaliacao (avalie), +interpretacao (o que significa), +factual overrides (ajuda, oi)
+- Removido "compare" de keywords analiticas (multi-step cuida de comparacoes temporais)
+- `collect_session_context(ctx)` — coleta dados da sessao (intent, params, detail_data, response_text)
+- `_format_context_for_llm()` — formata contexto pro prompt do 70b
+- `brain_analyze(question, context_data)` — envia pro 70b com contexto, fallback 8b
+- `_build_result()` — monta dict compativel com handlers (tipo: brain_analysis)
+
+**ask_core_v5.py (modificado):**
+- Brain check inserido APOS multi-step e ANTES do Layer 0.5 (produto)
+- Cenario A: analitica + contexto → brain_analyze direto → retorna resposta 70b
+- Cenario B: analitica sem contexto → routing normal → narrator usa 70b
+- Fallback: se 70b + 8b falharem → cai pro routing normal
+
+**narrator.py (sessao anterior):** Ja integrado com is_analytical_query para narracao standalone.
+
+**Testes:** 66/68 (mesmos 2 pre-existentes). 22 novos testes:
+- `TestIsAnalyticalQuery` (14): 7 fatuais + 7 analiticas
+- `TestCollectSessionContext` (4): sem contexto, sem intent, com contexto, sem detail_data
+- `TestBrainResult` (2): build_result format, format_context
+
+---
 
 ### 2026-02-19 (sessao 36) - Refatoracao V5 + Guardrails + Elastic Hybrid + Vendas Devolucoes
 

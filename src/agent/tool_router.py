@@ -2,12 +2,15 @@
 MMarra Data Hub - Tool Router.
 
 Roteador de 3 camadas que decide qual ferramenta usar:
-  Layer 1 (Scoring):    Keywords rápidos para intents óbvios (<5ms)
-  Layer 2 (FC):         Groq Function Calling - LLM escolhe tool + params (~300ms)
-  Layer 3 (Fallback):   Heurística com entidades detectadas
+  Layer 1 (Haiku):      Claude Haiku - classificação inteligente (~200ms)
+  Layer 2 (FC):         Groq Function Calling - backup se Haiku falhar (~300ms)
+  Layer 3 (Fallback):   Scoring keywords + heurística (último recurso)
 
-Queries complexas (filtros numéricos, comparações, múltiplos critérios)
-são SEMPRE enviadas pro Layer 2, mesmo que o scoring resolva o intent.
+Queries triviais (saudação, ajuda, excel) são resolvidas por scoring
+ANTES do Haiku para economizar tokens e latência.
+
+Feature flag: USE_HAIKU_CLASSIFIER=true/false no .env
+Quando false, volta pro fluxo antigo (scoring → FC → fallback).
 """
 
 import json
@@ -263,67 +266,86 @@ async def route(question: str, user_context: dict = None,
             )
 
     # ================================================================
-    # LAYER 1: Scoring rápido (keywords)
+    # TRIVIAIS: Scoring rápido para intents óbvios (<1ms)
+    # Resolve saudacao/ajuda/excel SEM gastar tokens no Haiku.
     # ================================================================
     scores = score_intent(tokens)
     best_intent = max(scores, key=scores.get)
     best_score = scores[best_intent]
 
-    # Intents triviais
     if best_intent == "saudacao" and best_score >= 0.7:
         _log_route(log, "scoring", "saudacao", best_score, t0)
         return ToolCall("saudacao", {}, source="scoring", confidence=best_score)
-    
+
     if best_intent == "ajuda" and best_score >= 0.7:
         _log_route(log, "scoring", "ajuda", best_score, t0)
         return ToolCall("ajuda", {}, source="scoring", confidence=best_score)
-    
+
     if any(w in q_norm for w in ("excel", "planilha", "csv", "exportar")):
         _log_route(log, "scoring", "gerar_excel", 0.99, t0)
         return ToolCall("gerar_excel", {}, source="scoring", confidence=0.99)
 
     # ================================================================
-    # DECISÃO: Query complexa → FORÇAR Layer 2 (FC)
+    # LAYER 1: Claude Haiku — classificação inteligente (~200ms)
+    # Substitui scoring + FC como classificador principal.
+    # Feature flag: USE_HAIKU_CLASSIFIER no .env
     # ================================================================
-    is_complex = _is_complex_query(q_norm, tokens)
+    from src.agent.haiku_classifier import haiku_classify, USE_HAIKU_CLASSIFIER
 
-    if is_complex and pool_classify.available:
-        print(f"[ROUTER] Query complexa detectada, forçando Layer 2 (FC)")
-        # Não passar contexto em query nova pra não contaminar
-        fc_ctx = ctx if not is_new else None
-        fc_result = await _function_calling(question, fc_ctx, params, history)
-        if fc_result:
-            _log_route(log, "function_calling", fc_result.name, fc_result.confidence, t0)
-            print(f"[ROUTER] Layer 2 (FC): {fc_result.name}({fc_result.params}) | {time.time()-t0:.0f}ms")
-            return fc_result
-        print(f"[ROUTER] Layer 2 falhou, usando Layer 1 com scoring")
+    if USE_HAIKU_CLASSIFIER:
+        haiku_result = await haiku_classify(
+            question=question,
+            known_marcas=known_marcas,
+            known_empresas=known_empresas,
+            known_compradores=known_compradores,
+            ctx=ctx if not is_new else None,
+            history=history,
+        )
 
-    # Score alto + query simples → confia no scoring
-    if best_score >= FC_CONFIDENCE_THRESHOLD:
-        tool_name = INTENT_TO_TOOL.get(best_intent, best_intent)
-        tool_params = _entities_to_tool_params(tool_name, params, question)
-        _log_route(log, "scoring", tool_name, best_score, t0)
-        print(f"[ROUTER] Layer 1 (scoring): {tool_name} score={best_score:.2f} | {time.time()-t0:.0f}ms")
-        return ToolCall(tool_name, tool_params, source="scoring", confidence=best_score)
+        if haiku_result and haiku_result.confidence >= 0.5:
+            # Merge Haiku params com entities extraídas via regex
+            # Regex é mais confiável pra marcas/empresas (match exato contra lista)
+            haiku_result.params = _merge_fc_with_entities(
+                haiku_result.name, haiku_result.params, params
+            )
+            _log_route(log, "haiku", haiku_result.name, haiku_result.confidence, t0)
+            print(f"[ROUTER] Layer 1 (Haiku): {haiku_result.name}({haiku_result.params}) "
+                  f"conf={haiku_result.confidence:.0%} | {int((time.time()-t0)*1000)}ms")
+            return haiku_result
+
+        if haiku_result:
+            print(f"[ROUTER] Haiku conf baixa ({haiku_result.confidence:.0%}), tentando FC...")
+        else:
+            print(f"[ROUTER] Haiku falhou, tentando FC...")
 
     # ================================================================
-    # LAYER 2: Function Calling via Groq (queries ambíguas)
+    # LAYER 2: Groq Function Calling (backup se Haiku falhar)
     # ================================================================
     if pool_classify.available:
         fc_ctx = ctx if not is_new else None
         fc_result = await _function_calling(question, fc_ctx, params, history)
         if fc_result:
             _log_route(log, "function_calling", fc_result.name, fc_result.confidence, t0)
-            print(f"[ROUTER] Layer 2 (FC): {fc_result.name}({fc_result.params}) | {time.time()-t0:.0f}ms")
+            print(f"[ROUTER] Layer 2 (FC): {fc_result.name}({fc_result.params}) | "
+                  f"{int((time.time()-t0)*1000)}ms")
             return fc_result
         print(f"[ROUTER] Layer 2 (FC): falhou, caindo pro fallback")
 
     # ================================================================
-    # LAYER 3: Fallback heurístico
+    # LAYER 3: Scoring + Fallback heurístico (último recurso)
+    # Se Haiku + FC falharam, scoring garante que o sistema funciona.
     # ================================================================
+    if best_score >= FC_CONFIDENCE_THRESHOLD:
+        tool_name = INTENT_TO_TOOL.get(best_intent, best_intent)
+        tool_params = _entities_to_tool_params(tool_name, params, question)
+        _log_route(log, "scoring_fallback", tool_name, best_score, t0)
+        print(f"[ROUTER] Layer 3 (scoring): {tool_name} score={best_score:.2f} | "
+              f"{int((time.time()-t0)*1000)}ms")
+        return ToolCall(tool_name, tool_params, source="scoring_fallback", confidence=best_score)
+
     tool_call = _fallback_route(best_intent, best_score, params, q_norm, tokens)
     _log_route(log, "fallback", tool_call.name, tool_call.confidence, t0)
-    print(f"[ROUTER] Layer 3 (fallback): {tool_call.name} | {time.time()-t0:.0f}ms")
+    print(f"[ROUTER] Layer 3 (fallback): {tool_call.name} | {int((time.time()-t0)*1000)}ms")
     return tool_call
 
 

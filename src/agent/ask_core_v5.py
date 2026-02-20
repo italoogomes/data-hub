@@ -22,6 +22,7 @@ from src.agent.context import (
 )
 from src.agent.session import session_store
 from src.agent.product import detect_product_query, is_product_code
+from src.agent.brain import is_analytical_query, brain_analyze, collect_session_context
 from src.core.utils import normalize, tokenize
 from src.agent.scoring import COLUMN_NORMALIZE, detect_view_mode
 from src.agent.multistep import detect_multistep, extract_kpis_from_result, StepResult
@@ -74,8 +75,45 @@ async def ask_core_v5(self, question: str, user_context: dict = None, _log: dict
             self._last_alias_resolved = {"from": original_term, "to": resolved_to}
             print(f"[ALIAS] Resolvido: '{original_term}' -> {resolved_to}")
 
+    # ========== BRAIN: Analytical query intercept ==========
+    # Detecta queries analiticas (por que, como melhorar, o que fazer)
+    # PRIORIDADE: Brain ANTES do Multi-step para evitar que "como melhorar
+    # o faturamento?" seja interceptado por trend detection do multi-step.
+    # Se tem contexto de sessao → brain responde direto com 70b (bypass multi-step)
+    # Se nao tem contexto → cai pro multi-step / routing normal + 70b narracao
+    _is_analytical = is_analytical_query(question)
+    print(f"[BRAIN] is_analytical={_is_analytical} para: \"{question[:80]}\"")
+
+    if _is_analytical:
+        brain_ctx = collect_session_context(ctx)
+        if brain_ctx:
+            print(f"[BRAIN] Contexto encontrado: {brain_ctx['intent']} "
+                  f"({brain_ctx['total_rows']} registros) → escalando pro 70b")
+            if _log:
+                _log["processing"] = _log.get("processing", {})
+                _log["processing"].update(layer="brain", intent="brain_analyze")
+
+            brain_result = await brain_analyze(question, brain_ctx)
+            if brain_result:
+                brain_result["time_ms"] = int((time.time() - t0) * 1000)
+                # Atualizar sessao
+                session.add_assistant_message(
+                    content=brain_result.get("response", "")[:200],
+                    tool_used="brain_analyze",
+                    params={"model": brain_result.get("_brain_model", "70b")}
+                )
+                return brain_result
+
+            # Brain falhou (70b + 8b) → cair pro multi-step / routing normal
+            print(f"[BRAIN] 70b + 8b falharam, fallback pro routing normal")
+        else:
+            print(f"[BRAIN] Sem contexto → routing normal + 70b narracao")
+
     # ========== MULTI-STEP DETECTION ==========
-    # Detecta queries compostas (comparações, tendências) ANTES do routing normal
+    # Detecta queries compostas (comparações, tendências) DEPOIS do brain.
+    # Brain com contexto já interceptou acima. Aqui pega:
+    # - Comparações explícitas: "compare janeiro vs fevereiro" (não analítica)
+    # - Tendências sem contexto: "faturamento caiu?" (analítica sem contexto → ok)
     plan = detect_multistep(question, ctx)
     if plan:
         print(f"[MULTISTEP] Detectado: {plan.merge_strategy} com {len(plan.steps)} steps")
@@ -167,15 +205,16 @@ async def ask_core_v5(self, question: str, user_context: dict = None, _log: dict
     result = await dispatch_v5(self, tool_call, question, user_context, t0, tokens, params_pre, ctx, _log)
 
     # ========== UPDATE SESSION ==========
+    # NOTA: handlers já chamam ctx.update() internamente com result_data
+    # (que contém "detail_data" sem underscore). NÃO sobrescrever ctx aqui.
+    # Porém: handlers geram "response" (narração) DEPOIS do ctx.update(),
+    # então precisamos salvar a narração no ctx para o brain ter contexto.
     if result and tool_call.name not in ("saudacao", "ajuda"):
-        ctx.update(
-            intent=tool_call.intent,
-            params=tool_call.params if tool_call.params else params_pre,
-            result=result,
-            question=question,
-            view_mode=tool_call.params.get("view", "pedidos")
-        )
-        # Registrar resposta na sessão
+        # Salvar narração no ctx para queries futuras (brain precisa)
+        if result.get("response") and ctx and ctx.last_result is not None:
+            ctx.last_result["response"] = result["response"]
+
+        # Registrar resposta na sessão (histórico de mensagens)
         session.add_assistant_message(
             content=result.get("response", "")[:200],
             tool_used=tool_call.name,
@@ -327,6 +366,21 @@ async def dispatch_v5(self, tool_call: ToolCall, question: str, user_context: di
 
     elif name == "ajuda":
         return self._handle_ajuda()
+
+    elif name == "brain_analyze":
+        # Haiku identificou como analítica — delegar pro brain
+        brain_ctx = collect_session_context(ctx)
+        if brain_ctx:
+            brain_result = await brain_analyze(question, brain_ctx)
+            if brain_result:
+                brain_result["time_ms"] = int((time.time() - t0) * 1000)
+                return brain_result
+        # Se brain falhou (sem contexto ou 70b+8b falharam), tentar knowledge base
+        kb_result = await self.kb.answer(question)
+        if kb_result:
+            kb_result["time_ms"] = int((time.time() - t0) * 1000)
+            return kb_result
+        return self._handle_fallback(question)
 
     # Fallback
     return self._handle_fallback(question)
