@@ -409,8 +409,8 @@ def detect_multistep(question: str, ctx=None) -> Optional[StepPlan]:
 # Campos conhecidos como KPIs (chave → label bonito)
 _KPI_FIELDS = {
     # Comissão
-    "QTD_NOTAS", "VLR_VENDAS", "VLR_DEVOLUCAO", "VLR_LIQUIDO",
-    "COM_VENDAS", "COM_DEVOLUCAO", "COM_LIQUIDA", "MARGEM_MEDIA",
+    "QTD_NOTAS", "VLR_FATURADO", "VLR_DEVOLUCAO", "VLR_LIQUIDO",
+    "BASE_COMISSAO", "COM_VENDAS", "COM_DEVOLUCAO", "COM_LIQUIDA", "MARGEM_MEDIA",
     # Vendas
     "QTD_VENDAS", "FATURAMENTO", "TICKET_MEDIO", "COMISSAO_TOTAL",
     # Pendências

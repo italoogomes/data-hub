@@ -387,15 +387,16 @@ def format_inadimplencia_response(kpis, detail_data, description, params):
 # ============================================================
 
 def format_comissao_response(kpis, detail_data, view, description, params, por_empresa=False):
-    """Formata resposta de comissão de vendedores (com vendas/devoluções separadas)."""
+    """Formata resposta de comissão de vendedores (VLRNOTA p/ faturado, AD_VLRBASECOMINT p/ base comissao)."""
     if not kpis:
         return "Nao encontrei dados de comissao para o periodo solicitado."
 
     row = kpis if isinstance(kpis, dict) else (kpis[0] if kpis else {})
     qtd_notas = int(row.get("QTD_NOTAS", 0) or 0)
-    vlr_vendas = float(row.get("VLR_VENDAS", 0) or 0)
+    vlr_faturado = float(row.get("VLR_FATURADO", 0) or 0)
     vlr_devolucao = float(row.get("VLR_DEVOLUCAO", 0) or 0)
     vlr_liquido = float(row.get("VLR_LIQUIDO", 0) or 0)
+    base_comissao = float(row.get("BASE_COMISSAO", 0) or 0)
     com_vendas = float(row.get("COM_VENDAS", 0) or 0)
     com_devolucao = float(row.get("COM_DEVOLUCAO", 0) or 0)
     com_liquida = float(row.get("COM_LIQUIDA", 0) or 0)
@@ -408,38 +409,40 @@ def format_comissao_response(kpis, detail_data, view, description, params, por_e
     lines = []
     lines.append(f"\U0001f4b5 **Comissao - {description}**\n")
     s = "s" if qtd_notas > 1 else ""
-    lines.append(f"**{fmt_num(qtd_notas)}** nota{s} | Faturado: **{fmt_brl(vlr_vendas)}**")
+    lines.append(f"**{fmt_num(qtd_notas)}** nota{s} | Faturado: **{fmt_brl(vlr_faturado)}**")
     if vlr_devolucao > 0:
         lines.append(f"\U0001f534 Devoluções: **{fmt_brl(vlr_devolucao)}** | Liquido: **{fmt_brl(vlr_liquido)}**")
+    lines.append(f"Base comissao: **{fmt_brl(base_comissao)}**")
     lines.append(f"Comissao: **{fmt_brl(com_vendas)}**" + (f" - Devol: **{fmt_brl(com_devolucao)}** = Liquida: **{fmt_brl(com_liquida)}**" if com_devolucao > 0 else ""))
     lines.append(f"Margem media: **{margem_media:.1f}%**\n")
 
     if detail_data:
         if view == "ranking":
             if por_empresa:
-                lines.append("| Vendedor | Empresa | Notas | Vendas | Devol. | Liquido | Com. Liq. | Margem | Aliq. |\n|----------|---------|-------|--------|--------|---------|-----------|--------|-------|")
+                lines.append("| Vendedor | Empresa | Notas | Faturado | Devol. | Liquido | Base Com. | Com. Liq. | Margem | Aliq. |\n|----------|---------|-------|----------|--------|---------|-----------|-----------|--------|-------|")
             else:
-                lines.append("| Vendedor | Notas | Vendas | Devol. | Liquido | Com. Liq. | Margem | Aliq. |\n|----------|-------|--------|--------|---------|-----------|--------|-------|")
+                lines.append("| Vendedor | Notas | Faturado | Devol. | Liquido | Base Com. | Com. Liq. | Margem | Aliq. |\n|----------|-------|----------|--------|---------|-----------|-----------|--------|-------|")
             for r in detail_data[:20]:
                 if not isinstance(r, dict):
                     continue
                 vend = trunc(str(r.get("VENDEDOR", "?")), 18)
                 notas = int(r.get("QTD_NOTAS", 0) or 0)
-                vendas = fmt_brl(float(r.get("VLR_VENDAS", 0) or 0))
+                faturado = fmt_brl(float(r.get("VLR_FATURADO", 0) or 0))
                 devol = fmt_brl(float(r.get("VLR_DEVOLUCAO", 0) or 0))
                 liq = fmt_brl(float(r.get("VLR_LIQUIDO", 0) or 0))
+                base_com = fmt_brl(float(r.get("BASE_COMISSAO", 0) or 0))
                 com_liq = fmt_brl(float(r.get("COM_LIQUIDA", 0) or 0))
                 mg = float(r.get("MARGEM_MEDIA", 0) or 0)
                 aliq = float(r.get("ALIQ_MEDIA", 0) or 0)
                 if por_empresa:
                     emp = trunc(str(r.get("EMPRESA", "?")), 18)
-                    lines.append(f"| {vend} | {emp} | {notas} | {vendas} | {devol} | {liq} | {com_liq} | {mg:.1f}% | {aliq:.1f}% |")
+                    lines.append(f"| {vend} | {emp} | {notas} | {faturado} | {devol} | {liq} | {base_com} | {com_liq} | {mg:.1f}% | {aliq:.1f}% |")
                 else:
-                    lines.append(f"| {vend} | {notas} | {vendas} | {devol} | {liq} | {com_liq} | {mg:.1f}% | {aliq:.1f}% |")
+                    lines.append(f"| {vend} | {notas} | {faturado} | {devol} | {liq} | {base_com} | {com_liq} | {mg:.1f}% | {aliq:.1f}% |")
             if len(detail_data) > 20:
                 lines.append(f"\n*...e mais {len(detail_data) - 20} {'linhas' if por_empresa else 'vendedores'}.*")
         else:
-            lines.append("| Nota | Tipo | Vendedor | Data | Base Com. | Margem | Aliq. | Comissao |\n|------|------|----------|------|-----------|--------|-------|----------|")
+            lines.append("| Nota | Tipo | Vendedor | Data | Faturado | Base Com. | Margem | Aliq. | Comissao |\n|------|------|----------|------|----------|-----------|--------|-------|----------|")
             for r in detail_data[:15]:
                 if not isinstance(r, dict):
                     continue
@@ -448,11 +451,12 @@ def format_comissao_response(kpis, detail_data, view, description, params, por_e
                 tipo_label = "Dev" if tipmov == "D" else "Vda"
                 vend = trunc(str(r.get("VENDEDOR", "?")), 15)
                 data = r.get("DT_NEG", "?")
-                base = fmt_brl(float(r.get("VLR_BASE_COM", 0) or 0))
+                faturado = fmt_brl(float(r.get("VLR_FATURADO", 0) or 0))
+                base = fmt_brl(float(r.get("BASE_COMISSAO", 0) or 0))
                 mg = float(r.get("MARGEM", 0) or 0)
                 aliq = float(r.get("ALIQUOTA", 0) or 0)
                 com = fmt_brl(float(r.get("VLR_COMISSAO", 0) or 0))
-                lines.append(f"| {nota} | {tipo_label} | {vend} | {data} | {base} | {mg:.1f}% | {aliq:.1f}% | {com} |")
+                lines.append(f"| {nota} | {tipo_label} | {vend} | {data} | {faturado} | {base} | {mg:.1f}% | {aliq:.1f}% | {com} |")
             if len(detail_data) > 15:
                 lines.append(f"\n*...e mais {len(detail_data) - 15} notas.*")
 
